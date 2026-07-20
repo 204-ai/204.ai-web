@@ -21,8 +21,8 @@ export function Home() {
   // hero player state — wired to the <video> inside MediaStill
   const reducedMotion = usePrefersReducedMotion()
   const videoEl = useRef<HTMLVideoElement | null>(null)
+  const fillRef = useRef<HTMLDivElement | null>(null)
   const [isPaused, setIsPaused] = useState(false)
-  const [progress, setProgress] = useState(0)
   const [timecode, setTimecode] = useState('00:00 / 00:00')
   const hasPlayer = Boolean(current.media?.video) && !reducedMotion
 
@@ -30,20 +30,26 @@ export function Home() {
     videoEl.current = el
     if (!el) return
     setIsPaused(el.paused)
-    setProgress(0)
     setTimecode('00:00 / 00:00')
     const onTime = () => {
-      if (el.duration) {
-        setProgress(el.currentTime / el.duration)
-        setTimecode(`${fmt(el.currentTime)} / ${fmt(el.duration)}`)
-      }
+      if (isFinite(el.duration) && el.duration) setTimecode(`${fmt(el.currentTime)} / ${fmt(el.duration)}`)
     }
     const onPlay = () => setIsPaused(false)
     const onPause = () => setIsPaused(true)
     el.addEventListener('timeupdate', onTime)
     el.addEventListener('play', onPlay)
     el.addEventListener('pause', onPause)
+    // progress bar advances per-frame — timeupdate only ticks ~4Hz, which
+    // reads as stepped jumps
+    let raf = requestAnimationFrame(function frame() {
+      const fill = fillRef.current
+      if (fill && isFinite(el.duration) && el.duration) {
+        fill.style.width = `${(el.currentTime / el.duration) * 100}%`
+      }
+      raf = requestAnimationFrame(frame)
+    })
     return () => {
+      cancelAnimationFrame(raf)
       el.removeEventListener('timeupdate', onTime)
       el.removeEventListener('play', onPlay)
       el.removeEventListener('pause', onPause)
@@ -100,7 +106,7 @@ export function Home() {
           {/* progress bar — sits on the lower letterbox bar */}
           {hasPlayer && (
             <div className={styles.progressTrack}>
-              <div className={styles.progressFill} style={{ width: `${progress * 100}%` }} />
+              <div ref={fillRef} className={styles.progressFill} />
             </div>
           )}
         </div>
@@ -123,7 +129,7 @@ export function Home() {
                   </span>
                   <span className={`t-mono ${styles.chapterCat}`}>{f.cat.toUpperCase()}</span>
                   <span>
-                    <span className={`t-mono ${styles.chapterCode}`} style={{ color: active ? 'var(--accent)' : undefined }}>
+                    <span className={`t-mono ${styles.chapterCode}`} style={{ color: active ? 'var(--accent-text)' : undefined }}>
                       CH.0{i + 1} · {f.code}
                     </span>
                     <span className={`t-display ${styles.chapterTitle}`} style={{ color: active ? 'var(--fg)' : 'var(--dim)' }}>

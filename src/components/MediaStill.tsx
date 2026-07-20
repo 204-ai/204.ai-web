@@ -18,6 +18,13 @@ interface MediaStillProps {
   videoRef?: (el: HTMLVideoElement | null) => void | (() => void)
 }
 
+// Webflow CDN keeps resized renditions ("-p-800") for path-style assets.
+// %2F-encoded poster URLs have no variants — leave those untouched.
+function sized(url: string): string {
+  if (url.includes('%2F')) return url
+  return url.replace(/(\.(?:png|jpe?g|webp))$/i, '-p-800$1')
+}
+
 const GRAIN_URL =
   "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.95' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.85'/%3E%3C/svg%3E\")"
 
@@ -67,9 +74,14 @@ export function MediaStill({ scene, media, mini = false, playing = false, letter
         </video>
       ) : (
         <img
-          src={media.still ?? media.video?.mp4}
+          src={media.still ? (letterbox ? media.still : sized(media.still)) : media.video?.mp4}
           alt=""
           loading="lazy"
+          decoding="async"
+          onError={(e) => {
+            // rendition missing → fall back to the original
+            if (media.still && e.currentTarget.src !== media.still) e.currentTarget.src = media.still
+          }}
           className={playing && !reducedMotion ? 'kenburns' : undefined}
           style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
         />

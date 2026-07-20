@@ -5,6 +5,8 @@
   --dim: rgba(236, 236, 236, 0.55);
   --hairline: rgba(236, 236, 236, 0.14);
   --accent: #c9442b;
+  /* accent for small mono text — same hue, lifted to pass 4.5:1 on bg */
+  --accent-text: #e0553a;
   --accent-soft: rgba(201, 68, 43, 0.08);
   --accent-border: rgba(201, 68, 43, 0.35);
 

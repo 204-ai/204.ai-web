@@ -109,8 +109,8 @@
 
 .progressFill {
   height: 100%;
+  width: 0%;
   background: var(--accent);
-  transition: width 0.15s linear;
 }
 
 /* ─── chapter rail ─── */
@@ -125,7 +125,7 @@
 .railHead {
   padding: 14px 16px 8px;
   font-size: clamp(9px, 0.68vw, 12px);
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.62);
   letter-spacing: 2px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
@@ -160,7 +160,7 @@
   top: 10px;
   right: 16px;
   font-size: clamp(8px, 0.6vw, 10px);
-  color: rgba(255, 255, 255, 0.35);
+  color: rgba(255, 255, 255, 0.58);
   letter-spacing: 1.5px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   padding: 3px 7px;
@@ -196,7 +196,7 @@
 .chapterCode {
   display: block;
   font-size: clamp(9px, 0.68vw, 12px);
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.62);
   letter-spacing: 1.5px;
   margin-bottom: 4px;
 }
@@ -211,7 +211,7 @@
 .chapterClient {
   display: block;
   font-size: clamp(9px, 0.68vw, 12px);
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.58);
   letter-spacing: 1px;
 }
 

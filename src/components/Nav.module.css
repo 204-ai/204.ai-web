@@ -99,7 +99,7 @@
 }
 
 .statusBooking {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .statusCta {
