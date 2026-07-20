@@ -5,16 +5,19 @@
 .head {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 28px;
+  align-items: center;
+  margin-bottom: 20px;
   gap: 20px;
   flex-wrap: wrap;
 }
 
-.title {
-  font-size: clamp(40px, 5.6vw, 108px);
-  color: var(--fg);
+.titleRow {
   margin: 0;
+  font-weight: 400;
+}
+
+.count {
+  color: var(--fg);
 }
 
 .filters {
@@ -123,10 +126,8 @@
 
 /* ─── hover preview card ─── */
 .preview {
-  position: absolute;
-  right: 8px;
-  top: -8px;
-  width: 320px;
+  position: fixed;
+  width: clamp(320px, 24vw, 420px);
   z-index: 12;
   box-shadow:
     0 24px 60px rgba(0, 0, 0, 0.7),

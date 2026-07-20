@@ -34,6 +34,7 @@ Ship production static site for studio "204 · NO-CONTENT". Implement design/ Di
 - V10: every route sets unique title + meta description on navigation.
 - V11: floating overlays (work hover preview) stay fully inside viewport; never extend document scroll height or sit under fixed nav.
 - V12: display type + hero scale fluidly past 1280 (vw-based clamps, caps ≈1.5× design size); display tracking = prototype value `-0.02px` (NOT em).
+- V13: content constrained to max 1720px centered shell on wide screens; nav bar full-bleed w/ inner capped; nav/labels/chapter type fluid (no fixed tiny px on hidpi).
 
 ## §T tasks
 id|status|desc|cites
@@ -53,6 +54,9 @@ T13|x|persist scrape snapshot design/scrape/extracted.json + note in DESIGN.md|C
 T14|x|real data swap src/data/studio.ts: curated 12 works (both pillars, cat= branded/artistic/mapping/interactive), 8 services (4 content + 4 interactive products), team 5 makers, contact (Hello@204.ai, RnA Studio Lisboa, IG/LinkedIn), stats, hero chapters|C10
 T15|x|brand + media wiring: real 204 logo in nav (hotlink), adapted copy (strap HUMAN FIRST—AI AS TOOL, about= creative tech studio + RnA box replaces hiring box, services intro), real stills/videos in hero chapters + work hover cards, CinematicStill fallback|C10,V4,V12
 T16|x|verify: build+lint, V6 rerun, screenshots desktop+mobile, V1 grep|V1,V5,V6
+T17|x|full catalog: all 31 scraped projects in ledger, codes reversed (highest=newest), posters where available|C10
+T18|x|wide-screen pass: 1720px shell, nav/chapter/label scale-up, strap redesign (no em dash), wider intro, cursor-anchored hover preview, /work header merged (label+count, no LEDGER slab), chapter category tags|V11,V13,C7
+T19|x|SEO pass: og:image, JSON-LD Organization, noscript fallback, semantic h1 audit; sitemap deferred until final domain|I.seo
 
 ## §B bugs
 id|date|cause|fix

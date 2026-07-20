@@ -13,6 +13,7 @@ const ITEMS = [
 export function Nav() {
   return (
     <header className={styles.root}>
+      <div className={styles.inner}>
       <Link to="/" className={styles.logo} aria-label="204 · NO-CONTENT — home">
         <img src={LOGO_URL} alt="204 · NO-CONTENT" className={styles.logoImg} />
       </Link>
@@ -34,6 +35,7 @@ export function Nav() {
         <span className={styles.statusBooking}>● RNA STUDIO · LISBOA</span>
         <span className={styles.statusCta}>WORK WITH US →</span>
       </Link>
+      </div>
     </header>
   )
 }

@@ -17,7 +17,9 @@ export function Work() {
 
   const works = cat === 'all' ? WORKS : WORKS.filter((w) => w.cat === cat)
 
-  const enter = (id: string) => {
+  const [anchor, setAnchor] = useState({ x: 0, y: 0 })
+  const enter = (id: string, e: React.MouseEvent) => {
+    setAnchor({ x: e.clientX, y: e.clientY })
     setHovered(id)
     cursor.setLabel('VIEW')
   }
@@ -29,12 +31,9 @@ export function Work() {
   return (
     <div className={styles.root}>
       <div className={styles.head}>
-        <div>
-          <div className="t-label" style={{ marginBottom: 8 }}>§ 02 / SELECTED WORK</div>
-          <h1 className={`t-display ${styles.title}`}>
-            Ledger <span style={{ color: 'var(--dim)' }}>·</span> {String(works.length).padStart(2, '0')}
-          </h1>
-        </div>
+        <h1 className={`t-label ${styles.titleRow}`}>
+          § 02 / SELECTED WORK <span className={styles.count}>— LEDGER · {String(works.length).padStart(2, '0')}</span>
+        </h1>
         <div className={styles.filters} role="group" aria-label="Filter by category">
           {CATEGORIES.map((c) => (
             <button
@@ -62,7 +61,7 @@ export function Work() {
         {works.map((w) => {
           const isHover = hovered === w.id
           return (
-            <div key={w.id} className={styles.row} onMouseEnter={() => enter(w.id)} onMouseLeave={leave}>
+            <div key={w.id} className={styles.row} onMouseEnter={(e) => enter(w.id, e)} onMouseLeave={leave}>
               {/* row background still — fades L→R, sits behind columns */}
               <div className={styles.rowBg} style={{ opacity: isHover ? 0.82 : 0.32 }}>
                 <div className={styles.rowBgInner} style={{ transform: isHover ? 'scale(1.04)' : 'scale(1)' }}>
@@ -84,7 +83,7 @@ export function Work() {
                 {w.client} · {w.cat.toUpperCase()} · {w.year}
               </div>
 
-              {isHover && <HoverPreview w={w} />}
+              {isHover && <HoverPreview w={w} anchor={anchor} />}
             </div>
           )
         })}
@@ -93,27 +92,33 @@ export function Work() {
   )
 }
 
-// Hover preview card — "playing" feel via CinematicStill Ken-Burns mode plus a
-// ticking timecode/progress bar. Pointer-events none: pure visual, no hover trap (V8).
-function HoverPreview({ w }: { w: WorkItem }) {
+// Hover preview card — follows the cursor (anchored beside it) and stays fully
+// inside the viewport (SPEC V11). Pointer-events none: pure visual, no hover trap (V8).
+function HoverPreview({ w, anchor }: { w: WorkItem; anchor: { x: number; y: number } }) {
   const reducedMotion = usePrefersReducedMotion()
   const [t, setT] = useState(0)
   const ref = useRef<HTMLDivElement>(null)
 
-  // Keep the card fully inside the viewport: shift up/down so it never
-  // extends past the bottom (which also grows document scroll height) or
-  // under the fixed nav.
   useLayoutEffect(() => {
     const el = ref.current
     if (!el) return
-    el.style.top = '-8px'
-    const rect = el.getBoundingClientRect()
-    const minTop = 58 + 12 // fixed nav + margin
-    const maxBottom = window.innerHeight - 12
-    let shift = 0
-    if (rect.bottom > maxBottom) shift = maxBottom - rect.bottom
-    if (rect.top + shift < minTop) shift = minTop - rect.top
-    if (shift !== 0) el.style.top = `${-8 + shift}px`
+    const navH = document.querySelector('header')?.getBoundingClientRect().height ?? 58
+    const place = (x: number, y: number) => {
+      const cardW = el.offsetWidth
+      const cardH = el.offsetHeight
+      let left = x + 28
+      if (left + cardW > window.innerWidth - 12) left = x - cardW - 28
+      left = Math.max(12, left)
+      const top = Math.min(Math.max(y - cardH * 0.35, navH + 12), window.innerHeight - cardH - 12)
+      el.style.left = `${left}px`
+      el.style.top = `${top}px`
+    }
+    place(anchor.x, anchor.y)
+    const move = (e: MouseEvent) => place(e.clientX, e.clientY)
+    document.addEventListener('mousemove', move)
+    return () => document.removeEventListener('mousemove', move)
+    // anchor is the enter-position only; live tracking comes from mousemove
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [w.id])
 
   useEffect(() => {

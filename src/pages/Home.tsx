@@ -64,6 +64,7 @@ export function Home() {
                     <MediaStill scene={f.scene} media={f.media} mini />
                     {active && <span className={styles.thumbRing} />}
                   </span>
+                  <span className={`t-mono ${styles.chapterCat}`}>{f.cat.toUpperCase()}</span>
                   <span>
                     <span className={`t-mono ${styles.chapterCode}`} style={{ color: active ? 'var(--accent)' : undefined }}>
                       CH.0{i + 1} · {f.code}
@@ -83,9 +84,10 @@ export function Home() {
       {/* big type strap */}
       <section className={styles.strap}>
         <h1 className={`t-display ${styles.strapType}`}>
-          HUMAN<span style={{ color: 'var(--dim)' }}>—</span>FIRST.
+          HUMAN FIRST<span style={{ color: 'var(--dim)' }}>.</span>
           <br />
-          AI AS <span style={{ color: 'var(--accent)' }}>TOOL</span>
+          <span style={{ color: 'var(--dim)' }}>AI AS</span> <span style={{ color: 'var(--accent)' }}>TOOL</span>
+          <span style={{ color: 'var(--dim)' }}>.</span>
         </h1>
         <div className={styles.strapRow}>
           <p className={`t-mono ${styles.intro}`}>

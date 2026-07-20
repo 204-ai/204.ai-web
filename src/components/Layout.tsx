@@ -15,8 +15,10 @@ export function Layout() {
     <CursorProvider>
       <div className="grain">
         <Nav />
-        <main style={{ paddingTop: 58 }}>
-          <Outlet />
+        <main style={{ paddingTop: 'var(--nav-h)' }}>
+          <div className="shell">
+            <Outlet />
+          </div>
         </main>
       </div>
     </CursorProvider>

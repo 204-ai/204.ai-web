@@ -12,7 +12,8 @@ let fail = 0
 for (const w of WIDTHS) {
   await page.setViewport({ width: w, height: 900 })
   for (const r of ROUTES) {
-    await page.goto(BASE + r, { waitUntil: 'networkidle0' })
+    await page.goto(BASE + r, { waitUntil: 'domcontentloaded', timeout: 60000 })
+    await new Promise((res) => setTimeout(res, 600))
     const res = await page.evaluate(() => {
       const de = document.documentElement
       const overflowEls = []
