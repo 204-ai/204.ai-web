@@ -26,20 +26,25 @@
   margin-top: 8px;
 }
 
+.mediaRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(260px, 1fr);
+  gap: 40px;
+  margin-top: 24px;
+  align-items: start;
+}
+
 .hero {
   position: relative;
-  aspect-ratio: 21 / 9;
-  margin-top: 24px;
+  aspect-ratio: 16 / 9;
   overflow: hidden;
   background: #0f0f0f;
   border-radius: 2px;
 }
 
-.columns {
-  display: grid;
-  grid-template-columns: minmax(0, 1.6fr) minmax(240px, 1fr);
-  gap: 48px;
+.main {
   margin-top: 36px;
+  max-width: 880px;
 }
 
 .body {
@@ -139,6 +144,13 @@
   align-self: start;
 }
 
+.metaNote {
+  font-size: 13px;
+  color: var(--dim);
+  line-height: 1.55;
+  margin: 16px 0 0;
+}
+
 .metaRow {
   display: flex;
   justify-content: space-between;
@@ -226,9 +238,9 @@
     aspect-ratio: 16 / 9;
   }
 
-  .columns {
+  .mediaRow {
     grid-template-columns: 1fr;
-    gap: 28px;
+    gap: 24px;
   }
 
   .meta {

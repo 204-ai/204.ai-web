@@ -33,28 +33,11 @@ export function WorkDetail() {
       <h1 className={`t-display ${styles.title}`}>{w.title}</h1>
       {w.client !== '—' && <div className={`t-serif ${styles.client}`}>for {w.client}</div>}
 
-      {/* hero media */}
-      <div className={styles.hero}>
-        <MediaStill scene={w.scene} media={w.media} playing letterbox />
-      </div>
-
-      <div className={styles.columns}>
-        <div className={styles.main}>
-          <p className={`t-serif ${styles.body}`}>{w.body ?? w.note}</p>
-
-          {w.youtube?.map((id) => <YoutubeEmbed key={id} id={id} title={w.title} />)}
-
-          {w.gallery && (
-            <div className={styles.gallery}>
-              {w.gallery.map((src) => (
-                <div key={src} className={styles.galleryItem}>
-                  <img src={src} alt={`${w.title} — installation photo`} loading="lazy" decoding="async" />
-                </div>
-              ))}
-            </div>
-          )}
+      {/* media front and center, spec sheet beside it on large screens */}
+      <div className={styles.mediaRow}>
+        <div className={styles.hero}>
+          <MediaStill scene={w.scene} media={w.media} playing letterbox />
         </div>
-
         <aside className={styles.meta}>
           <div className="t-label" style={{ marginBottom: 12 }}>/ SPEC SHEET</div>
           {(
@@ -70,10 +53,27 @@ export function WorkDetail() {
               <span className={styles.metaValue}>{v}</span>
             </div>
           ))}
+          <p className={styles.metaNote}>{w.note}</p>
           <Link to="/contact" className={`t-mono ${styles.cta}`}>
             → SOMETHING LIKE THIS?
           </Link>
         </aside>
+      </div>
+
+      <div className={styles.main}>
+        {w.body && <p className={`t-serif ${styles.body}`}>{w.body}</p>}
+
+        {w.youtube?.map((id) => <YoutubeEmbed key={id} id={id} title={w.title} />)}
+
+        {w.gallery && (
+          <div className={styles.gallery}>
+            {w.gallery.map((src) => (
+              <div key={src} className={styles.galleryItem}>
+                <img src={src} alt={`${w.title} — installation photo`} loading="lazy" decoding="async" />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* prev / next */}

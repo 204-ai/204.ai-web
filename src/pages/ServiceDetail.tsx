@@ -32,16 +32,22 @@ export function ServiceDetail() {
         / {pillar} — {s.n}
       </div>
       <h1 className={`t-display ${styles.title}`}>{s.label}</h1>
-      <p className={`t-serif ${styles.intro}`}>{s.intro ?? s.body}</p>
 
-      {/* hero media — product loop where it exists, scene otherwise */}
-      <div className={styles.hero}>
-        <MediaStill
-          scene={s.scene}
-          media={s.still || s.video ? { still: s.still, video: s.video } : undefined}
-          playing
-          letterbox
-        />
+      {/* copy leads; product loop sits compact beside it on large screens */}
+      <div className={styles.top}>
+        <div>
+          <p className={`t-serif ${styles.intro}`}>{s.intro ?? s.body}</p>
+          <Link to="/contact" className={`t-mono ${styles.cta}`}>
+            → BRING THIS TO YOUR EVENT
+          </Link>
+        </div>
+        <div className={styles.hero}>
+          <MediaStill
+            scene={s.scene}
+            media={s.still || s.video ? { still: s.still, video: s.video } : undefined}
+            playing
+          />
+        </div>
       </div>
 
       {s.modes && (
@@ -83,12 +89,6 @@ export function ServiceDetail() {
           ))}
         </section>
       )}
-
-      <div className={styles.ctaRow}>
-        <Link to="/contact" className={`t-mono ${styles.cta}`}>
-          → BRING THIS TO YOUR EVENT
-        </Link>
-      </div>
 
       <nav className={styles.pager} aria-label="More services">
         <Link to={`/services/${prev.slug}`} className={styles.pagerLink}>
