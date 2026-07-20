@@ -61,6 +61,7 @@
 }
 
 .row {
+  cursor: pointer;
   display: grid;
   grid-template-columns: 80px 1fr 1fr 120px 80px 60px;
   padding: 18px 4px;

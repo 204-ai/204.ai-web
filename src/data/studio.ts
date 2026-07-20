@@ -18,6 +18,7 @@ export interface WorkMedia {
 export interface Work {
   id: string
   code: string
+  slug: string
   title: string
   client: string
   cat: Category
@@ -26,6 +27,9 @@ export interface Work {
   note: string
   scene: Scene
   media?: WorkMedia
+  body?: string
+  youtube?: string[]
+  gallery?: string[]
 }
 
 export interface Service {
@@ -59,6 +63,10 @@ interface RawWork {
   note: string
   scene: Scene
   media?: WorkMedia
+  /* detail-page extras (present where the live site has real content) */
+  body?: string
+  youtube?: string[]
+  gallery?: string[]
 }
 
 const RAW_WORKS: RawWork[] = [
@@ -67,11 +75,15 @@ const RAW_WORKS: RawWork[] = [
   { title: 'Portugal Tech Week', client: 'Portugal Tech Week', cat: 'interactive', year: '2025', runtime: '—', note: 'Interactive AI installation for Lisbon’s tech flagship event.', scene: 'cathedral', media: { still: `${CDN}/692db82f1671a179f06be1c8_portugaltechweek-img.png` } },
   { title: 'Sensoria', client: '—', cat: 'interactive', year: '2025', runtime: '—', note: 'Interactive AI installation.', scene: 'water', media: { still: `${CDN}/692ec004ca954cf090b1a964_sensoria-img.png` } },
   { title: 'Tkeshii', client: '—', cat: 'interactive', year: '2025', runtime: '—', note: 'Interactive AI installation.', scene: 'desert', media: { still: `${CDN}/692ebab120c3c4da481896d5_tkeshi-img.png` } },
-  { title: '1N: EEG Mirror', client: 'MuLabs × 204', cat: 'interactive', year: '2025', runtime: '—', note: 'Real-time brain activity becomes a living artwork. Neurofeedback-driven Magic Mirror, London.', scene: 'water', media: { still: `${CDN}/69a086f5c7d37a8dd190b970_1nport.png` } },
+  { title: '1N: EEG Mirror', client: 'MuLabs × 204', cat: 'interactive', year: '2025', runtime: '—', note: 'Real-time brain activity becomes a living artwork. Neurofeedback-driven Magic Mirror, London.', scene: 'water', media: { still: `${CDN}/69a086f5c7d37a8dd190b970_1nport.png` },
+    body: 'Your mind becomes the exhibit. The Brain Mirror translates real-time brain activity into evolving visual forms — 204 generative technology driven by MuLabs neurofeedback. The installation responds to shifts in attention, focus and mental engagement: as you concentrate, the imagery transforms, turning your internal cognitive state into a living artwork. Shown in London.',
+    gallery: [`${CDN}/69a0891bc407f0e265b0cc4d_DEV02179.jpg`, `${CDN}/69a08950e74b2dd303902e2c_Screenshot%202026-02-26%20at%2018.56.16.png`, `${CDN}/69a08969335ead4bd83753a8_Screenshot%202026-02-26%20at%2018.56.07.png`] },
   { title: 'Viva el Gonzo', client: 'Viva el Gonzo', cat: 'interactive', year: '2025', runtime: '—', note: 'Magic Mirror experience on location.', scene: 'desert', media: { still: `${CDN}/684047350c7f0d019855e2e9_vivaelgonzo.png` } },
   { title: 'Burst', client: 'Francisco Carolinum, Linz', cat: 'interactive', year: '2025', runtime: '—', note: 'Magic Mirror experience trained on the Burst style, shown in Linz.', scene: 'cathedral', media: { still: `${CDN}/69203f052ef9933a7d26918a_burst-img.png` } },
   { title: 'Rare Effect', client: 'Rare Effect, Arroz Estúdios', cat: 'interactive', year: '2024', runtime: '—', note: 'Interactive AI installation at Arroz Estúdios, Lisbon.', scene: 'interior', media: { still: `${CDN}/69b295ccf321e17fbd830d05_%C2%A9FILIPA_AURE%CC%81LIO_RARE%20EFFECT%202025%20-%20ARROZ%20ESTU%CC%81DIOS_-069.jpg` } },
-  { title: 'Hulaween', client: 'Suwannee Hulaween, Florida', cat: 'interactive', year: '2024', runtime: '—', note: 'The Spirit Mirror — festival-goers transformed into the spirits of Spirit Lake.', scene: 'desert', media: { still: `${CDN}/6926dbb374354eab559adf35_hulaupscale.png` } },
+  { title: 'Hulaween', client: 'Suwannee Hulaween, Florida', cat: 'interactive', year: '2024', runtime: '—', note: 'The Spirit Mirror — festival-goers transformed into the spirits of Spirit Lake.', scene: 'desert', media: { still: `${CDN}/6926dbb374354eab559adf35_hulaupscale.png` },
+    body: 'Florida’s Hulaween is home to Spirit Lake — a lake with a reputation for being haunted, though nobody quite agrees on what lives inside. That legend became the brief: the Spirit Mirror, a Magic Mirror installation that transforms festival-goers into the spirits we imagine beneath the surface. October 24–27, 2024.',
+    gallery: [`${CDN}/6749a0687b3df6da91e82b2f_2024-11-22%2016.18.15.jpg`, `${CDN}/6749a0702ffc63114d0d2862_2024-11-22%2016.18.25.jpg`, `${CDN}/6749a07936708671a96b92a3_2024-11-22%2016.18.32.jpg`] },
   { title: 'Vagabond', client: 'Vagabond', cat: 'interactive', year: '2024', runtime: '—', note: 'Magic Mirror event installation.', scene: 'interior', media: { still: `${CDN}/67488e3d2ecffdff49269d83_Vagabond_cover.png` } },
   { title: 'Studio 54b', client: 'Studio 54b', cat: 'interactive', year: '2024', runtime: '—', note: 'Interactive AI installation.', scene: 'cathedral' },
   { title: 'Oddsgate', client: 'Oddsgate', cat: 'interactive', year: '2024', runtime: '—', note: 'Interactive AI installation.', scene: 'water', media: { still: `${CDN}/6744776d2208432823790a7b_Oddsgate_cover.png` } },
@@ -83,8 +95,12 @@ const RAW_WORKS: RawWork[] = [
   { title: 'Lisbon Insiders', client: 'Lisbon Insiders', cat: 'interactive', year: '2024', runtime: '—', note: 'Interactive AI installation.', scene: 'cathedral' },
   { title: 'Wines Around The World', client: '—', cat: 'interactive', year: '2023', runtime: '—', note: 'Interactive AI installation.', scene: 'interior', media: { still: `${CDN}/67489265485a73607410fa99_winesfromanother.png` } },
   { title: 'Mazarine', client: 'Auriece Vettier', cat: 'interactive', year: '2023', runtime: '—', note: 'Augmented art collaboration with Auriece Vettier.', scene: 'water', media: { still: `${CDN}/69203f08380e1ffe677a9418_mazarine-img.png` } },
-  { title: 'RUBr', client: 'Concept condom brand', cat: 'branded', year: '—', runtime: '—', note: 'Full brand book, packaging and AI-assisted campaign for a hypothetical condom brand.', scene: 'cathedral', media: { still: `${CDN}/69206288837a6cbd56eb8420_Rubr-img.png` } },
-  { title: 'Venom', client: 'Concept perfume brand', cat: 'branded', year: '—', runtime: '—', note: 'Identity film for a hypothetical perfume — transformation, seduction, embodied desire.', scene: 'water', media: { still: `${CDN}/692062972d8b6237a3349b6e_Venom-Img.png` } },
+  { title: 'RUBr', client: 'Concept condom brand', cat: 'branded', year: '—', runtime: '—', note: 'Full brand book, packaging and AI-assisted campaign for a hypothetical condom brand.', scene: 'cathedral', media: { still: `${CDN}/69206288837a6cbd56eb8420_Rubr-img.png` },
+    body: 'A self-initiated showcase of creative thinking and advertising craft: we designed a hypothetical condom brand end to end — brand book, wrappers and boxes, plus a campaign of posters and films to market it. Our designers built the entire brand; AI helped produce the campaign videos and product imagery. Landmark buildings become subtle, unmistakable reminders of why protection matters.',
+    youtube: ['HerOGLgpefU', 'kLC9BqOVwOU'] },
+  { title: 'Venom', client: 'Concept perfume brand', cat: 'branded', year: '—', runtime: '—', note: 'Identity film for a hypothetical perfume — transformation, seduction, embodied desire.', scene: 'water', media: { still: `${CDN}/692062972d8b6237a3349b6e_Venom-Img.png` },
+    body: 'A full concept for a hypothetical perfume brand: an identity film crafted entirely from scratch — narrative, visual language and sound design. The piece explores transformation, seduction and embodied desire, using evocative imagery and atmosphere to give the brand its essence.',
+    youtube: ['l8mZr3Th5dI'] },
   { title: 'Remember', client: 'Music video', cat: 'artistic', year: '—', runtime: '—', note: 'Artistic AI music video.', scene: 'interior', media: { still: `${CDN}/692429b5e7e95fffebb32c7c_Remember-img.png` } },
   { title: 'Shower Thoughts', client: '—', cat: 'artistic', year: '—', runtime: '—', note: 'Artistic AI film.', scene: 'desert', media: { still: `${CDN}/69242ae193a8f3d6760eb460_Shower%20Thoughts-img.png` } },
   { title: 'Thorneshade', client: '—', cat: 'branded', year: '—', runtime: '—', note: 'Branded content film.', scene: 'cathedral', media: { still: `${CDN}/69242a234690e5231f599efa_Thorneshade-img.png` } },
@@ -95,10 +111,20 @@ const RAW_WORKS: RawWork[] = [
   { title: 'BIOxyz Coin Launch', client: 'BIOxyz', cat: 'branded', year: '—', runtime: '—', note: 'Branded launch content.', scene: 'cathedral', media: { still: `${CDN}/692428c1a4b41790fc8a213a_bioxyz-img.png` } },
 ]
 
+function slugify(title: string): string {
+  return title
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
 export const WORKS: Work[] = RAW_WORKS.map((w, i) => ({
   ...w,
   id: `w${String(i + 1).padStart(2, '0')}`,
   code: `NC·${String(RAW_WORKS.length - i).padStart(3, '0')}`,
+  slug: slugify(w.title),
 }))
 
 export const CATEGORIES = ['all', 'interactive', 'mapping', 'branded', 'artistic'] as const

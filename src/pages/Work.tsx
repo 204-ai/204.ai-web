@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { MediaStill } from '../components/MediaStill'
 import { useCursor } from '../components/Cursor'
 import { useHead } from '../hooks/useHead'
@@ -14,6 +15,7 @@ export function Work() {
   const [cat, setCat] = useState<CategoryFilter>('all')
   const [hovered, setHovered] = useState<string | null>(null)
   const cursor = useCursor()
+  const navigate = useNavigate()
 
   const works = cat === 'all' ? WORKS : WORKS.filter((w) => w.cat === cat)
 
@@ -61,7 +63,16 @@ export function Work() {
         {works.map((w) => {
           const isHover = hovered === w.id
           return (
-            <div key={w.id} className={styles.row} onMouseEnter={(e) => enter(w.id, e)} onMouseLeave={leave}>
+            <div
+              key={w.id}
+              className={styles.row}
+              onMouseEnter={(e) => enter(w.id, e)}
+              onMouseLeave={leave}
+              onClick={() => {
+                leave()
+                navigate(`/work/${w.slug}`)
+              }}
+            >
               {/* row background still — fades L→R, sits behind columns */}
               <div className={styles.rowBg} style={{ opacity: isHover ? 0.82 : 0.32 }}>
                 <div className={styles.rowBgInner} style={{ transform: isHover ? 'scale(1.04)' : 'scale(1)' }}>
@@ -71,7 +82,7 @@ export function Work() {
 
               <div className={`t-mono ${styles.cellRef}`}>{w.code}</div>
               <div className={`t-display ${styles.cellTitle}`} style={{ color: isHover ? 'var(--accent)' : 'var(--fg)' }}>
-                {w.title}
+                <Link to={`/work/${w.slug}`} onClick={(e) => { e.stopPropagation(); leave() }}>{w.title}</Link>
               </div>
               <div className={`${styles.cellClient} ${styles.colClient}`}>{w.client}</div>
               <div className={`t-mono ${styles.cellDim} ${styles.colCat}`}>{w.cat}</div>
