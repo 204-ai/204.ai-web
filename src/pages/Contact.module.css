@@ -1,0 +1,178 @@
+.root {
+  padding: 32px 28px 64px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+
+.title {
+  font-size: clamp(48px, 7.8vw, 100px);
+  color: var(--fg);
+  line-height: 0.88;
+  margin: 0;
+}
+
+.body {
+  margin: 32px 0 0;
+  font-size: 14px;
+  color: var(--fg);
+  line-height: 1.7;
+  max-width: 440px;
+}
+
+.info {
+  margin: 40px 0 0;
+  font-size: 12px;
+}
+
+.infoRow {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 20px;
+  padding: 6px 0;
+}
+
+.infoKey {
+  color: var(--dim);
+  letter-spacing: 1px;
+}
+
+.infoValue {
+  color: var(--fg);
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.infoValue a:hover {
+  color: var(--accent);
+}
+
+/* ─── form panel ─── */
+.panel {
+  border: 1px solid var(--hairline);
+  padding: 28px;
+  background: rgba(255, 255, 255, 0.02);
+  align-self: start;
+}
+
+.field {
+  display: block;
+  margin-bottom: 16px;
+}
+
+.fieldLabel {
+  display: block;
+  font-size: 9px;
+  color: var(--dim);
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+}
+
+.input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--hairline);
+  color: var(--fg);
+  font-size: 15px;
+  padding: 8px 0;
+  outline: none;
+  border-radius: 0;
+}
+
+.input:focus {
+  border-bottom-color: var(--accent);
+}
+
+.chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.chip {
+  background: transparent;
+  color: var(--dim);
+  border: 1px solid var(--hairline);
+  font-size: 10px;
+  letter-spacing: 1px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.chipActive {
+  background: var(--fg);
+  color: var(--bg);
+  border-color: var(--fg);
+}
+
+.textarea {
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--hairline);
+  color: var(--fg);
+  font-size: 13px;
+  padding: 12px;
+  outline: none;
+  resize: none;
+  border-radius: 0;
+  line-height: 1.5;
+}
+
+.textarea:focus {
+  border-color: var(--accent);
+}
+
+.textarea::placeholder {
+  color: var(--dim);
+}
+
+.submit {
+  width: 100%;
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 14px 0;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+.submit:hover {
+  filter: brightness(1.1);
+}
+
+/* ─── sent state ─── */
+.sent {
+  padding: 60px 0;
+  text-align: center;
+}
+
+.sentBadge {
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+}
+
+.sentTitle {
+  font-size: 40px;
+  color: var(--fg);
+  margin-bottom: 14px;
+}
+
+.sentNote {
+  font-size: 13px;
+  color: var(--dim);
+}
+
+@media (max-width: 900px) {
+  .root {
+    grid-template-columns: 1fr;
+    padding: 24px 16px 48px;
+    gap: 32px;
+  }
+}

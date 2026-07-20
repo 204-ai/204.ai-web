@@ -1,0 +1,270 @@
+.root {
+  padding: 32px 28px 64px;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 28px;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.title {
+  font-size: clamp(40px, 5.6vw, 72px);
+  color: var(--fg);
+  margin: 0;
+}
+
+.filters {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.filter {
+  background: transparent;
+  color: var(--dim);
+  border: 1px solid var(--hairline);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.filterActive {
+  background: var(--fg);
+  color: var(--bg);
+  border-color: var(--fg);
+}
+
+/* ─── ledger table ─── */
+.table {
+  border-top: 1px solid var(--hairline);
+  position: relative;
+}
+
+.cols {
+  display: grid;
+  grid-template-columns: 80px 1fr 1fr 120px 80px 60px;
+  padding: 8px 4px;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  color: var(--dim);
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 80px 1fr 1fr 120px 80px 60px;
+  padding: 18px 4px;
+  border-bottom: 1px solid var(--hairline);
+  align-items: center;
+  position: relative;
+}
+
+.rowBg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, #000 0%, #000 28%, rgba(0, 0, 0, 0.55) 48%, transparent 72%);
+  mask-image: linear-gradient(to right, #000 0%, #000 28%, rgba(0, 0, 0, 0.55) 48%, transparent 72%);
+  transition: opacity 0.25s;
+}
+
+.rowBgInner {
+  position: absolute;
+  inset: 0;
+  transition: transform 0.4s ease;
+}
+
+.cellRef {
+  font-size: 10px;
+  color: var(--dim);
+  letter-spacing: 1px;
+  position: relative;
+}
+
+.cellTitle {
+  font-size: clamp(20px, 2.2vw, 28px);
+  transition: color 0.12s;
+  position: relative;
+}
+
+.row:hover .cellTitle {
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.6);
+}
+
+.cellClient {
+  font-size: 13px;
+  color: var(--fg);
+  position: relative;
+}
+
+.cellDim {
+  font-size: 10px;
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+}
+
+.cellRt {
+  text-align: right;
+}
+
+.mobileMeta {
+  display: none;
+}
+
+/* ─── hover preview card ─── */
+.preview {
+  position: absolute;
+  right: 8px;
+  top: -8px;
+  width: 320px;
+  z-index: 12;
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+  background: #0f0f0f;
+}
+
+.previewStill {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+
+.previewBadge {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 2;
+}
+
+.previewPulse {
+  width: 6px;
+  height: 6px;
+  border-radius: 99px;
+  background: var(--accent);
+  animation: ncPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes ncPulse {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .previewPulse {
+    animation: none;
+  }
+}
+
+.previewTimecode {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.8);
+  z-index: 2;
+}
+
+.previewTrack {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.15);
+  z-index: 2;
+}
+
+.previewProgress {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.1s linear;
+}
+
+.previewBody {
+  padding: 12px 14px;
+}
+
+.previewMeta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  color: var(--dim);
+  letter-spacing: 1.5px;
+  margin-bottom: 6px;
+}
+
+.previewTitle {
+  font-size: 16px;
+  color: var(--fg);
+  line-height: 1.05;
+  margin-bottom: 6px;
+}
+
+.previewNote {
+  font-size: 11px;
+  color: var(--dim);
+  line-height: 1.45;
+}
+
+/* ─── responsive: table → card list (SPEC C7) ─── */
+@media (max-width: 768px) {
+  .root {
+    padding: 24px 16px 48px;
+  }
+
+  .cols {
+    display: none;
+  }
+
+  .row {
+    grid-template-columns: 80px 1fr;
+    row-gap: 4px;
+    padding: 16px 4px;
+  }
+
+  .colClient,
+  .colCat,
+  .colYear,
+  .colRt {
+    display: none;
+  }
+
+  .mobileMeta {
+    display: block;
+    grid-column: 2;
+    font-size: 9px;
+    color: var(--dim);
+    letter-spacing: 1px;
+    position: relative;
+  }
+
+  .preview {
+    display: none;
+  }
+}

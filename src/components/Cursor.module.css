@@ -1,0 +1,34 @@
+.root {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 100;
+  mix-blend-mode: difference;
+  transition: opacity 0.15s;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 99px;
+  background: var(--fg);
+  border: none;
+  transition:
+    width 0.18s,
+    height 0.18s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--fg);
+  letter-spacing: 1px;
+}
+
+.expanded {
+  width: 56px;
+  height: 56px;
+  background: transparent;
+  border: 1px solid var(--fg);
+}

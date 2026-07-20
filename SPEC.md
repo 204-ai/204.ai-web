@@ -38,14 +38,14 @@ T1|x|scaffold: vite react-ts, eslint, @fontsource pkgs, folder layout (src/compo
 T2|x|global styles: CSS reset, :root tokens, font-face imports, type scale helpers (display/mono/serif classes), grain overlay util|C3,C4,V2
 T3|x|data module src/data/studio.ts: STUDIO, WORKS, CATEGORIES, SERVICES, PEOPLE, CONTACT_INFO typed from design/shared.jsx + copy from direction-a.jsx|C9
 T4|x|CinematicStill component: 4 SVG scenes (cathedral/desert/interior/water), mini + playing (Ken Burns) modes, grain, letterbox, reduced-motion gate|C9,V7
-T5|.|app shell: router setup, Layout w/ NavA (logo, nav links, booking status), custom cursor (pointer:fine), route head hook for title/meta, 404 page|I.routes,I.seo,V3,V8,V10
-T6|.|Home page: hero player 16:9 + chapter rail, big type strap, intro copy, CTA → /work|C9,C7
-T7|.|Work page: category filter, ledger table w/ per-row scene bg, hover preview card (autoplay still + timecode), mobile = card list|C7,C9
-T8|.|Services page: 4 service cards w/ scene bg + hover, footer strip (rates/NDA/briefs)|C9
-T9|.|About page: colophon display type, stats, team list, hiring box|C9
-T10|.|Contact page: info grid + brief intake form (name/org/budget chips/three-lines textarea) → client-side sent state|C8,C9
-T11|.|responsive pass: nav collapse, hero stack, type clamp(), work table→cards, grids→1col; verify V6 widths|C7,V6
-T12|.|verify: build+lint clean, V1 grep, route deep-links via preview server, no external requests, README (run/build/deploy)|V1,V3,V4,V5
+T5|x|app shell: router setup, Layout w/ NavA (logo, nav links, booking status), custom cursor (pointer:fine), route head hook for title/meta, 404 page|I.routes,I.seo,V3,V8,V10
+T6|x|Home page: hero player 16:9 + chapter rail, big type strap, intro copy, CTA → /work|C9,C7
+T7|x|Work page: category filter, ledger table w/ per-row scene bg, hover preview card (autoplay still + timecode), mobile = card list|C7,C9
+T8|x|Services page: 4 service cards w/ scene bg + hover, footer strip (rates/NDA/briefs)|C9
+T9|x|About page: colophon display type, stats, team list, hiring box|C9
+T10|x|Contact page: info grid + brief intake form (name/org/budget chips/three-lines textarea) → client-side sent state|C8,C9
+T11|x|responsive pass: nav collapse, hero stack, type clamp(), work table→cards, grids→1col; verify V6 widths|C7,V6
+T12|x|verify: build+lint clean, V1 grep, route deep-links via preview server, no external requests, README (run/build/deploy)|V1,V3,V4,V5
 
 ## §B bugs
 id|date|cause|fix

@@ -1,0 +1,127 @@
+.root {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 58px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  padding: 0 28px;
+  border-bottom: 1px solid var(--hairline);
+  background: rgba(10, 10, 10, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.logoBox {
+  border: 1.5px solid var(--fg);
+  padding: 3px 7px 2px;
+  font-family: var(--font-display);
+  font-size: 18px;
+  letter-spacing: 0.5px;
+  line-height: 1;
+}
+
+.logoSuffix {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--dim);
+  letter-spacing: 2px;
+  line-height: 1;
+}
+
+.nav {
+  display: flex;
+  margin-left: 24px;
+}
+
+.link {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 8px 14px;
+  position: relative;
+}
+
+.linkLabel {
+  color: var(--dim);
+  transition: color 0.15s;
+}
+
+.link:hover .linkLabel {
+  color: var(--fg);
+}
+
+.linkActive {
+  color: var(--fg);
+}
+
+.underline {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 2px;
+  height: 2px;
+  background: var(--accent);
+}
+
+.status {
+  margin-left: auto;
+  padding-left: 20px;
+  border-left: 1px solid var(--hairline);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--dim);
+  letter-spacing: 0.5px;
+  line-height: 1.3;
+  text-align: right;
+  display: block;
+}
+
+.statusBooking {
+  display: block;
+  color: var(--accent);
+}
+
+.statusCta {
+  display: block;
+  color: var(--fg);
+  margin-top: 2px;
+}
+
+/* ─── responsive (SPEC C7/V6) ─── */
+@media (max-width: 768px) {
+  .root {
+    height: auto;
+    min-height: 58px;
+    flex-wrap: wrap;
+    padding: 10px 16px;
+    gap: 4px;
+  }
+
+  .nav {
+    order: 3;
+    width: 100%;
+    margin-left: -14px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .status {
+    border-left: none;
+    padding-left: 0;
+  }
+}
