@@ -13,7 +13,8 @@
   border-radius: 2px;
   display: grid;
   grid-template-columns: minmax(0, 1.55fr) minmax(280px, 1fr);
-  height: min(440px, 52vh);
+  /* scales with viewport so large/hidpi screens don't get a small strip */
+  height: clamp(360px, 52vh, 700px);
 }
 
 .still {
@@ -180,9 +181,16 @@
 }
 
 .strapType {
-  font-size: clamp(26px, 8.4vw, 92px);
+  /* 92px at the 1280 design width, keeps growing on wider screens */
+  font-size: clamp(48px, 7.2vw, 138px);
   color: var(--fg);
   margin: 0;
+}
+
+@media (max-width: 660px) {
+  .strapType {
+    font-size: clamp(26px, 8.4vw, 48px);
+  }
 }
 
 .strapRow {
@@ -195,7 +203,7 @@
 }
 
 .intro {
-  font-size: 11px;
+  font-size: clamp(11px, 0.86vw, 15px);
   color: var(--dim);
   letter-spacing: 1px;
   max-width: 380px;

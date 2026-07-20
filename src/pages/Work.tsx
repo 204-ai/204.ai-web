@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { CinematicStill } from '../components/CinematicStill'
 import { useCursor } from '../components/Cursor'
 import { useHead } from '../hooks/useHead'
@@ -98,6 +98,23 @@ export function Work() {
 function HoverPreview({ w }: { w: WorkItem }) {
   const reducedMotion = usePrefersReducedMotion()
   const [t, setT] = useState(0)
+  const ref = useRef<HTMLDivElement>(null)
+
+  // Keep the card fully inside the viewport: shift up/down so it never
+  // extends past the bottom (which also grows document scroll height) or
+  // under the fixed nav.
+  useLayoutEffect(() => {
+    const el = ref.current
+    if (!el) return
+    el.style.top = '-8px'
+    const rect = el.getBoundingClientRect()
+    const minTop = 58 + 12 // fixed nav + margin
+    const maxBottom = window.innerHeight - 12
+    let shift = 0
+    if (rect.bottom > maxBottom) shift = maxBottom - rect.bottom
+    if (rect.top + shift < minTop) shift = minTop - rect.top
+    if (shift !== 0) el.style.top = `${-8 + shift}px`
+  }, [w.id])
 
   useEffect(() => {
     if (reducedMotion) return
@@ -121,7 +138,7 @@ function HoverPreview({ w }: { w: WorkItem }) {
   const hasRuntime = w.runtime !== '—'
 
   return (
-    <div className={styles.preview}>
+    <div ref={ref} className={styles.preview}>
       <div className={styles.previewStill}>
         <CinematicStill scene={w.scene} playing />
         <div className={`t-mono ${styles.previewBadge}`}>

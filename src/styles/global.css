@@ -65,7 +65,8 @@ a {
 /* ─── type helpers ─── */
 .t-display {
   font-family: var(--font-display);
-  letter-spacing: -0.02em;
+  /* prototype uses -0.02 (px), i.e. effectively no tracking — not -0.02em */
+  letter-spacing: -0.02px;
   line-height: 0.88;
   text-transform: uppercase;
 }

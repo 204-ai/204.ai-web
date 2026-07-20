@@ -12,7 +12,7 @@
 }
 
 .title {
-  font-size: clamp(40px, 5.6vw, 72px);
+  font-size: clamp(40px, 5.6vw, 108px);
   color: var(--fg);
   margin: 0;
 }
@@ -90,7 +90,7 @@
 }
 
 .cellTitle {
-  font-size: clamp(20px, 2.2vw, 28px);
+  font-size: clamp(20px, 2.2vw, 42px);
   transition: color 0.12s;
   position: relative;
 }
@@ -100,7 +100,7 @@
 }
 
 .cellClient {
-  font-size: 13px;
+  font-size: clamp(13px, 1vw, 16px);
   color: var(--fg);
   position: relative;
 }

@@ -6,7 +6,7 @@
 }
 
 .title {
-  font-size: clamp(48px, 7.8vw, 100px);
+  font-size: clamp(48px, 7.8vw, 150px);
   color: var(--fg);
   line-height: 0.88;
   margin: 0;
@@ -14,7 +14,7 @@
 
 .body {
   margin: 32px 0 0;
-  font-size: 14px;
+  font-size: clamp(14px, 1.1vw, 17px);
   color: var(--fg);
   line-height: 1.7;
   max-width: 440px;

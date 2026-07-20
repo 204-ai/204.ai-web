@@ -31,6 +31,8 @@ Ship production static site for studio "204 · NO-CONTENT". Implement design/ Di
 - V8: custom cursor active only on `(pointer: fine)`; touch devices keep native cursor + hover-preview features degrade gracefully (no hover trap).
 - V9: app code never imports from `design/`; `design/` not in tsconfig include, not in vite root scan.
 - V10: every route sets unique title + meta description on navigation.
+- V11: floating overlays (work hover preview) stay fully inside viewport; never extend document scroll height or sit under fixed nav.
+- V12: display type + hero scale fluidly past 1280 (vw-based clamps, caps ≈1.5× design size); display tracking = prototype value `-0.02px` (NOT em).
 
 ## §T tasks
 id|status|desc|cites
@@ -49,3 +51,6 @@ T12|x|verify: build+lint clean, V1 grep, route deep-links via preview server, no
 
 ## §B bugs
 id|date|cause|fix
+B1|2026-07-20|work hover preview absolute w/o viewport clamp → clipped bottom + grew doc scroll|V11 + useLayoutEffect clamp
+B2|2026-07-20|nav status lines not optically flush right (block/text-align)|flex column + flex-end, cosmetic
+B3|2026-07-20|t-display tracking -0.02em (prototype = -0.02px ≈ none) + fixed 1280-design px caps → tiny type + dead space on large/hidpi screens|V12 + fluid clamps

@@ -6,14 +6,14 @@
 }
 
 .title {
-  font-size: clamp(44px, 6.6vw, 84px);
+  font-size: clamp(44px, 6.6vw, 126px);
   color: var(--fg);
   line-height: 0.9;
   margin: 0;
 }
 
 .body {
-  font-size: 15px;
+  font-size: clamp(15px, 1.17vw, 19px);
   color: var(--fg);
   line-height: 1.6;
   margin: 32px 0 0;
@@ -29,7 +29,7 @@
 }
 
 .statValue {
-  font-size: clamp(32px, 3.4vw, 44px);
+  font-size: clamp(32px, 3.4vw, 66px);
   color: var(--fg);
 }
 
@@ -93,7 +93,7 @@
 }
 
 .hiringBody {
-  font-size: 14px;
+  font-size: clamp(14px, 1.1vw, 17px);
   color: var(--fg);
   line-height: 1.5;
   margin: 0;
