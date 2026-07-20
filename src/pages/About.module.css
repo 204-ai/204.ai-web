@@ -40,6 +40,37 @@
   margin-top: 6px;
 }
 
+.practice {
+  margin-top: 44px;
+  max-width: 560px;
+}
+
+.practiceRow {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 4px 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--hairline);
+  align-items: baseline;
+}
+
+.practiceNum {
+  font-size: 11px;
+  color: var(--accent-text);
+}
+
+.practiceLabel {
+  font-size: clamp(17px, 1.5vw, 24px);
+  color: var(--fg);
+}
+
+.practiceBody {
+  grid-column: 2;
+  font-size: 13px;
+  color: var(--dim);
+  line-height: 1.5;
+}
+
 .side {
   border-left: 1px solid var(--hairline);
   padding-left: 32px;
@@ -48,15 +79,24 @@
 .person {
   display: flex;
   justify-content: space-between;
-  padding: 14px 0;
+  align-items: center;
+  padding: 10px 0;
   border-bottom: 1px solid var(--hairline);
   gap: 12px;
 }
 
 .personName {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 12px;
+}
+
+.personPhoto {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 2px;
+  filter: grayscale(0.35) contrast(1.05);
 }
 
 .personNum {

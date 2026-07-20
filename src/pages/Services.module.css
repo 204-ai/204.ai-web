@@ -101,6 +101,15 @@
   margin: 0;
 }
 
+.footerLink {
+  color: var(--fg);
+  transition: color 0.15s;
+}
+
+.footerLink:hover {
+  color: var(--accent);
+}
+
 .footer {
   margin-top: 40px;
   padding: 24px 0;

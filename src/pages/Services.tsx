@@ -43,7 +43,9 @@ export function Services() {
       <div className={`t-mono ${styles.footer}`}>
         <span>RATES ON REQUEST</span>
         <span>EVERY FORMAT STANDS ALONE OR SCALES TO YOUR VENUE</span>
-        <span>TAKING BRIEFS →</span>
+        <Link to="/contact" className={styles.footerLink}>
+          TAKING BRIEFS →
+        </Link>
       </div>
     </div>
   )

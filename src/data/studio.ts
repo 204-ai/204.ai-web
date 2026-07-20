@@ -50,6 +50,7 @@ export interface Service {
 export interface Person {
   name: string
   role: string
+  photo?: string
 }
 
 export const STUDIO = {
@@ -236,11 +237,19 @@ export const SERVICES_INTERACTIVE: Service[] = [
 export const SERVICES_ALL: Service[] = [...SERVICES_CONTENT, ...SERVICES_INTERACTIVE]
 
 export const PEOPLE: Person[] = [
-  { name: 'Dimitri De Jonghe', role: 'Creative Technologist & Founder' },
-  { name: 'Cintia Aguiar Pinto', role: 'Creative Director & Founder' },
-  { name: 'Cecilia Hübinette', role: 'Art Director & Co-Founder' },
-  { name: 'Dan Brown', role: 'AI Arts Director & Artist' },
-  { name: 'Laura Coimbra', role: 'Marketing' },
+  { name: 'Dimitri De Jonghe', role: 'Creative Technologist & Founder', photo: `${CDN}/6744aa085bf15599e815f40d_Dimi_Makers.png` },
+  { name: 'Cintia Aguiar Pinto', role: 'Creative Director & Founder', photo: `${CDN}/6744aaf77e86a28002b33175_Cintia_Makers.png` },
+  { name: 'Cecilia Hübinette', role: 'Art Director & Co-Founder', photo: `${CDN}/6744aaff7714a7f2459a01a9_Cece_Makers.png` },
+  { name: 'Dan Brown', role: 'AI Arts Director & Artist', photo: `${CDN}/6744ab08106d7329c3649e60_dan_makers.png` },
+  { name: 'Laura Coimbra', role: 'Marketing', photo: `${CDN}/67991aab309a340fa28cef39_Laure_themakers.png` },
+]
+
+// Worldbuilding in practice — from the live About page.
+export const PRACTICE: Array<{ n: string; label: string; body: string }> = [
+  { n: '01', label: 'Experience Design', body: 'We understand your audience, objectives, and environment.' },
+  { n: '02', label: 'System Development', body: 'We define the experience mode, visual identity, and technical setup.' },
+  { n: '03', label: 'Technical Production', body: 'We develop the AI models, interaction logic, and visual worlds.' },
+  { n: '04', label: 'Strategic Consulting', body: 'We deploy, calibrate, and ensure seamless on-site performance.' },
 ]
 
 export const CONTACT = {

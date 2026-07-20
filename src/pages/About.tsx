@@ -1,5 +1,5 @@
 import { useHead } from '../hooks/useHead'
-import { CONTACT, PEOPLE, STATS } from '../data/studio'
+import { CONTACT, PEOPLE, PRACTICE, STATS } from '../data/studio'
 import styles from './About.module.css'
 
 export function About() {
@@ -30,6 +30,17 @@ export function About() {
             </div>
           ))}
         </div>
+
+        <div className={styles.practice}>
+          <div className="t-label" style={{ marginBottom: 4 }}>/ WORLDBUILDING IN PRACTICE</div>
+          {PRACTICE.map((p) => (
+            <div key={p.n} className={styles.practiceRow}>
+              <span className={`t-mono ${styles.practiceNum}`}>{p.n}.</span>
+              <span className={`t-display ${styles.practiceLabel}`}>{p.label}</span>
+              <span className={styles.practiceBody}>{p.body}</span>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className={styles.side}>
@@ -38,6 +49,7 @@ export function About() {
           <div key={p.name} className={styles.person}>
             <div className={styles.personName}>
               <span className={`t-mono ${styles.personNum}`}>{String(i + 1).padStart(2, '0')}</span>
+              {p.photo && <img src={p.photo} alt={p.name} className={styles.personPhoto} loading="lazy" decoding="async" />}
               <span className={`t-serif ${styles.personLabel}`}>{p.name}</span>
             </div>
             <span className={`t-mono ${styles.personRole}`}>{p.role}</span>
