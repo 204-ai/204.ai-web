@@ -16,7 +16,7 @@ Ship production static site for studio "204 · NO-CONTENT". Implement design/ Di
 - C10: real content source = 204-no-content.webflow.io scrape (snapshot design/scrape/extracted.json). Copy ADAPTED into Night Shift voice — inform, don't transplant; no invented facts. Design/layout unchanged.
 
 ## §I interfaces
-- I.routes: `/` home, `/work`, `/work/:slug` detail, `/services`, `/about`, `/contact`, `*` → 404.
+- I.routes: `/` home, `/work`, `/work/:slug` detail, `/services`, `/services/:slug` detail, `/about`, `/contact`, `*` → 404.
 - I.build: `npm run dev`, `npm run build` (tsc + vite build → dist/), `npm run preview`, `npm run lint`.
 - I.deploy: `dist/` output. SPA rewrite: `public/_redirects` (`/* /index.html 200`) + `vercel.json` rewrite.
 - I.seo: per-route `<title>` + meta description via route head hook. `index.html` base meta + og tags. `robots.txt`.
@@ -57,6 +57,7 @@ T16|x|verify: build+lint, V6 rerun, screenshots desktop+mobile, V1 grep|V1,V5,V6
 T17|x|full catalog: all 31 scraped projects in ledger, codes reversed (highest=newest), posters where available|C10
 T18|x|wide-screen pass: 1720px shell, nav/chapter/label scale-up, strap redesign (no em dash), wider intro, cursor-anchored hover preview, /work header merged (label+count, no LEDGER slab), chapter category tags|V11,V13,C7
 T19|x|SEO pass: og:image, JSON-LD Organization, noscript fallback, semantic h1 audit; sitemap deferred until final domain|I.seo
+T21|x|service detail pages /services/:slug: cards click through (READ MORE affordance), product loop hero video, modes list, feature grid, related-work links by category, prev/next pager, 404 on unknown slug; copy from scraped product pages|I.routes,C10,V10
 T20|x|work detail pages /work/:slug: ledger rows click through; hero media, meta grid, longform copy (scraped where available), click-to-load youtube (RUBr/Venom), photo gallery (Hulaween/1N), prev/next nav, unknown slug → 404|I.routes,C10,V4,V10
 
 ## §B bugs

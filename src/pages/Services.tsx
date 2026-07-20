@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { MediaStill } from '../components/MediaStill'
 import { useHead } from '../hooks/useHead'
 import { SERVICES_CONTENT, SERVICES_INTERACTIVE, type Service } from '../data/studio'
@@ -51,7 +52,12 @@ export function Services() {
 function ServiceCard({ s, last }: { s: Service; last: boolean }) {
   const [hover, setHover] = useState(false)
   return (
-    <div className={styles.card} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
+    <Link
+      to={`/services/${s.slug}`}
+      className={styles.card}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+    >
       <div className={styles.cardBg} style={{ opacity: hover ? 0.55 : 0.26 }}>
         <div className={styles.cardBgInner} style={{ transform: hover ? 'scale(1.03)' : 'scale(1)' }}>
           <MediaStill scene={s.scene} media={s.still ? { still: s.still } : undefined} mini scrim />
@@ -66,7 +72,10 @@ function ServiceCard({ s, last }: { s: Service; last: boolean }) {
           {s.label}
         </h2>
         <p className={styles.cardBody}>{s.body}</p>
+        <span className={`t-mono ${styles.cardMore}`} style={{ opacity: hover ? 1 : 0.55 }}>
+          READ MORE →
+        </span>
       </div>
-    </div>
+    </Link>
   )
 }
