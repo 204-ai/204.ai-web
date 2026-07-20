@@ -242,6 +242,7 @@ export const PEOPLE: Person[] = [
   { name: 'Cecilia Hübinette', role: 'Art Director & Co-Founder', photo: `${CDN}/6744aaff7714a7f2459a01a9_Cece_Makers.png` },
   { name: 'Dan Brown', role: 'AI Arts Director & Artist', photo: `${CDN}/6744ab08106d7329c3649e60_dan_makers.png` },
   { name: 'Laura Coimbra', role: 'Marketing', photo: `${CDN}/67991aab309a340fa28cef39_Laure_themakers.png` },
+  { name: 'Florian Hinze', role: 'Creative Engineer' },
 ]
 
 // Worldbuilding in practice — from the live About page.
@@ -286,7 +287,7 @@ export const HERO_CHAPTERS: HeroChapter[] = [
 ]
 
 export const STATS: Array<[string, string]> = [
-  ['Makers in the room', '05'],
+  ['Makers in the room', '06'],
   ['Main pillars', '02'],
   ['Projects shipped', '31'],
 ]
