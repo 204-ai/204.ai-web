@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { MediaStill } from '../components/MediaStill'
 import { useHead } from '../hooks/useHead'
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion'
-import { HERO_CHAPTERS, PARTNERS, STUDIO, TRUSTED_BY } from '../data/studio'
+import { HERO_CHAPTERS, PARTNERS, STUDIO, TRUSTED_BY, type PartnerLogo } from '../data/studio'
 import { trackChapterSelect, trackCta, trackPlayToggle } from '../lib/analytics'
 import styles from './Home.module.css'
 
@@ -261,22 +261,7 @@ export function Home() {
           <span className="t-label">/ TRUSTED BY</span>
           <span className={styles.logosRule} />
         </div>
-        <div className={styles.marquee}>
-          <div className={styles.marqueeTrack}>
-            {[...TRUSTED_BY, ...TRUSTED_BY].map((p, i) => (
-              <img
-                key={`${p.name}-${i}`}
-                src={p.logo}
-                alt={i < TRUSTED_BY.length ? p.name : ''}
-                title={p.name}
-                className={styles.logo}
-                loading="lazy"
-                decoding="async"
-                aria-hidden={i >= TRUSTED_BY.length}
-              />
-            ))}
-          </div>
-        </div>
+        <LogoMarquee items={TRUSTED_BY} />
 
         <div className={styles.logosHead}>
           <span className="t-label">/ GLOBAL PARTNERS & DISTRIBUTION</span>
@@ -284,10 +269,130 @@ export function Home() {
         </div>
         <div className={styles.partnersRow}>
           {PARTNERS.map((p) => (
-            <img key={p.name} src={p.logo} alt={p.name} title={p.name} className={styles.logo} loading="lazy" decoding="async" />
+            <PartnerMark key={p.name} item={p} />
           ))}
         </div>
       </section>
     </>
+  )
+}
+
+// Logo (linked when a url is set — internal → router link, external → new tab)
+function PartnerMark({ item, hidden = false }: { item: PartnerLogo; hidden?: boolean }) {
+  const img = (
+    <img
+      src={item.logo}
+      alt={hidden ? '' : item.name}
+      title={item.name}
+      className={styles.logo}
+      loading="lazy"
+      decoding="async"
+      draggable={false}
+    />
+  )
+  if (!item.url) return img
+  return item.url.startsWith('/') ? (
+    <Link to={item.url} className={styles.logoLink} aria-hidden={hidden} tabIndex={hidden ? -1 : undefined}>
+      {img}
+    </Link>
+  ) : (
+    <a href={item.url} target="_blank" rel="noreferrer" className={styles.logoLink} aria-hidden={hidden} tabIndex={hidden ? -1 : undefined}>
+      {img}
+    </a>
+  )
+}
+
+// Auto-scrolling marquee, scrubbable by drag. rAF-driven so drag and
+// auto-scroll share one offset; a real drag suppresses the logo links'
+// click. Reduced motion renders a static wrapped grid instead.
+function LogoMarquee({ items }: { items: PartnerLogo[] }) {
+  const reducedMotion = usePrefersReducedMotion()
+  const trackRef = useRef<HTMLDivElement | null>(null)
+  const offset = useRef(0)
+  const dragging = useRef(false)
+  const hovering = useRef(false)
+  const moved = useRef(0)
+  const lastX = useRef(0)
+  const [grabbing, setGrabbing] = useState(false)
+
+  useEffect(() => {
+    if (reducedMotion) return
+    let raf: number
+    let last = performance.now()
+    const tick = (now: number) => {
+      const dt = Math.min((now - last) / 1000, 0.1)
+      last = now
+      const el = trackRef.current
+      if (el) {
+        if (!dragging.current && !hovering.current) offset.current -= 30 * dt
+        const half = el.scrollWidth / 2
+        if (half > 0) {
+          let o = offset.current % half
+          if (o > 0) o -= half
+          offset.current = o
+          el.style.transform = `translateX(${o}px)`
+        }
+      }
+      raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [reducedMotion])
+
+  if (reducedMotion) {
+    return (
+      <div className={styles.marqueeStatic}>
+        {items.map((p) => (
+          <PartnerMark key={p.name} item={p} />
+        ))}
+      </div>
+    )
+  }
+
+  // NOTE: no setPointerCapture here — capturing retargets the derived click
+  // to the container, which would swallow the logo links' clicks entirely.
+  // Drag tracking runs on window listeners installed at pointerdown instead.
+  const startDrag = (e: React.PointerEvent) => {
+    dragging.current = true
+    moved.current = 0
+    lastX.current = e.clientX
+    const move = (ev: PointerEvent) => {
+      const dx = ev.clientX - lastX.current
+      lastX.current = ev.clientX
+      offset.current += dx
+      moved.current += Math.abs(dx)
+      if (moved.current > 4) setGrabbing(true)
+    }
+    const up = () => {
+      dragging.current = false
+      setGrabbing(false)
+      window.removeEventListener('pointermove', move)
+      window.removeEventListener('pointerup', up)
+      window.removeEventListener('pointercancel', up)
+    }
+    window.addEventListener('pointermove', move)
+    window.addEventListener('pointerup', up)
+    window.addEventListener('pointercancel', up)
+  }
+
+  return (
+    <div
+      className={`${styles.marquee} ${grabbing ? styles.marqueeGrabbing : ''}`}
+      onPointerEnter={() => (hovering.current = true)}
+      onPointerLeave={() => (hovering.current = false)}
+      onPointerDown={startDrag}
+      onClickCapture={(e) => {
+        if (moved.current > 6) {
+          e.preventDefault()
+          e.stopPropagation()
+        }
+      }}
+    >
+      <div ref={trackRef} className={styles.marqueeTrack}>
+        {[...items, ...items].map((p, i) => (
+          <PartnerMark key={`${p.name}-${i}`} item={p} hidden={i >= items.length} />
+        ))}
+      </div>
+    </div>
   )
 }

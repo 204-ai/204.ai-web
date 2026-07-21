@@ -507,38 +507,30 @@
   padding-right: 72px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .marqueeTrack {
-    animation: ncMarquee 46s linear infinite;
-  }
-
-  .marquee:hover .marqueeTrack {
-    animation-play-state: paused;
-  }
-
-  @keyframes ncMarquee {
-    to {
-      transform: translateX(-50%);
-    }
-  }
+.marquee {
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .marquee {
-    mask-image: none;
-    -webkit-mask-image: none;
-  }
+.marqueeGrabbing {
+  cursor: grabbing;
+}
 
-  .marqueeTrack {
-    flex-wrap: wrap;
-    gap: 32px 48px;
-    width: auto;
-  }
+.marqueeTrack {
+  will-change: transform;
+}
 
-  /* second copy is redundant when static */
-  .marqueeTrack img[aria-hidden='true'] {
-    display: none;
-  }
+.logoLink {
+  display: block;
+  flex: none;
+}
+
+.marqueeStatic {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 32px 48px;
 }
 
 .partnersRow {

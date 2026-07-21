@@ -153,6 +153,8 @@ export const BUDGET_RANGES: string[] = studioJson.budgetRanges
 export interface PartnerLogo {
   name: string
   logo: string
+  /* internal path (project page) or external site — only set links render as anchors */
+  url?: string
 }
 
 export const TRUSTED_BY: PartnerLogo[] = studioJson.trustedBy
