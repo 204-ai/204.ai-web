@@ -25,6 +25,8 @@ type LimbDriver = {
 
 export class OrganismSimulation {
   private restLengths: Float32Array
+  private tgtX!: Float32Array
+  private tgtY!: Float32Array
   private drivers: LimbDriver[] = []
   private breathePhase = 0
   private breathePhase2 = 0
@@ -44,6 +46,8 @@ export class OrganismSimulation {
     const rnd = mulberry32(seed)
     const p = particles
     this.restLengths = new Float32Array(p.count)
+    this.tgtX = Float32Array.from(p.posX)
+    this.tgtY = Float32Array.from(p.posY)
     this.chainLen = new Float32Array(p.appendageCount)
     for (let a = 0; a < p.appendageCount; a++) {
       for (let j = 0; j < p.jointsPerAppendage - 1; j++) {
@@ -76,6 +80,9 @@ export class OrganismSimulation {
   /* M9 state machine — Rest/Pursue/Settle/Sniff/Jump with min durations */
   state: 'rest' | 'pursue' | 'settle' | 'sniff' | 'jump' = 'rest'
   private stateSince = 0
+  private pursueBestDist = Infinity
+  private pursueBestAt = 0
+  dbgReleases = 0
   private jumpT = 0
   private jumpDur = 1
   private jumpSX = 0
@@ -86,6 +93,10 @@ export class OrganismSimulation {
     if (this.state !== next) {
       this.state = next
       this.stateSince = this.time
+      if (next === 'pursue') {
+        this.pursueBestDist = Infinity
+        this.pursueBestAt = this.time
+      }
     }
   }
   private lastReleaseTime = -10
@@ -314,6 +325,10 @@ export class OrganismSimulation {
     const moving = goalDist > (this.pointerActive ? 0.13 : 0.05)
     this.dbgMoving = moving
     this.dbgGoalDist = goalDist
+    if (this.state === 'pursue' && goalDist < this.pursueBestDist - 0.02) {
+      this.pursueBestDist = goalDist
+      this.pursueBestAt = this.time
+    }
 
     // ---- state transitions (min durations + hysteresis, §18/§24) ----
     const inState = this.time - this.stateSince
@@ -321,6 +336,11 @@ export class OrganismSimulation {
       if (this.sniffing && this.state !== 'sniff') this.setState('sniff')
       else if (this.state === 'rest' && goalDist > 0.3 && inState > 1.5) this.setState('pursue')
       else if (this.state === 'pursue' && goalDist < 0.14 && inState > 1) this.setState('settle')
+      else if (this.state === 'pursue' && inState > 1 && this.time - this.pursueBestAt > 2.5) {
+        // Withdraw-lite (§18): no progress for 2.5s → stop dancing at the
+        // wall, settle where we are — feet freeze, body sways organically
+        this.setState('settle')
+      }
       else if (this.state === 'settle' && inState > 1) this.setState('rest')
       else if ((this.state === 'settle' || this.state === 'sniff') && goalDist > 0.35 && !this.sniffing) this.setState('pursue')
       // jump trigger: the next waypoint leaves the surface shell — the one
@@ -436,6 +456,7 @@ export class OrganismSimulation {
       if (worst >= 0 && worstDot < this.chainLen[worst] * 0.45) {
         this.plants[worst].active = false
         this.lastReleaseTime = this.time
+        this.dbgReleases++
       }
     }
 
@@ -458,6 +479,7 @@ export class OrganismSimulation {
         if (stretch > this.chainLen[a] * 1.3 || (S === 'pursue' && !wantPlant.has(a)) || gaitRelease) {
           plant.active = false
           this.lastReleaseTime = this.time
+          this.dbgReleases++
         }
       }
       if (!plant.active && wantPlant.has(a) && (S === 'pursue' || S === 'settle' || (S === 'rest' && inState < 0.3))) {
@@ -574,21 +596,12 @@ export class OrganismSimulation {
           if (j === tipIdx) {
             p.posX[i] += (plant.x - p.posX[i]) * Math.min(1, dt * 16)
             p.posY[i] += (plant.y - p.posY[i]) * Math.min(1, dt * 16)
-          } else {
-            // planted limbs snake too: slow S-wave across the bridge plus
-            // outward sag — no straight strut limbs (user 2026-07-21)
-            const bridgeX = plant.x - p.posX[rootI]
-            const bridgeY = plant.y - p.posY[rootI]
-            const bl = Math.hypot(bridgeX, bridgeY) || 1
-            const perpX = -bridgeY / bl
-            const perpY = bridgeX / bl
-            const snake = Math.sin(t * Math.PI * 2 + this.time * d.curlFreq * Math.PI * 2 + d.curlPhase) * this.chainLen[a] * 0.09 * Math.sin(t * Math.PI)
-            const sag = Math.sin(t * Math.PI) * this.chainLen[a] * 0.08
-            const bx = p.posX[rootI] + bridgeX * t + surfNX * sag + perpX * snake
-            const by = p.posY[rootI] + bridgeY * t + surfNY * sag + perpY * snake
-            p.posX[i] += (bx - p.posX[i]) * Math.min(1, dt * 2.2)
-            p.posY[i] += (by - p.posY[i]) * Math.min(1, dt * 2.2)
           }
+          // mid joints of planted limbs: NO driven target — root glue +
+          // tip lock + segment/bend constraints settle into a still
+          // catenary. A competing bridge target made the solver correct
+          // it every frame = permanent limit-cycle jiggle (user 2026-07-21).
+          // The snake wave is applied render-side in writeUniforms.
           continue
         }
         // free limb: cumulative curl + S-bend + faint traveling wave
@@ -597,9 +610,14 @@ export class OrganismSimulation {
         cx += Math.cos(desired) * this.restLengths[i] * reachScale
         cy += Math.sin(desired) * this.restLengths[i] * reachScale
         const raw = this.reachableTowards(p.posX[rootI], p.posY[rootI], cx, cy, p.radius[i])
+        // low-pass the target itself: reachableTowards quantizes to 1/8-ray
+        // steps near obstacles — raw hops must never reach the joints
+        const tk = Math.min(1, dt * 5)
+        this.tgtX[i] += (raw.x - this.tgtX[i]) * tk
+        this.tgtY[i] += (raw.y - this.tgtY[i]) * tk
         const k = Math.min(1, 0.4 * dt * (0.3 + t))
-        p.posX[i] += (raw.x - p.posX[i]) * k
-        p.posY[i] += (raw.y - p.posY[i]) * k
+        p.posX[i] += (this.tgtX[i] - p.posX[i]) * k
+        p.posY[i] += (this.tgtY[i] - p.posY[i]) * k
       }
     }
 
@@ -991,6 +1009,25 @@ export class OrganismSimulation {
       // 2026-07-21): the visible body is the knot of limb roots + webbing
       const renderR = i === 0 ? p.radius[i] * 0.5 : p.radius[i]
       p.uniformData[i].set(p.renderX[i], p.renderY[i], renderR, p.activation[i])
+    }
+    // cosmetic snake on planted limbs — render offset only, the solver
+    // never sees it, so it can undulate without any physical jitter
+    for (let a = 0; a < Math.min(4, p.appendageCount); a++) {
+      if (!this.plants[a].active) continue
+      const rootI = p.indexOf(a, 0)
+      const tipI = p.indexOf(a, p.jointsPerAppendage - 1)
+      const bx = p.uniformData[tipI].x - p.uniformData[rootI].x
+      const by = p.uniformData[tipI].y - p.uniformData[rootI].y
+      const bl = Math.hypot(bx, by) || 1
+      const px2 = -by / bl
+      const py2 = bx / bl
+      for (let j = 1; j < p.jointsPerAppendage - 1; j++) {
+        const i = p.indexOf(a, j)
+        const t = j / (p.jointsPerAppendage - 1)
+        const w = Math.sin(t * Math.PI) * Math.sin(t * Math.PI * 2 + this.time * 0.5 + a * 2.1) * this.chainLen[a] * 0.06
+        p.uniformData[i].x += px2 * w
+        p.uniformData[i].y += py2 * w
+      }
     }
   }
 }
