@@ -137,6 +137,7 @@ export function Home() {
       <section className={styles.hero} aria-label={`${STUDIO.name} showreel`}>
         <div
           className={`${styles.still} anim-media`}
+          data-cursor={hasPlayer ? (isPaused ? 'PLAY' : 'PAUSE') : undefined}
           onClick={hasPlayer ? togglePlay : undefined}
           onKeyDown={hasPlayer ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); togglePlay() } } : undefined}
           role={hasPlayer ? 'button' : undefined}
@@ -205,6 +206,7 @@ export function Home() {
                     }
                   }}
                   className={`${styles.chapter} ${active ? styles.chapterActive : ''}`}
+                  data-cursor="PLAY"
                 >
                   <span className={styles.thumb}>
                     <MediaStill scene={f.scene} media={f.media} mini />
@@ -378,6 +380,7 @@ function LogoMarquee({ items }: { items: PartnerLogo[] }) {
   return (
     <div
       className={`${styles.marquee} ${grabbing ? styles.marqueeGrabbing : ''}`}
+      data-cursor="DRAG"
       onPointerEnter={() => (hovering.current = true)}
       onPointerLeave={() => (hovering.current = false)}
       onPointerDown={startDrag}

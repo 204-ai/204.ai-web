@@ -1,7 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { MediaStill } from '../components/MediaStill'
-import { useCursor } from '../components/Cursor'
 import { useHead } from '../hooks/useHead'
 import { trackWorkFilter } from '../lib/analytics'
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion'
@@ -15,7 +14,6 @@ export function Work() {
   )
   const [cat, setCat] = useState<CategoryFilter>('all')
   const [hovered, setHovered] = useState<string | null>(null)
-  const cursor = useCursor()
   const navigate = useNavigate()
 
   const works = cat === 'all' ? WORKS : WORKS.filter((w) => w.cat === cat)
@@ -24,12 +22,8 @@ export function Work() {
   const enter = (id: string, e: React.MouseEvent) => {
     setAnchor({ x: e.clientX, y: e.clientY })
     setHovered(id)
-    cursor.setLabel('VIEW')
   }
-  const leave = () => {
-    setHovered(null)
-    cursor.setLabel(null)
-  }
+  const leave = () => setHovered(null)
 
   return (
     <div className={styles.root}>
@@ -70,6 +64,7 @@ export function Work() {
             <div
               key={w.id}
               className={styles.row}
+              data-cursor="VIEW"
               onMouseEnter={(e) => enter(w.id, e)}
               onMouseLeave={leave}
               onClick={() => {

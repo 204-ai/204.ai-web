@@ -149,15 +149,17 @@ a {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.8'/%3E%3C/svg%3E");
 }
 
-/* ─── custom cursor: hide native only on precise pointers (V8) ─── */
+/* ─── custom cursor: hide native everywhere on precise pointers (V8) —
+   the dot reacts (ring/label) instead; text fields keep the caret ─── */
 @media (pointer: fine) {
   body.custom-cursor,
-  body.custom-cursor a,
-  body.custom-cursor button,
+  body.custom-cursor * {
+    cursor: none !important;
+  }
+
   body.custom-cursor input,
-  body.custom-cursor textarea,
-  body.custom-cursor label {
-    cursor: none;
+  body.custom-cursor textarea {
+    cursor: text !important;
   }
 }
 

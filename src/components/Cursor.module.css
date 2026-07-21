@@ -32,3 +32,18 @@
   background: transparent;
   border: 1px solid var(--fg);
 }
+
+/* any interactive surface without a label — open ring */
+.ring {
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: 1px solid var(--fg);
+}
+
+/* text fields keep the native caret; the dot steps back */
+.text {
+  width: 6px;
+  height: 6px;
+  opacity: 0.35;
+}
