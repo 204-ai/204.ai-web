@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { Layout } from './components/Layout'
 import { Home } from './pages/Home'
@@ -15,6 +15,24 @@ const Contact = lazy(() => import('./pages/Contact').then((m) => ({ default: m.C
 const NotFound = lazy(() => import('./pages/NotFound').then((m) => ({ default: m.NotFound })))
 
 export default function App() {
+  // warm the route chunks once the shell is idle: splitting keeps first
+  // paint lean, but an unfetched chunk blanks the body on the first nav
+  // click (§B12) — after this, navigation is instant
+  useEffect(() => {
+    const warm = () => {
+      import('./pages/Work')
+      import('./pages/WorkDetail')
+      import('./pages/Services')
+      import('./pages/ServiceDetail')
+      import('./pages/About')
+      import('./pages/MakerDetail')
+      import('./pages/Contact')
+    }
+    const hasRic = typeof window.requestIdleCallback === 'function'
+    const id = hasRic ? window.requestIdleCallback(warm, { timeout: 3000 }) : window.setTimeout(warm, 1500)
+    return () => (hasRic ? window.cancelIdleCallback(id) : window.clearTimeout(id))
+  }, [])
+
   return (
     <Routes>
       <Route element={<Layout />}>

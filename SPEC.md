@@ -83,6 +83,7 @@ B1|2026-07-20|work hover preview absolute w/o viewport clamp → clipped bottom 
 B2|2026-07-20|nav status lines not optically flush right (block/text-align)|flex column + flex-end, cosmetic
 B3|2026-07-20|t-display tracking -0.02em (prototype = -0.02px ≈ none) + fixed 1280-design px caps → tiny type + dead space on large/hidpi screens|V12 + fluid clamps
 B4|2026-07-20|home not composed to viewport: fixed-height hero + oversized strap pushed CTA below fold on FHD; fixed-width chapter thumbs forced rail taller than hero (last item clipped); nav divider floating|hero flex-fills 100dvh-composed root, strap 6.2vw, thumbs derive width from row height, status divider stretched
+B12|2026-07-21|route-split chunks fetch on first nav click → body blank ~0.5s, nav feels sluggish|App idle-warms all route chunks post-mount (requestIdleCallback, timeout 3s)
 B11|2026-07-21|pipeline rerun after --rewrite found 0 CDN urls (refs now local) → wrote empty manifest, clobbered url→path map|manifest merged not overwritten + url list sourced from prior manifest; restored from git
 B10|2026-07-21|home .root min-height 100dvh but hero max-height caps at 33vw → medium-width tall windows left dead gap before logos section|@media (max-aspect-ratio: 8/5) releases composition
 B9|2026-07-21|About maker avatars: lazy 44px imgs under grayscale filter skip first paint in Chromium until repaint (hover)|eager + -p-160 rendition + translateZ(0) layer

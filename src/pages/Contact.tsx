@@ -48,7 +48,8 @@ export function Contact() {
       <div>
         <div className="t-label" style={{ marginBottom: 8 }}>§ 05 / WRITE TO US</div>
         <h1 className={`t-display ${styles.title}`}>
-          Send a <span style={{ color: 'var(--accent)' }}>brief</span>,
+          Send a <span style={{ color: 'var(--accent)' }}>brief</span>
+          <span style={{ color: 'var(--dim)' }}>,</span>
           <br />
           not a <span style={{ color: 'var(--dim)' }}>form.</span>
         </h1>

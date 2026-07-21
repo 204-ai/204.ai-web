@@ -19,7 +19,10 @@ export function Nav() {
       <Link to="/" className={styles.logo} aria-label="204 · NO-CONTENT — home">
         <img
           src={rendition(LOGO_URL, 320)}
+          srcSet={`${rendition(LOGO_URL, 160)} 160w, ${rendition(LOGO_URL, 320)} 320w`}
+          sizes="110px"
           onError={(e) => {
+            e.currentTarget.srcset = ''
             if (e.currentTarget.src !== LOGO_URL) e.currentTarget.src = LOGO_URL
           }}
           alt="204 · NO-CONTENT"

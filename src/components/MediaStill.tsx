@@ -74,7 +74,15 @@ export function MediaStill({ scene, media, mini = false, playing = false, letter
                 ? `${rendition(media.still, 800)} 800w, ${media.still} 1920w`
                 : [160, 320, 500, 800].map((w) => `${rendition(media.still!, w as 160 | 320 | 500 | 800)} ${w}w`).join(', ')
           }
-          sizes={letterbox ? '(max-width: 900px) 100vw, 62vw' : mini ? '(max-width: 900px) 88vw, 160px' : '(max-width: 900px) 100vw, 60vw'}
+          /* `auto` = true layout size for lazy imgs (thumbs, hover preview);
+             eager imgs (detail heroes) skip it and use the vw fallback */
+          sizes={
+            letterbox
+              ? '(max-width: 900px) 100vw, 62vw'
+              : mini
+                ? 'auto, (max-width: 900px) 88vw, 160px'
+                : 'auto, (max-width: 900px) 100vw, 60vw'
+          }
           alt=""
           loading={priority ? 'eager' : 'lazy'}
           fetchPriority={priority ? 'high' : undefined}
