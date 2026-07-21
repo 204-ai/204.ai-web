@@ -29,6 +29,7 @@ export class OrganismSimulation {
   private breathePhase2 = 0
   private time = 0
   private normal: Vec2 = { x: 0, y: 0 }
+  private normal2: Vec2 = { x: 0, y: 0 }
   /* padded obstacle rects, refreshed by the controller after collection */
   obstacles: SimRect[] = []
   obstacleRounding = 0.02
@@ -70,6 +71,7 @@ export class OrganismSimulation {
   /* planted tip anchors — the walking substrate (§22, user 2026-07-21) */
   private plants: Array<{ x: number; y: number; active: boolean }> = []
   private lastReleaseTime = -10
+  private lastPlantTime = -10
 
   /** Page anchoring: on scroll the whole state shifts so the creature stays
       glued to the DOCUMENT, then walks back into view organically. */
@@ -146,7 +148,6 @@ export class OrganismSimulation {
     let iy = this.anchorY + Math.cos(this.time * 0.041 + 0.4) * 0.032 + Math.sin(this.time * 0.017 + 2.1) * 0.022
     let pointerDirX = 0
     let pointerDirY = 0
-    let pointerNear = 0
     if (this.pointerActive) {
       const dx = this.pointerX - p.posX[0]
       const dy = this.pointerY - p.posY[0]
@@ -154,7 +155,6 @@ export class OrganismSimulation {
       if (dist > 0.05) {
         pointerDirX = dx / dist
         pointerDirY = dy / dist
-        pointerNear = Math.max(0, 1 - dist / 1.4)
         const interest = this.config.behavior.pointerInterest
         // stop short: hold ~0.12 sim units away from the cursor
         ix = ix * (1 - interest) + (this.pointerX - pointerDirX * 0.18) * interest
@@ -163,14 +163,30 @@ export class OrganismSimulation {
     }
     // torso needs real clearance — a pocket tighter than the body is not a
     // destination (reachability-lite; M8 A* replaces this)
-    const target = this.reachableTowards(p.posX[0], p.posY[0], ix, iy, p.radius[0] * 1.35)
+    const rawTarget = this.reachableTowards(p.posX[0], p.posY[0], ix, iy, p.radius[0] * 1.35)
+    // ease the effective target: losing line of sight must not snap the
+    // destination (user 2026-07-21) — the body drifts, never jerks
+    const tk = 1 - Math.exp((-dt / 0.55) * Math.LN2)
+    this.intentX += (rawTarget.x - this.intentX) * tk
+    this.intentY += (rawTarget.y - this.intentY) * tk
+    // NO FLIGHT (user 2026-07-21): destinations live on the hover shell
+    // around surfaces — far targets become "crawl along the wall toward it"
+    const shellBand = this.maxReach * 0.34
+    const tsd = this.surfaceDist(this.intentX, this.intentY)
+    if (tsd > shellBand) {
+      this.surfaceNormalInto(this.intentX, this.intentY, this.normal2)
+      const pullIn = tsd - shellBand
+      this.intentX -= this.normal2.x * pullIn
+      this.intentY -= this.normal2.y * pullIn
+    }
+    const target = { x: this.intentX, y: this.intentY }
     // heavy body: bounded approach speed (§23: 2–12% viewport width/s)
     const maxStep = this.config.behavior.maximumCoreSpeed * this.viewportAspect * dt
     const tdx = target.x - p.posX[0]
     const tdy = target.y - p.posY[0]
     const tlen = Math.hypot(tdx, tdy)
     const step = Math.min(tlen * dt * 1.2, maxStep)
-    if (tlen > 1e-4) {
+    if (tlen > 0.015) {
       p.posX[0] += (tdx / tlen) * step
       p.posY[0] += (tdy / tlen) * step
     }
@@ -183,23 +199,39 @@ export class OrganismSimulation {
     const n = this.surfaceNormalInto(p.posX[0], p.posY[0], this.normal)
     const surfNX = n.x
     const surfNY = n.y
-    if (inRange) {
-      // hover spring: settle at ~45% of reach above the surface (gravity-ish)
-      const hover = this.maxReach * 0.3
-      const err = sd - hover
-      p.posX[0] -= surfNX * err * Math.min(1, dt * 1.4)
-      p.posY[0] -= surfNY * err * Math.min(1, dt * 1.4)
+    {
+      // carry height breathes slowly, crouches while moving; spring is
+      // ALWAYS on (clamped) — detached bodies sink to the nearest surface
+      const speedNorm = Math.min(1, Math.hypot(this.coreVelX, this.coreVelY) / 0.08)
+      const dip = 0.08 * Math.exp(-(this.time - this.lastPlantTime) / 0.35)
+      const hover = this.maxReach * (0.3 + Math.sin(this.time * 0.11 * Math.PI * 2 + 0.7) * 0.06 - speedNorm * 0.08 - dip)
+      const err = Math.max(-0.05, Math.min(0.05, sd - hover))
+      p.posX[0] -= surfNX * err * Math.min(1, dt * 1.6)
+      p.posY[0] -= surfNY * err * Math.min(1, dt * 1.6)
     }
-    // rank limbs by how much they face the surface; top 3 want to plant
-    const facing: Array<{ a: number; score: number }> = []
+    // role-based anatomy (user 2026-07-21): first 3 limbs are WALKERS that
+    // hang toward the surface, the rest are UPPER tentacles — rest angles
+    // slowly reorganize around the surface normal, so the same rig walks
+    // floors, walls and obstacle edges without ever reading as a starfish
+    const downAngle = Math.atan2(-surfNY, -surfNX)
+    const upAngle = Math.atan2(surfNY, surfNX)
+    const WALKER_SPREAD = [-0.85, 0, 0.85]
+    const UPPER_SPREAD = [-0.55, 0.55]
     for (let a = 0; a < p.appendageCount; a++) {
       const d = this.drivers[a]
-      const score = -(Math.cos(d.restAngle) * surfNX + Math.sin(d.restAngle) * surfNY)
-      facing.push({ a, score })
+      const isWalker = a < 3
+      const want = inRange
+        ? isWalker
+          ? downAngle + WALKER_SPREAD[a % 3]
+          : upAngle + UPPER_SPREAD[(a - 3) % 2]
+        : d.restAngle
+      let delta = want - d.restAngle
+      while (delta > Math.PI) delta -= Math.PI * 2
+      while (delta < -Math.PI) delta += Math.PI * 2
+      d.restAngle += delta * Math.min(1, dt * 0.8)
     }
-    facing.sort((x, y) => y.score - x.score)
     const wantPlant = new Set<number>()
-    if (inRange) for (let r = 0; r < Math.min(3, facing.length); r++) if (facing[r].score > 0.15) wantPlant.add(facing[r].a)
+    if (inRange) for (let a = 0; a < Math.min(3, p.appendageCount); a++) wantPlant.add(a)
     for (let a = 0; a < p.appendageCount; a++) {
       const plant = this.plants[a]
       const rootI = p.indexOf(a, 0)
@@ -208,7 +240,9 @@ export class OrganismSimulation {
         // release when overstretched or misaligned — but stagger releases
         // (one foot at a time = walk rhythm, not scramble)
         const may = this.time - this.lastReleaseTime > 0.45
-        if ((stretch > this.chainLen[a] * 1.06 && may) || !wantPlant.has(a)) {
+        // EMERGENCY: badly overstretched grips let go immediately — a tip
+        // pinned across an obstacle bridges the body through it (B14)
+        if (stretch > this.chainLen[a] * 1.3 || !wantPlant.has(a) || (stretch > this.chainLen[a] * 1.06 && may)) {
           plant.active = false
           this.lastReleaseTime = this.time
         }
@@ -234,6 +268,7 @@ export class OrganismSimulation {
           plant.x = tx
           plant.y = ty
           plant.active = true
+          this.lastPlantTime = this.time
         }
       }
     }
@@ -246,16 +281,21 @@ export class OrganismSimulation {
       const sway = Math.sin(this.time * d.swayFreq * Math.PI * 2 + d.swayPhase) * d.swayAmp
       let targetAngle = d.restAngle + sway * 0.45
       let reachScale = 1
-      if (pointerNear > 0) {
+      // walkers (a<3) keep their feet — only UPPER tentacles reach for the
+      // pointer, stretching MORE when it is farther away (planted reach-out,
+      // user 2026-07-21)
+      if (a >= 3 && this.pointerActive && (pointerDirX !== 0 || pointerDirY !== 0)) {
         const pointerAngle = Math.atan2(pointerDirY, pointerDirX)
         let delta = pointerAngle - d.restAngle
         while (delta > Math.PI) delta -= Math.PI * 2
         while (delta < -Math.PI) delta += Math.PI * 2
         const align = Math.max(0, Math.cos(delta))
-        // only well-aligned limbs react; blend angle toward the pointer
-        const bias = align * align * pointerNear
-        targetAngle += delta * 0.6 * bias
-        reachScale = 1 + bias * 0.75
+        const dx0 = this.pointerX - p.posX[0]
+        const dy0 = this.pointerY - p.posY[0]
+        const farness = Math.min(1, Math.hypot(dx0, dy0) / 0.5)
+        const bias = align * align * (0.3 + 0.7 * farness)
+        targetAngle += delta * 0.7 * bias
+        reachScale = 1 + bias * 1.1
       }
       const rootI = p.indexOf(a, 0)
       const plant = this.plants[a]
@@ -269,8 +309,8 @@ export class OrganismSimulation {
           // gripping limb: tip locks to the plant, mid joints relax into a
           // catenary-ish sag between root and plant (wave damped)
           if (j === tipIdx) {
-            p.posX[i] += (plant.x - p.posX[i]) * Math.min(1, dt * 10)
-            p.posY[i] += (plant.y - p.posY[i]) * Math.min(1, dt * 10)
+            p.posX[i] += (plant.x - p.posX[i]) * Math.min(1, dt * 16)
+            p.posY[i] += (plant.y - p.posY[i]) * Math.min(1, dt * 16)
           } else {
             const sag = Math.sin(t * Math.PI) * this.chainLen[a] * 0.08
             const bx = p.posX[rootI] + (plant.x - p.posX[rootI]) * t + surfNX * sag
@@ -407,6 +447,15 @@ export class OrganismSimulation {
     this.anchorX = Math.min(Math.max(this.anchorX, 0.14), this.viewportAspect - 0.14)
     this.anchorY = Math.min(Math.max(this.anchorY, 0.14), 0.86)
 
+    // sleep threshold: microscopic displacements collapse to rest — the
+    // creature holds a pose without shimmering (§24)
+    for (let i = 0; i < p.count; i++) {
+      if (Math.hypot(p.posX[i] - p.prevX[i], p.posY[i] - p.prevY[i]) < 0.00006) {
+        p.posX[i] = p.prevX[i]
+        p.posY[i] = p.prevY[i]
+      }
+    }
+
     // smoothed core velocity → torso motion stretch (§15.1)
     const cvx = (p.posX[0] - p.prevX[0]) / dt
     const cvy = (p.posY[0] - p.prevY[0]) / dt
@@ -429,13 +478,24 @@ export class OrganismSimulation {
       }
     }
 
-    /* ---- breathing: core + tips radius modulation (temporally stable) ---- */
+    /* ---- breathing + squash/stretch (volume feel) ---- */
     const breathe = 1 + Math.sin(this.breathePhase) * 0.03 + Math.sin(this.breathePhase2) * 0.025
     p.activation[0] = breathe
     for (let a = 0; a < p.appendageCount; a++) {
+      const rootI = p.indexOf(a, 0)
+      const tipI = p.indexOf(a, p.jointsPerAppendage - 1)
+      const span = Math.hypot(p.posX[tipI] - p.posX[rootI], p.posY[tipI] - p.posY[rootI])
+      // compressed limb → thicker mid (squash); extended → slimmer (stretch)
+      const ratio = span / (this.chainLen[a] * 0.85)
+      const squash = Math.max(-0.25, Math.min(0.45, 1 - ratio))
+      const planted = this.plants[a].active
       for (let j = 0; j < p.jointsPerAppendage; j++) {
         const i = p.indexOf(a, j)
-        p.activation[i] = 1 + Math.sin(this.breathePhase2 + a * 1.3) * 0.04
+        const t = j / (p.jointsPerAppendage - 1)
+        const profile = Math.sin(t * Math.PI)
+        // load-bearing limbs bulge toward the foot — visible weight
+        const pad = planted && t > 0.55 ? 1 + (t - 0.55) * 0.7 : 1
+        p.activation[i] = (1 + Math.sin(this.breathePhase2 + a * 1.3) * 0.04) * (1 + squash * 0.5 * profile) * pad
       }
     }
   }
@@ -448,6 +508,9 @@ export class OrganismSimulation {
   /* smoothed core velocity, consumed by the torso motion-stretch */
   coreVelX = 0
   coreVelY = 0
+  /* smoothed intention target (no LOS-loss snapping) */
+  private intentX = 1.02
+  private intentY = 0.42
 
   /* pointer state (handoff §17): raw set from DOM, smoothed in-step */
   pointerRawX = 0

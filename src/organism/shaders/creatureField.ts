@@ -111,6 +111,8 @@ export function buildOutputNodes(opts: {
   sdfTex: THREE.Texture
   uvNode: Vec2Node
   simPos: Vec2Node
+  aspect: Node
+  torsoRadius: number
   viewportHeightPx: Node
   debugView: Node
   particles: Node
@@ -119,7 +121,18 @@ export function buildOutputNodes(opts: {
   edgeSoftnessPx: number
   includeDebug: boolean
 }) {
-  const { distance, uvNode, simPos, viewportHeightPx, debugView } = opts
+  const { distance: rawDistance, uvNode, simPos, viewportHeightPx, debugView } = opts
+  const R = opts.torsoRadius
+
+  const sdfS = texture(opts.sdfTex, uvNode)
+
+  /* contact press (§15.3/§20, user 2026-07-21): the creature field is cut
+     by the obstacle SDF + viewport edges — anything touching a boundary
+     flattens against it (firm planted contact) and can never visually
+     enter a protected region */
+  const edgeD = min(min(simPos.x, opts.aspect.sub(simPos.x)), min(simPos.y, float(1).sub(simPos.y)))
+  const boundaryD = min(sdfS.x, edgeD)
+  const distance = smaxN(rawDistance, boundaryD.negate(), R * 0.35)
 
   /* analytic AA: edge width from derivatives, floored at edgeSoftness px
      converted to sim units (1 sim unit = viewport height in px) (§16) */
@@ -132,7 +145,6 @@ export function buildOutputNodes(opts: {
   }
 
   const maskS = texture(opts.maskTex, uvNode)
-  const sdfS = texture(opts.sdfTex, uvNode)
 
   // 2: signed distance — blue outside bands, red inside, white boundary
   const bands = sdfS.x.mul(40).fract()

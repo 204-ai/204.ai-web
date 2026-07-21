@@ -54,6 +54,8 @@ export class OrganismRenderer {
       sdfTex,
       uvNode,
       simPos,
+      aspect: this.aspect,
+      torsoRadius: config.anatomy.torsoRadius,
       viewportHeightPx: this.viewportHeightPx,
       debugView: this.debugView,
       particles: this.fieldUniforms.particles,
