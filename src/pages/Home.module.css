@@ -16,6 +16,7 @@
   border-radius: 2px;
   display: grid;
   grid-template-columns: minmax(0, 1.55fr) minmax(280px, 1fr);
+  column-gap: 22px;
   /* flex-fills the viewport between nav and strap; the width-based cap
      keeps the player area near 16:9 so footage isn't over-cropped */
   flex: 1 1 auto;
