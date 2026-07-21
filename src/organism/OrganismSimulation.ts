@@ -440,8 +440,16 @@ export class OrganismSimulation {
         pointerDirY = dy / dist
         const ramp = this.pointerRampStart < 0 ? 0 : Math.min(1, (this.time - this.pointerRampStart) / 1.5)
         const interest = cfg.behavior.pointerInterest * ramp
-        ix = ix * (1 - interest) + this.slowPX * interest
-        iy = iy * (1 - interest) + this.slowPY * interest
+        if (ramp >= 0.6) {
+          // full attention: the pointer IS the goal — the residual anchor
+          // blend once dragged goals into blocked clearance rings and
+          // false-flagged reachable cursors as unreachable (sniff-lock)
+          ix = this.slowPX
+          iy = this.slowPY
+        } else {
+          ix = ix * (1 - interest) + this.slowPX * interest
+          iy = iy * (1 - interest) + this.slowPY * interest
+        }
       }
     }
 
@@ -501,6 +509,28 @@ export class OrganismSimulation {
       this.intentX -= this.normal2.x * pullIn
       this.intentY -= this.normal2.y * pullIn
     }
+    // carrot around corners (user 2026-07-21): if shell projection collapsed
+    // the intent next to the body while the goal is still far, slide it
+    // along the surface tangent toward the goal and re-project — the body
+    // WALKS around the bend instead of stalling against it
+    {
+      const iDist = Math.hypot(this.intentX - p.posX[0], this.intentY - p.posY[0])
+      const gDist = Math.hypot(ix - p.posX[0], iy - p.posY[0])
+      if (iDist < 0.08 && gDist > 0.15) {
+        this.surfaceNormalInto(this.intentX, this.intentY, this.normal2)
+        const tgX = -this.normal2.y
+        const tgY = this.normal2.x
+        const sgn = tgX * (ix - this.intentX) + tgY * (iy - this.intentY) >= 0 ? 1 : -1
+        this.intentX += tgX * sgn * 0.12
+        this.intentY += tgY * sgn * 0.12
+        const tsd2 = this.surfaceDist(this.intentX, this.intentY)
+        if (tsd2 > shellBand) {
+          this.surfaceNormalInto(this.intentX, this.intentY, this.normal2)
+          this.intentX -= this.normal2.x * (tsd2 - shellBand)
+          this.intentY -= this.normal2.y * (tsd2 - shellBand)
+        }
+      }
+    }
     const tdx = this.intentX - p.posX[0]
     const tdy = this.intentY - p.posY[0]
     const tlen = Math.hypot(tdx, tdy)
@@ -539,6 +569,7 @@ export class OrganismSimulation {
       }
       else if (this.state === 'settle' && inState > 1) this.setState('rest')
       else if ((this.state === 'settle' || this.state === 'sniff') && goalDist > 0.35 && !this.sniffing) this.setState('pursue')
+      else if (this.state === 'sniff' && !this.sniffing && inState > 1) this.setState('pursue')
       if (this.state === 'pursue' && this.route && this.routeIdx < this.route.points.length) {
         const wp = this.route.points[this.routeIdx]
         if (this.surfaceDist(wp.x, wp.y) > this.maxReach * 0.6) {
