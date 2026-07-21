@@ -345,7 +345,24 @@ export class OrganismSimulation {
           }
           const gap = Math.hypot(land.x - p.posX[0], land.y - p.posY[0])
           const landSane = land.x > 0.02 && land.x < this.viewportAspect - 0.02 && land.y > 0.02 && land.y < 0.98
-          if (landSane && goalDist > 0.2 && gap > this.maxReach * 1.1 && gap < 0.4) {
+          // obstacles are SOLID: the arc itself must be clear — a jump is
+          // never a license to pass through geometry (user 2026-07-21)
+          let arcClear = true
+          if (this.obstacles.length) {
+            const upx0 = -(land.y - p.posY[0])
+            const upy0 = land.x - p.posX[0]
+            const ul0 = Math.hypot(upx0, upy0) || 1
+            for (const t of [0.2, 0.35, 0.5, 0.65, 0.8]) {
+              const arcH = Math.sin(t * Math.PI) * 0.12 * gap
+              const ax = p.posX[0] + (land.x - p.posX[0]) * t + (upx0 / ul0) * arcH
+              const ay = p.posY[0] + (land.y - p.posY[0]) * t + (upy0 / ul0) * arcH
+              if (sdObstacles(ax, ay, this.obstacles, this.obstacleRounding) < p.radius[0] * 0.8) {
+                arcClear = false
+                break
+              }
+            }
+          }
+          if (arcClear && landSane && goalDist > 0.2 && gap > this.maxReach * 1.1 && gap < 0.4) {
             this.jumpSX = p.posX[0]
             this.jumpSY = p.posY[0]
             this.jumpEX = land.x
@@ -701,6 +718,28 @@ export class OrganismSimulation {
     this.anchorX = Math.min(Math.max(this.anchorX, 0.14), this.viewportAspect - 0.14)
     this.anchorY = Math.min(Math.max(this.anchorY, 0.14), 0.86)
 
+    // segment solidity: joints are projected individually, but a LINK can
+    // still straddle a corner — push straddling midpoints out and drag
+    // both endpoints along (obstacles are solid, no corner cutting)
+    if (this.obstacles.length) {
+      for (let a = 0; a < p.appendageCount; a++) {
+        for (let j = 0; j < p.jointsPerAppendage - 1; j++) {
+          const i0 = p.indexOf(a, j)
+          const i1 = p.indexOf(a, j + 1)
+          const mx = (p.posX[i0] + p.posX[i1]) / 2
+          const my = (p.posY[i0] + p.posY[i1]) / 2
+          const dm = sdObstacles(mx, my, this.obstacles, this.obstacleRounding)
+          if (dm < 0) {
+            obstacleNormal(mx, my, this.obstacles, this.obstacleRounding, this.normal)
+            p.posX[i0] -= this.normal.x * dm * 0.5
+            p.posY[i0] -= this.normal.y * dm * 0.5
+            p.posX[i1] -= this.normal.x * dm * 0.5
+            p.posY[i1] -= this.normal.y * dm * 0.5
+          }
+        }
+      }
+    }
+
     // §24 hard guarantees — regardless of what any force computed:
     // (a) the core never leaves the page neighborhood; (b) no particle
     // moves more than 2% of the viewport in one step (anti-teleport)
@@ -753,6 +792,14 @@ export class OrganismSimulation {
       const arc = Math.sin(t01 * Math.PI) * 0.12 * Math.hypot(this.jumpEX - this.jumpSX, this.jumpEY - this.jumpSY)
       p.posX[0] = this.jumpSX + (this.jumpEX - this.jumpSX) * ease + (upx / ul) * arc
       p.posY[0] = this.jumpSY + (this.jumpEY - this.jumpSY) * ease + (upy / ul) * arc
+      if (this.obstacles.length) {
+        const dj = sdObstacles(p.posX[0], p.posY[0], this.obstacles, this.obstacleRounding) - p.radius[0]
+        if (dj < 0) {
+          obstacleNormal(p.posX[0], p.posY[0], this.obstacles, this.obstacleRounding, this.normal)
+          p.posX[0] -= this.normal.x * dj
+          p.posY[0] -= this.normal.y * dj
+        }
+      }
       if (t01 >= 1) this.setState('pursue')
     }
 
