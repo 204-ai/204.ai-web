@@ -257,7 +257,7 @@ export class OrganismSimulation {
    * kinematic (pos AND prev written — zero velocity, zero jitter by
    * construction). `bend` arcs the chain perpendicular to root→target.
    */
-  private solveLimb(a: number, rootX: number, rootY: number, tx: number, ty: number, bend: number) {
+  private solveLimb(a: number, rootX: number, rootY: number, tx: number, ty: number, bend: number, quietTip = false) {
     const p = this.particles
     const n = p.jointsPerAppendage
     const X: number[] = []
@@ -316,11 +316,15 @@ export class OrganismSimulation {
       const ampMod = 0.55 + 0.45 * Math.sin(this.time * 0.043 * Math.PI * 2 + d2.curlPhase * 1.7)
       for (let j = 1; j < n - 1; j++) {
         const t = j / (n - 1)
+        // quietTip: contact-adjacent joints stay STILL — the wave lives
+        // near the root and dies toward the planted foot (user 2026-07-21)
+        const env = quietTip ? Math.pow(1 - t, 1.4) : 1
         const w =
           (Math.sin(t * Math.PI * 1.7 + this.time * sp1 + d2.curlPhase) * 0.7 +
             Math.sin(t * Math.PI * 2.9 - this.time * sp2 + d2.curlPhase * 2.3) * 0.3) *
           Math.sin(t * Math.PI) *
-          ampMod
+          ampMod *
+          env
         X[j] += px2 * w * bend
         Y[j] += py2 * w * bend
       }
@@ -854,7 +858,7 @@ export class OrganismSimulation {
         if (pl.active) {
           tx = pl.x
           ty = pl.y
-          bend = this.chainLen[a] * 0.14
+          bend = this.chainLen[a] * 0.08 // taut standing leg, slight arc
         } else if (sw.active) {
           const e = sw.t * sw.t * (3 - 2 * sw.t)
           const lift = Math.sin(sw.t * Math.PI) * this.chainLen[a] * 0.35
@@ -866,7 +870,7 @@ export class OrganismSimulation {
           ty = rootY + Math.sin(d.restAngle) * this.chainLen[a] * 0.55
           bend = this.chainLen[a] * 0.1
         }
-        this.solveLimb(a, rootX, rootY, tx, ty, bend)
+        this.solveLimb(a, rootX, rootY, tx, ty, bend, pl.active)
       } else {
         let desX: number
         let desY: number
