@@ -156,3 +156,32 @@ if (SITE_URL) {
 }
 
 console.log(`generate-meta: ${count} routes${SITE_URL ? ' + sitemap.xml' : ' (no SITE_URL — sitemap skipped)'}`)
+
+/* WhatsApp drops og:images over ~600KB. Gate every unique image at build
+   time so new content can't silently ship a preview that blanks there.
+   Network hiccups only warn; a confirmed oversize image fails the build. */
+const OG_IMAGE_LIMIT = 600 * 1024
+const unique = [...new Set(routes.map((r) => r.image ?? DEFAULT_IMAGE))]
+const results = await Promise.allSettled(
+  unique.map(async (u) => {
+    const res = await fetch(u, { method: 'HEAD' })
+    return { u, ok: res.ok, size: Number(res.headers.get('content-length')) || 0 }
+  }),
+)
+let failed = false
+for (const r of results) {
+  if (r.status === 'rejected') {
+    console.warn(`generate-meta: WARN could not size-check og:image (${r.reason})`)
+    continue
+  }
+  const { u, ok, size } = r.value
+  if (!ok) {
+    console.error(`generate-meta: FAIL og:image not reachable: ${u}`)
+    failed = true
+  } else if (size > OG_IMAGE_LIMIT) {
+    console.error(`generate-meta: FAIL og:image ${Math.round(size / 1024)}KB > 600KB (WhatsApp drops it): ${u}`)
+    failed = true
+  }
+}
+console.log(`generate-meta: og:image size gate — ${unique.length} images checked`)
+if (failed) process.exit(1)
