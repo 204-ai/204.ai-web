@@ -39,10 +39,9 @@ export function OrganismLayer() {
       if (!('gpu' in navigator)) return
       if (window.matchMedia('(pointer: coarse)').matches) return
       if (window.matchMedia('(max-width: 900px)').matches) return
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        // reduced-motion breathing mode lands in M10
-        return
-      }
+      // reduced-motion: feature fully disabled — deliberate, no special
+      // mode (user call 2026-07-21)
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
       const mod = await import('../organism/OrganismBackground')
       if (cancelled || !containerRef.current) return
       handle = await mod.mountOrganism(containerRef.current)

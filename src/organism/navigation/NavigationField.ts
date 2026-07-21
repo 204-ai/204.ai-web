@@ -1,0 +1,167 @@
+// Coarse navigation grid + A* (handoff §21, SPEC C14). Rebuilt only when
+// the obstacle layout changes; A* runs on demand (reroute conditions),
+// never per frame. Costs come from the same analytic obstacle field the
+// solver uses — grid resolution only affects ROUTING granularity, not
+// contact precision.
+
+import { sdObstacles, type SimRect } from '../math/sdf'
+
+export type RouteResult = {
+  /* smoothed waypoints, start exclusive */
+  points: Array<{ x: number; y: number }>
+  /* true when the goal itself is unreachable and the route ends at the
+     nearest reachable point instead (→ sniff-tendril behavior) */
+  goalUnreachable: boolean
+}
+
+export class NavigationField {
+  private cols: number
+  private rows: number
+  private blocked: Uint8Array
+  private cost: Float32Array
+  private aspect = 1.6
+
+  constructor(cols: number, rows: number) {
+    this.cols = cols
+    this.rows = rows
+    this.blocked = new Uint8Array(cols * rows)
+    this.cost = new Float32Array(cols * rows)
+  }
+
+  rebuild(obstacles: SimRect[], rounding: number, aspect: number, torsoClearance: number, comfort: number) {
+    this.aspect = aspect
+    const { cols, rows } = this
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const x = ((c + 0.5) / cols) * aspect
+        const y = (r + 0.5) / rows
+        const edge = Math.min(x, aspect - x, y, 1 - y)
+        const d = Math.min(edge + torsoClearance /* edges are walkable shells */, obstacles.length ? sdObstacles(x, y, obstacles, rounding) : Infinity)
+        const i = r * cols + c
+        this.blocked[i] = d < torsoClearance ? 1 : 0
+        // discourage the comfort band without forbidding it
+        this.cost[i] = 1 + (d < comfort ? 3 * (1 - Math.max(d, 0) / comfort) : 0)
+      }
+    }
+  }
+
+  private cellOf(x: number, y: number): number {
+    const c = Math.min(this.cols - 1, Math.max(0, Math.floor((x / this.aspect) * this.cols)))
+    const r = Math.min(this.rows - 1, Math.max(0, Math.floor(y * this.rows)))
+    return r * this.cols + c
+  }
+
+  private center(i: number): { x: number; y: number } {
+    const c = i % this.cols
+    const r = Math.floor(i / this.cols)
+    return { x: ((c + 0.5) / this.cols) * this.aspect, y: (r + 0.5) / this.rows }
+  }
+
+  /** Nearest unblocked cell via BFS ring (goal may sit inside an obstacle). */
+  private nearestOpen(start: number): number {
+    if (!this.blocked[start]) return start
+    const q = [start]
+    const seen = new Set<number>([start])
+    while (q.length) {
+      const i = q.shift()!
+      if (!this.blocked[i]) return i
+      const c = i % this.cols
+      const r = Math.floor(i / this.cols)
+      for (const [dc, dr] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as const) {
+        const nc = c + dc
+        const nr = r + dr
+        if (nc < 0 || nc >= this.cols || nr < 0 || nr >= this.rows) continue
+        const ni = nr * this.cols + nc
+        if (!seen.has(ni)) {
+          seen.add(ni)
+          q.push(ni)
+        }
+      }
+    }
+    return start
+  }
+
+  /** A* with octile heuristic; smoothed by line-of-sight shortcutting. */
+  route(sx: number, sy: number, gx: number, gy: number, hasLineOfSight: (ax: number, ay: number, bx: number, by: number) => boolean): RouteResult {
+    const start = this.nearestOpen(this.cellOf(sx, sy))
+    const goalCellRaw = this.cellOf(gx, gy)
+    const goal = this.nearestOpen(goalCellRaw)
+    const goalUnreachable = goal !== goalCellRaw
+
+    const { cols, rows } = this
+    const n = cols * rows
+    const g = new Float32Array(n).fill(Infinity)
+    const from = new Int32Array(n).fill(-1)
+    const closed = new Uint8Array(n)
+    g[start] = 0
+    // tiny binary-heap-free open list is fine at 64×36
+    const open: number[] = [start]
+    const gc = goal % cols
+    const gr = Math.floor(goal / cols)
+    const h = (i: number) => {
+      const dc = Math.abs((i % cols) - gc)
+      const dr = Math.abs(Math.floor(i / cols) - gr)
+      return Math.max(dc, dr) + 0.41 * Math.min(dc, dr)
+    }
+    while (open.length) {
+      let bi = 0
+      let bf = Infinity
+      for (let k = 0; k < open.length; k++) {
+        const f = g[open[k]] + h(open[k])
+        if (f < bf) {
+          bf = f
+          bi = k
+        }
+      }
+      const cur = open.splice(bi, 1)[0]
+      if (cur === goal) break
+      if (closed[cur]) continue
+      closed[cur] = 1
+      const cc = cur % cols
+      const cr = Math.floor(cur / cols)
+      for (let dr = -1; dr <= 1; dr++) {
+        for (let dc = -1; dc <= 1; dc++) {
+          if (!dc && !dr) continue
+          const nc = cc + dc
+          const nr = cr + dr
+          if (nc < 0 || nc >= cols || nr < 0 || nr >= rows) continue
+          const ni = nr * cols + nc
+          if (this.blocked[ni] || closed[ni]) continue
+          const step = (dc && dr ? 1.41 : 1) * this.cost[ni]
+          if (g[cur] + step < g[ni]) {
+            g[ni] = g[cur] + step
+            from[ni] = cur
+            open.push(ni)
+          }
+        }
+      }
+      if (open.length > 2000) break // safety
+    }
+
+    // reconstruct
+    const cells: number[] = []
+    let cur = goal
+    while (cur !== -1 && cur !== start) {
+      cells.push(cur)
+      cur = from[cur]
+    }
+    cells.reverse()
+    let points = cells.map((i) => this.center(i))
+
+    // line-of-sight smoothing: keep only necessary waypoints
+    const smoothed: Array<{ x: number; y: number }> = []
+    let ax = sx
+    let ay = sy
+    for (let i = 0; i < points.length; i++) {
+      const isLast = i === points.length - 1
+      const next = points[i + 1]
+      if (!isLast && next && hasLineOfSight(ax, ay, next.x, next.y)) continue
+      smoothed.push(points[i])
+      ax = points[i].x
+      ay = points[i].y
+    }
+    points = smoothed
+
+    return { points, goalUnreachable }
+  }
+}

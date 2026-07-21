@@ -9,6 +9,7 @@ import { ObstacleMask } from './obstacle/ObstacleMask'
 import { ObstacleDistanceField } from './obstacle/ObstacleDistanceField'
 import { ParticleBuffer, mulberry32 } from './simulation/ParticleBuffer'
 import { OrganismSimulation } from './OrganismSimulation'
+import { NavigationField } from './navigation/NavigationField'
 import { FixedTimestep } from './simulation/FixedTimestep'
 import type { OrganismConfig } from './OrganismParameters'
 import { viewportPxToSimulation, type Viewport } from './obstacle/ObstacleCoordinates'
@@ -26,6 +27,7 @@ export class OrganismController {
   private obstacles: CollectedObstacle[] = []
   private lobeSeeds: Array<{ ang: number; dist: number; r: number }>
   private simulation: OrganismSimulation
+  private nav: NavigationField
   private timestep: FixedTimestep
   viewport: Viewport = { width: 1, height: 1 }
 
@@ -48,6 +50,8 @@ export class OrganismController {
 
     this.field = new ObstacleDistanceField(renderer, this.mask.texture, this.mask.width, this.mask.height)
     this.simulation = new OrganismSimulation(this.particles, config)
+    this.nav = new NavigationField(config.navigation.gridWidth, config.navigation.gridHeight)
+    this.simulation.nav = this.nav
     this.timestep = new FixedTimestep(config.simulation.fixedDelta, 0.1, config.simulation.maxSubsteps)
     this.deriveTorso()
     this.deriveCreases()
@@ -105,6 +109,15 @@ export class OrganismController {
         hw: rect.hw + paddingSim,
         hh: rect.hh + paddingSim,
       }))
+      const aspect = this.viewport.width / Math.max(this.viewport.height, 1)
+      this.nav.rebuild(
+        this.simulation.obstacles,
+        this.simulation.obstacleRounding,
+        aspect,
+        this.particles.radius[0] * 1.2,
+        this.config.obstacles.comfortClearance,
+      )
+      this.simulation.invalidateRoute()
     }
     this.simulation.viewportAspect = this.viewport.width / Math.max(this.viewport.height, 1)
     const steps = this.timestep.advance(timeMs)

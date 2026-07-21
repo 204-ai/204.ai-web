@@ -46,7 +46,7 @@ Ship production static site for studio "204 · NO-CONTENT". Implement design/ Di
 - V15: media weight budget: public/media total ≤ 80MB; ∀ video ≤ 40MB (quality > squeeze, user call 2026-07-21); ∀ img file ≤ 2MB; ∀ site-rendered img ≤ 500KB @ used rendition.
 - V17: organism canvas ⊥ intercepts pointer events; core ⊥ enters hard obstacle regions; UI text readability preserved (content above, opt-in obstacles protect marked elements).
 - V18: organism = separate lazy chunk, entry bundle unchanged; no WebGPU → zero runtime cost beyond capability check; V5/V6 hold w/ feature on & off.
-- V19: organism sim fixed-timestep + interpolation (frame-rate independent, no explosion after tab restore); reduced-motion → breathing-only, no pursuit/crawl (extends V7); no per-frame DOM layout reads on static pages; no GPU→CPU readback in loop.
+- V19: organism sim fixed-timestep + interpolation (frame-rate independent, no explosion after tab restore); reduced-motion → feature fully disabled, no special mode (user call 2026-07-21, extends V7); no per-frame DOM layout reads on static pages; no GPU→CPU readback in loop.
 - V16: dual deploy: GH Pages build (VITE_BASE=/204.ai-web/) & Firebase build (base /) both exit 0; canonical + sitemap urls → Firebase (SITE_URL=https://studio204-web.web.app) until domain cutover.
 
 ## §T tasks
@@ -87,9 +87,9 @@ T34|x|organism M4 static creature field: TSL implicit field — anisotropic tors
 T35|x|organism M5 simulation: fixed-timestep PBD (segment/bend/cohesion/volume constraints, 6 iter), interpolation, damping, pause/resume stable|C14,V19
 T36|~|organism M6 obstacle contact: SDF sampling @ joints/tips/core+predicted, soft repulsion + hard projection, tangential slide, contact debug, no clipping|C14,V17
 T37|~|organism M7 pointer attention: smoothed pointer state, attention vs body targets, dead zones, observe behavior, no direct following|C14
-T38|.|organism M8 navigation: 64×36 cost grid, A* on-demand (⊥ per frame), route smoothing, unreachable → nearest point + 1-2 SNIFF tendrils (boundary-crawl: tangent step + SDF snap-back, per-tendril seed, subtle grasp — user 2026-07-21) + withdraw|C14
+T38|x|organism M8 navigation: 64×36 cost grid, A* on-demand (⊥ per frame), route smoothing, unreachable → nearest point + 1-2 SNIFF tendrils (boundary-crawl: tangent step + SDF snap-back, per-tendril seed, subtle grasp — user 2026-07-21) + withdraw|C14
 T39|~|organism M9 locomotion+idle: anchor cycle crawl, state machine (Rest/Observe/Reach/Crawl/Brace/Settle/Withdraw w/ hysteresis), breathing 4-9s, gestures 4-14s seeded|C14,V19
-T40|.|organism M10 polish: quality modes high/balanced/low, reduced-motion mode, profiling (≤3ms GPU target), param tuning, debug stripped from prod|C14,V18,V19
+T40|.|organism M10 polish: quality modes high/balanced/low, profiling (≤3ms GPU target), param tuning, debug stripped from prod (reduced-motion = disabled, no extra mode)|C14,V18,V19
 T29|x|verify sprint: build+lint, V4 grep empty, V6 rerun, player-probe, V15 size audit, curl header check both hosts, both deploys green|V4,V5,V6,V14,V15,V16
 
 ## §B bugs

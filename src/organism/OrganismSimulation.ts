@@ -8,6 +8,7 @@
 
 import { ParticleBuffer, mulberry32 } from './simulation/ParticleBuffer'
 import { obstacleNormal, sdObstacles, type SimRect, type Vec2 } from './math/sdf'
+import type { NavigationField, RouteResult } from './navigation/NavigationField'
 import type { OrganismConfig } from './OrganismParameters'
 
 type LimbDriver = {
@@ -114,6 +115,7 @@ export class OrganismSimulation {
     /* ---- forces / drivers (velocity via Verlet position delta) ---- */
     const damping = cfg.simulation.damping
     for (let i = 0; i < p.count; i++) {
+      if (i === 1) continue // attention node is kinematic (no velocity)
       const vx = (p.posX[i] - p.prevX[i]) * damping
       const vy = (p.posY[i] - p.prevY[i]) * damping
       p.prevX[i] = p.posX[i]
@@ -134,11 +136,15 @@ export class OrganismSimulation {
       this.pointerY += (this.pointerRawY - this.pointerY) * k
     }
 
-    // attention node: follows the pointer faster than the body (§17)
+    // attention node: kinematic, critically damped — tracks without ever
+    // orbiting/flinging around the target (user 2026-07-21)
     if (this.pointerActive) {
       const at = this.reachableTowards(p.posX[0], p.posY[0], this.pointerX, this.pointerY, 0.02)
-      p.posX[1] += (at.x - p.posX[1]) * Math.min(1, dt * 4)
-      p.posY[1] += (at.y - p.posY[1]) * Math.min(1, dt * 4)
+      const ak = 1 - Math.exp((-dt / 0.18) * Math.LN2)
+      p.posX[1] += (at.x - p.posX[1]) * ak
+      p.posY[1] += (at.y - p.posY[1]) * ak
+      p.prevX[1] = p.posX[1]
+      p.prevY[1] = p.posY[1]
     }
 
     // surface probe first — intention + corner-following both need it
@@ -170,6 +176,31 @@ export class OrganismSimulation {
     }
     // torso needs real clearance — a pocket tighter than the body is not a
     // destination (reachability-lite; M8 A* replaces this)
+    // M8 routing: A* on demand (goal moved / layout changed / stale) —
+    // never per frame (§21); the route feeds the intention, it does not
+    // animate the body directly
+    this.sniffing = false
+    if (this.nav) {
+      const stale = !this.route || Math.hypot(ix - this.routeGoalX, iy - this.routeGoalY) > this.config.navigation.rerouteThreshold || this.time - this.lastRouteTime > 2.5
+      if (stale) {
+        this.route = this.nav.route(p.posX[0], p.posY[0], ix, iy, this.hasLOS)
+        this.routeGoalX = ix
+        this.routeGoalY = iy
+        this.lastRouteTime = this.time
+        this.routeIdx = 0
+      }
+      const pts = this.route!.points
+      while (this.routeIdx < pts.length && Math.hypot(pts[this.routeIdx].x - p.posX[0], pts[this.routeIdx].y - p.posY[0]) < 0.07) this.routeIdx++
+      if (this.routeIdx < pts.length) {
+        ix = pts[this.routeIdx].x
+        iy = pts[this.routeIdx].y
+      }
+      // unreachable goal + arrived near route end → sniff at it (§21.3)
+      if (this.route!.goalUnreachable && this.pointerActive) {
+        const end = pts.length ? pts[pts.length - 1] : { x: p.posX[0], y: p.posY[0] }
+        if (Math.hypot(end.x - p.posX[0], end.y - p.posY[0]) < 0.16) this.sniffing = true
+      }
+    }
     let rawTarget = this.reachableTowards(p.posX[0], p.posY[0], ix, iy, p.radius[0] * 1.35)
     // corner following (until M8 A*): if the straight ray is blocked but the
     // desire is far, walk along the wall tangent toward it — the creature
@@ -311,6 +342,12 @@ export class OrganismSimulation {
         const bias = align * align * (0.3 + 0.7 * farness)
         targetAngle += delta * 0.7 * bias
         reachScale = 1 + bias * 1.1
+        if (this.sniffing) {
+          // grasp toward thin air: slow per-tendril wobble + reach pulsing —
+          // intentional sniffing, not stiff pointing (user 2026-07-21)
+          targetAngle += Math.sin(this.time * 0.32 * Math.PI * 2 + a * 2.1) * 0.22
+          reachScale *= 1.12 + Math.sin(this.time * 0.47 * Math.PI * 2 + a * 1.4) * 0.14
+        }
       }
       const rootI = p.indexOf(a, 0)
       const plant = this.plants[a]
@@ -526,6 +563,26 @@ export class OrganismSimulation {
   /* smoothed intention target (no LOS-loss snapping) */
   private intentX = 1.02
   private intentY = 0.42
+  /* navigation (M8): route to the current desire, rerouted on demand */
+  nav: NavigationField | null = null
+  private route: RouteResult | null = null
+  private routeIdx = 0
+  private routeGoalX = 0
+  private routeGoalY = 0
+  private lastRouteTime = -10
+  private sniffing = false
+
+  invalidateRoute() {
+    this.route = null
+  }
+
+  private hasLOS = (ax: number, ay: number, bx: number, by: number): boolean => {
+    for (let k = 1; k <= 8; k++) {
+      const t = k / 8
+      if (!this.clear(ax + (bx - ax) * t, ay + (by - ay) * t, this.particles.radius[0] * 1.1)) return false
+    }
+    return true
+  }
 
   /* pointer state (handoff §17): raw set from DOM, smoothed in-step */
   pointerRawX = 0
