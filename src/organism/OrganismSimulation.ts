@@ -53,7 +53,7 @@ export class OrganismSimulation {
       this.drivers.push({
         swayFreq: 0.06 + rnd() * 0.11,
         swayPhase: rnd() * Math.PI * 2,
-        swayAmp: 0.25 + rnd() * 0.5,
+        swayAmp: 0.12 + rnd() * 0.18,
         curlFreq: 0.04 + rnd() * 0.08,
         curlPhase: rnd() * Math.PI * 2,
         restAngle: Math.atan2(p.posY[root] - p.posY[0], p.posX[root] - p.posX[0]),
@@ -69,6 +69,7 @@ export class OrganismSimulation {
   private maxReach: number
   /* planted tip anchors — the walking substrate (§22, user 2026-07-21) */
   private plants: Array<{ x: number; y: number; active: boolean }> = []
+  private lastReleaseTime = -10
 
   /** Page anchoring: on scroll the whole state shifts so the creature stays
       glued to the DOCUMENT, then walks back into view organically. */
@@ -156,8 +157,8 @@ export class OrganismSimulation {
         pointerNear = Math.max(0, 1 - dist / 1.4)
         const interest = this.config.behavior.pointerInterest
         // stop short: hold ~0.12 sim units away from the cursor
-        ix = ix * (1 - interest) + (this.pointerX - pointerDirX * 0.12) * interest
-        iy = iy * (1 - interest) + (this.pointerY - pointerDirY * 0.12) * interest
+        ix = ix * (1 - interest) + (this.pointerX - pointerDirX * 0.18) * interest
+        iy = iy * (1 - interest) + (this.pointerY - pointerDirY * 0.18) * interest
       }
     }
     // torso needs real clearance — a pocket tighter than the body is not a
@@ -168,7 +169,7 @@ export class OrganismSimulation {
     const tdx = target.x - p.posX[0]
     const tdy = target.y - p.posY[0]
     const tlen = Math.hypot(tdx, tdy)
-    const step = Math.min(tlen * dt * 2.4, maxStep)
+    const step = Math.min(tlen * dt * 1.2, maxStep)
     if (tlen > 1e-4) {
       p.posX[0] += (tdx / tlen) * step
       p.posY[0] += (tdy / tlen) * step
@@ -184,7 +185,7 @@ export class OrganismSimulation {
     const surfNY = n.y
     if (inRange) {
       // hover spring: settle at ~45% of reach above the surface (gravity-ish)
-      const hover = this.maxReach * 0.45
+      const hover = this.maxReach * 0.3
       const err = sd - hover
       p.posX[0] -= surfNX * err * Math.min(1, dt * 1.4)
       p.posY[0] -= surfNY * err * Math.min(1, dt * 1.4)
@@ -204,9 +205,13 @@ export class OrganismSimulation {
       const rootI = p.indexOf(a, 0)
       if (plant.active) {
         const stretch = Math.hypot(plant.x - p.posX[rootI], plant.y - p.posY[rootI])
-        // release when overstretched or the surface fell out of alignment —
-        // the release+replant cycle IS the gait
-        if (stretch > this.chainLen[a] * 1.06 || !wantPlant.has(a)) plant.active = false
+        // release when overstretched or misaligned — but stagger releases
+        // (one foot at a time = walk rhythm, not scramble)
+        const may = this.time - this.lastReleaseTime > 0.45
+        if ((stretch > this.chainLen[a] * 1.06 && may) || !wantPlant.has(a)) {
+          plant.active = false
+          this.lastReleaseTime = this.time
+        }
       }
       if (!plant.active && wantPlant.has(a)) {
         // plant ahead of travel: tip projected onto the surface with a lead
@@ -276,12 +281,12 @@ export class OrganismSimulation {
           continue
         }
         // free limb: slow traveling wave — wriggle, not rigid pointing
-        const wave = Math.sin(t * 2.8 + d.curlPhase + this.time * d.curlFreq * Math.PI * 2) * 0.5 * (0.3 + 0.7 * t)
+        const wave = Math.sin(t * 2.8 + d.curlPhase + this.time * d.curlFreq * Math.PI * 2) * 0.26 * (0.3 + 0.7 * t)
         const desired = targetAngle + wave
         cx += Math.cos(desired) * this.restLengths[i] * reachScale
         cy += Math.sin(desired) * this.restLengths[i] * reachScale
         const raw = this.reachableTowards(p.posX[rootI], p.posY[rootI], cx, cy, p.radius[i])
-        const k = Math.min(1, 0.55 * dt * (0.3 + t))
+        const k = Math.min(1, 0.4 * dt * (0.3 + t))
         p.posX[i] += (raw.x - p.posX[i]) * k
         p.posY[i] += (raw.y - p.posY[i]) * k
       }
@@ -360,7 +365,7 @@ export class OrganismSimulation {
         const dx = p.posX[i1] - p.posX[i0]
         const dy = p.posY[i1] - p.posY[i0]
         const len = Math.hypot(dx, dy)
-        const maxLen = this.restLengths[i1] * 1.15
+        const maxLen = this.restLengths[i1] * 1.06
         if (len > maxLen) {
           const s = maxLen / len
           p.posX[i1] = p.posX[i0] + dx * s
@@ -417,7 +422,7 @@ export class OrganismSimulation {
         const d = sdObstacles(p.posX[i], p.posY[i], this.obstacles, this.obstacleRounding) - p.radius[i]
         if (d >= 0 && d < comfort) {
           obstacleNormal(p.posX[i], p.posY[i], this.obstacles, this.obstacleRounding, this.normal)
-          const push = (1 - d / comfort) * 0.0035 * (p.invMass[i] > 1 ? 0.5 : 1)
+          const push = (1 - d / comfort) * 0.0015 * (p.invMass[i] > 1 ? 0.5 : 1)
           p.posX[i] += this.normal.x * push
           p.posY[i] += this.normal.y * push
         }

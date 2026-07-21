@@ -72,7 +72,7 @@ export function creatureDistance(
   let d = sdCircle(simPos, core.xy, core.z)
   for (let l = 0; l < layout.lobeCount; l++) {
     const lobe = u.lobes.element(l)
-    d = sminN(d, sdCircle(simPos, lobe.xy, lobe.z.mul(lobe.w)), R * 1.2)
+    d = sminN(d, sdCircle(simPos, lobe.xy, lobe.z.mul(lobe.w)), R * 0.9)
   }
 
   // limbs: chains of tapered capsules; union softness varies root→tip so
@@ -82,7 +82,7 @@ export function creatureDistance(
       const p0 = part(layout.indexOf(a, j))
       const p1 = part(layout.indexOf(a, j + 1))
       const t = j / (layout.jointsPerAppendage - 1)
-      const k = j === 0 ? R * 1.3 : t < 0.55 ? R * 0.7 : R * 0.32
+      const k = j === 0 ? R * 1.0 : t < 0.55 ? R * 0.55 : R * 0.28
       const seg = sdTaperedSegment(simPos, p0.xy, p1.xy, p0.z.mul(p0.w), p1.z.mul(p1.w))
       d = sminN(d, seg, k)
     }

@@ -42,8 +42,8 @@ export class OrganismController {
     const rnd = mulberry32(511)
     this.lobeSeeds = Array.from({ length: LOBE_COUNT }, () => ({
       ang: rnd() * Math.PI * 2,
-      dist: 0.35 + rnd() * 0.55,
-      r: 0.55 + rnd() * 0.35,
+      dist: 0.3 + rnd() * 0.4,
+      r: 0.45 + rnd() * 0.2,
     }))
 
     this.field = new ObstacleDistanceField(renderer, this.mask.texture, this.mask.width, this.mask.height)
@@ -120,7 +120,7 @@ export class OrganismController {
     const sn = Math.min(1, speed / 0.1)
     const dirX = speed > 1e-4 ? vx / speed : 0
     const dirY = speed > 1e-4 ? vy / speed : 0
-    const MOTION_BIAS = [0.55, -0.9, 0.18]
+    const MOTION_BIAS = [0.3, -0.5, 0.1]
     for (let l = 0; l < LOBE_COUNT; l++) {
       const s = this.lobeSeeds[l]
       const bias = MOTION_BIAS[l % MOTION_BIAS.length] * coreR * sn

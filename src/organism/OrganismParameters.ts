@@ -54,7 +54,7 @@ export const defaultOrganismConfig: OrganismConfig = {
   simulation: {
     fixedDelta: 1 / 60,
     maxSubsteps: 4,
-    constraintIterations: 6,
+    constraintIterations: 8,
     damping: 0.985,
   },
   /* scale target (user call 2026-07-21): whole creature ≈ ≤2× the home
@@ -68,8 +68,8 @@ export const defaultOrganismConfig: OrganismConfig = {
   },
   behavior: {
     pointerInterest: 0.8,
-    maximumCoreSpeed: 0.12,
-    maximumTipSpeed: 0.32,
+    maximumCoreSpeed: 0.055,
+    maximumTipSpeed: 0.2,
     gestureIntervalMin: 4,
     gestureIntervalMax: 14,
   },
@@ -77,7 +77,7 @@ export const defaultOrganismConfig: OrganismConfig = {
     fieldWidth: 256,
     hardClearance: 0.02,
     /* dense layout — a fat comfort band leaves the creature nowhere to be */
-    comfortClearance: 0.05,
+    comfortClearance: 0.025,
   },
   navigation: {
     gridWidth: 64,

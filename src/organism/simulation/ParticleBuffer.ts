@@ -110,7 +110,7 @@ export class ParticleBuffer {
       const serpFreq = 1.8 + rnd() * 1.6
       const serpPhase = rnd() * Math.PI * 2
       const serpAmp = 0.35 + rnd() * 0.5
-      const rootR = torsoRadius * (0.5 + rnd() * 0.3) * thickness
+      const rootR = torsoRadius * (0.62 + rnd() * 0.33) * thickness
       const tipR = minimumTipRadius + rnd() * (maximumTipRadius - minimumTipRadius)
       const segLen = torsoRadius * (0.34 + rnd() * 0.18) * lengthScale
 
