@@ -29,6 +29,9 @@ const WORKS = rawWorks.map((w) => ({ ...w, slug: slugify(w.title) }))
 const servicesJson = content('services.json')
 const SERVICES_ALL = [...servicesJson.content, ...servicesJson.interactive].map((s) => ({ ...s, slug: slugify(s.label) }))
 const PEOPLE = content('people.json').map((p) => ({ ...p, slug: slugify(p.name) }))
+const studioJson = content('studio.json')
+// home LCP = the first hero chapter's poster
+const heroWork = WORKS.find((w) => w.slug === studioJson.heroChapters[0])
 const dist = join(root, 'dist')
 // e.g. https://laubsauger.github.io/204.ai-web — no trailing slash
 const SITE_URL = (process.env.SITE_URL ?? '').replace(/\/$/, '')
@@ -58,6 +61,7 @@ const routes = [
   {
     path: '/',
     title: t(''),
+    preload: heroWork?.media?.still,
     desc: '204 is a creative technology studio at the intersection of AI, motion, identity and live environments. Based at RnA Studio, Lisbon.',
   },
   {
@@ -85,18 +89,21 @@ const routes = [
     title: t(`${w.title} · Work`),
     desc: w.note,
     image: ogImage(w.media?.still),
+    preload: w.media?.still,
   })),
   ...SERVICES_ALL.map((s) => ({
     path: `/services/${s.slug}`,
     title: t(`${s.label} · Service`),
     desc: s.body,
     image: ogImage(s.still),
+    preload: s.still,
   })),
   ...PEOPLE.map((p) => ({
     path: `/makers/${p.slug}`,
     title: t(`${p.name} · Maker`),
     desc: `${p.name}, ${p.role} at 204 — creative technology studio, Lisbon.`,
     image: ogImage(p.photo),
+    preload: p.photo && !p.photo.startsWith('data:') ? p.photo : undefined,
   })),
 ]
 
@@ -118,7 +125,10 @@ function metaFor(r) {
     `    <meta name="twitter:card" content="summary_large_image" />\n` +
     `    <meta name="twitter:title" content="${esc(r.title)}" />\n` +
     `    <meta name="twitter:description" content="${esc(r.desc)}" />\n` +
-    `    <meta name="twitter:image" content="${esc(image)}" />`
+    `    <meta name="twitter:image" content="${esc(image)}" />` +
+    // LCP: hero media downloads in parallel with the JS bundle instead of
+    // being discovered after React mounts
+    (r.preload ? `\n    <link rel="preload" as="image" href="${esc(r.preload)}" fetchpriority="high" />` : '')
   )
 }
 

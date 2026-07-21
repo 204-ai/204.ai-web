@@ -1,6 +1,7 @@
 import { NavLink, Link } from 'react-router-dom'
 import { LOGO_URL } from '../data/studio'
 import { trackCta } from '../lib/analytics'
+import { rendition } from '../lib/media'
 import styles from './Nav.module.css'
 
 const ITEMS = [
@@ -16,7 +17,14 @@ export function Nav() {
     <header className={styles.root}>
       <div className={styles.inner}>
       <Link to="/" className={styles.logo} aria-label="204 · NO-CONTENT — home">
-        <img src={LOGO_URL} alt="204 · NO-CONTENT" className={styles.logoImg} />
+        <img
+          src={rendition(LOGO_URL, 500)}
+          onError={(e) => {
+            if (e.currentTarget.src !== LOGO_URL) e.currentTarget.src = LOGO_URL
+          }}
+          alt="204 · NO-CONTENT"
+          className={styles.logoImg}
+        />
       </Link>
 
       <nav className={styles.nav} aria-label="Main">

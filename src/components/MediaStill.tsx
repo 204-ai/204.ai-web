@@ -3,8 +3,10 @@
 // motion is allowed (SPEC V7); otherwise the poster still is shown.
 
 import { useCallback, useEffect, useRef } from 'react'
+import { rendition } from '../lib/media'
 import { CinematicStill } from './CinematicStill'
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion'
+import { useMediaQuery } from '../hooks/useMediaQuery'
 import type { Scene, WorkMedia } from '../data/studio'
 
 interface MediaStillProps {
@@ -16,24 +18,24 @@ interface MediaStillProps {
   scrim?: boolean
   /* default true; the hero player disables looping to drive auto-advance */
   loop?: boolean
+  /* LCP hint: eager-load + fetchpriority=high (hero media only) */
+  priority?: boolean
   /* exposes the underlying <video> so a host can build player controls */
   videoRef?: (el: HTMLVideoElement | null) => void | (() => void)
-}
-
-// Webflow CDN keeps resized renditions ("-p-800") for path-style assets.
-// %2F-encoded poster URLs have no variants — leave those untouched.
-function sized(url: string): string {
-  if (url.includes('%2F')) return url
-  return url.replace(/(\.(?:png|jpe?g|webp))$/i, '-p-800$1')
 }
 
 const GRAIN_URL =
   "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.95' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.85'/%3E%3C/svg%3E\")"
 
-export function MediaStill({ scene, media, mini = false, playing = false, letterbox = false, scrim = false, loop = true, videoRef }: MediaStillProps) {
+export function MediaStill({ scene, media, mini = false, playing = false, letterbox = false, scrim = false, loop = true, priority = false, videoRef }: MediaStillProps) {
   const reducedMotion = usePrefersReducedMotion()
+  // No autoplay background video on small screens: it dominates constrained
+  // bandwidth and registers a late LCP entry. Mobile gets the (preloaded)
+  // still with Ken-Burns; the reel's still-timer drives auto-advance.
+  const smallScreen = useMediaQuery('(max-width: 900px)')
   const innerVideoRef = useRef<HTMLVideoElement>(null)
-  const useVideo = Boolean(media?.video) && playing && !reducedMotion
+
+  const useVideo = Boolean(media?.video) && playing && !reducedMotion && !smallScreen
 
   // stable identity — an inline ref arrow changes every render, which makes
   // React 19 run the ref cleanup + re-invoke it (host resets its player state)
@@ -55,6 +57,22 @@ export function MediaStill({ scene, media, mini = false, playing = false, letter
 
   return (
     <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', background: '#0f0f0f' }} aria-hidden="true">
+      {/* poster stays mounted under the video: the early img paint anchors
+          LCP — an equal-size video frame later can't replace it */}
+      {media.still && (
+        <img
+          src={letterbox ? media.still : rendition(media.still, mini ? 500 : 800)}
+          alt=""
+          loading={priority ? 'eager' : 'lazy'}
+          fetchPriority={priority ? 'high' : undefined}
+          decoding="async"
+          onError={(e) => {
+            if (media.still && e.currentTarget.src !== media.still) e.currentTarget.src = media.still
+          }}
+          className={!useVideo && playing && !reducedMotion ? 'kenburns' : undefined}
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+        />
+      )}
       {useVideo && media.video ? (
         <video
           /* key forces a fresh element per source — <source> swaps alone
@@ -65,29 +83,16 @@ export function MediaStill({ scene, media, mini = false, playing = false, letter
           loop={loop}
           playsInline
           autoPlay
+          preload="auto"
           onLoadedData={(e) => {
             if (playing) e.currentTarget.play().catch(() => {})
           }}
-          poster={media.still}
           style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
         >
           <source src={media.video.mp4} type="video/mp4" />
           <source src={media.video.webm} type="video/webm" />
         </video>
-      ) : (
-        <img
-          src={media.still ? (letterbox ? media.still : sized(media.still)) : media.video?.mp4}
-          alt=""
-          loading="lazy"
-          decoding="async"
-          onError={(e) => {
-            // rendition missing → fall back to the original
-            if (media.still && e.currentTarget.src !== media.still) e.currentTarget.src = media.still
-          }}
-          className={playing && !reducedMotion ? 'kenburns' : undefined}
-          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
-        />
-      )}
+      ) : null}
 
       {/* dark scrim keeps busy photos as subtle as the placeholder scenes in bg use */}
       {scrim && <div style={{ position: 'absolute', inset: 0, background: 'rgba(10,10,10,0.38)' }} />}

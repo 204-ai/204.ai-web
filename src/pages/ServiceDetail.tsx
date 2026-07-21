@@ -43,6 +43,7 @@ export function ServiceDetail() {
             scene={s.scene}
             media={s.still || s.video ? { still: s.still, video: s.video } : undefined}
             playing
+            priority
           />
         </div>
         <aside className="anim-fade">

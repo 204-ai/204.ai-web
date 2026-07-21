@@ -38,7 +38,7 @@ export function WorkDetail() {
       {/* media front and center, spec sheet beside it on large screens */}
       <div className={styles.mediaRow}>
         <div className={`${styles.hero} anim-media`}>
-          <MediaStill scene={w.scene} media={w.media} playing letterbox />
+          <MediaStill scene={w.scene} media={w.media} playing letterbox priority />
         </div>
         <aside className={`${styles.meta} anim-fade`}>
           <div className="t-label" style={{ marginBottom: 12 }}>/ SPEC SHEET</div>

@@ -5,6 +5,7 @@ import { useHead } from '../hooks/useHead'
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion'
 import { HERO_CHAPTERS, PARTNERS, STUDIO, TRUSTED_BY, type PartnerLogo } from '../data/studio'
 import { trackChapterSelect, trackCta, trackPlayToggle } from '../lib/analytics'
+import { rendition } from '../lib/media'
 import styles from './Home.module.css'
 
 function fmt(s: number) {
@@ -144,7 +145,7 @@ export function Home() {
           tabIndex={hasPlayer ? 0 : undefined}
           aria-label={hasPlayer ? (isPaused ? 'Play showreel' : 'Pause showreel') : undefined}
         >
-          <MediaStill scene={current.scene} media={current.media} playing letterbox loop={false} videoRef={bindVideo} />
+          <MediaStill scene={current.scene} media={current.media} playing letterbox loop={false} priority videoRef={bindVideo} />
           {/* caption overlays */}
           <div className={`t-mono ${styles.captionLeft}`}>
             <div style={{ color: 'var(--accent)' }}>● NOW PLAYING</div>
@@ -283,7 +284,10 @@ export function Home() {
 function PartnerMark({ item, hidden = false }: { item: PartnerLogo; hidden?: boolean }) {
   const img = (
     <img
-      src={item.logo}
+      src={rendition(item.logo, 500)}
+      onError={(e) => {
+        if (e.currentTarget.src !== item.logo) e.currentTarget.src = item.logo
+      }}
       alt={hidden ? '' : item.name}
       title={item.name}
       className={styles.logo}
