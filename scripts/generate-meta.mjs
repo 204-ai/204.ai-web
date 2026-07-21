@@ -109,7 +109,31 @@ const routes = [
 
 const esc = (s) => s.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;')
 
-const base = readFileSync(join(dist, 'index.html'), 'utf8')
+let base = readFileSync(join(dist, 'index.html'), 'utf8')
+
+/* Inline the stylesheet: at ~16KB transfer the whole file IS the critical
+   CSS — removes the render-blocking request without any FOUC/layout risk.
+   Also preload the primary latin font files so they load in parallel with
+   the HTML instead of chaining behind CSS discovery. */
+import { readdirSync } from 'node:fs'
+const cssLink = base.match(/<link rel="stylesheet"[^>]*href="([^"]+\.css)"[^>]*>/)
+if (cssLink) {
+  const cssHref = cssLink[1]
+  const cssFile = join(dist, cssHref.replace(/^.*\/assets\//, 'assets/'))
+  const css = readFileSync(cssFile, 'utf8')
+  base = base.replace(cssLink[0], `<style>${css}</style>`)
+  const assetBase = cssHref.replace(/assets\/[^/]+$/, 'assets/')
+  const fonts = readdirSync(join(dist, 'assets')).filter(
+    (f) =>
+      f.endsWith('.woff2') &&
+      /^(archivo-black-latin-400-normal|space-grotesk-latin-400-normal|jetbrains-mono-latin-400-normal)/.test(f),
+  )
+  const preloads = fonts
+    .map((f) => `    <link rel="preload" as="font" type="font/woff2" crossorigin href="${assetBase}${f}" />`)
+    .join('\n')
+  base = base.replace('</title>', `</title>\n${preloads}`)
+  console.log(`generate-meta: inlined ${Math.round(css.length / 1024)}KB CSS, preloaded ${fonts.length} fonts`)
+}
 
 function metaFor(r) {
   const image = r.image ?? DEFAULT_IMAGE
