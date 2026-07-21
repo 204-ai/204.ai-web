@@ -187,15 +187,15 @@ export function buildOutputNodes(opts: {
   const m1 = simPos.x.mul(34).add(time.mul(0.05)).sin()
   const m2 = simPos.y.mul(29).sub(time.mul(0.037)).sin()
   const mottle = m1.mul(m2).mul(0.5).add(0.5)
-  const interiorBase = 1 - opts.internalShadingStrength * 1.25
+  const interiorBase = 1 - opts.internalShadingStrength * 1.7 // deep interior (user: way darker)
   /* contact-pressure highlight (§35) */
   const press = float(1).sub(smoothstep(0, R * 0.35, boundaryD.abs())).mul(coverageRaw).mul(0.1)
   const tone = float(interiorBase)
     .add(rim.mul(1 - interiorBase))
-    .add(limbCore.mul(0.16))
-    .sub(mottle.mul(0.06))
+    .add(limbCore.mul(0.2))
+    .sub(mottle.mul(0.08))
     .add(press)
-    .clamp(0.2, 1)
+    .clamp(0.14, 1)
   const shaded = vec3(tone)
   /* proximity glow: ONLY the nearest tip heats toward the accent
      (#c9442b) as it nears the cursor's touch radius — localized want */
@@ -211,7 +211,9 @@ export function buildOutputNodes(opts: {
   const hot = float(1).sub(smoothstep(0, opts.glow.z.mul(0.35), gd)).mul(opts.glow.w).mul(0.5)
   const glowColor = ACCENT.add(vec3(hot))
   const bodyColor = shaded.mul(float(1).sub(accentW)).add(glowColor.mul(accentW))
-  const opacityWithHaze = coverage.mul(opts.opacity).add(haze.mul(haze).mul(0.4)).clamp(0, 1)
+  // interior breathes slightly translucent — depth without heaviness
+  const insideAlpha = float(1).sub(smoothstep(0, R * 0.5, distance.negate()).mul(0.16))
+  const opacityWithHaze = coverage.mul(opts.opacity).mul(insideAlpha).add(haze.mul(haze).mul(0.4)).clamp(0, 1)
 
   if (!opts.includeDebug) {
     return { colorNode: bodyColor, opacityNode: opacityWithHaze }

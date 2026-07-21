@@ -508,7 +508,7 @@ export class OrganismSimulation {
         this.time - this.lastRouteTime > 6
       if (stale) {
         if (starved) this.lastProgressTime = this.time
-        this.route = this.nav.route(p.posX[0], p.posY[0], ix, iy, this.hasLOS, this.route?.points)
+        this.route = this.nav.route(p.posX[0], p.posY[0], ix, iy, this.hasLOS, starved ? undefined : this.route?.points)
         this.routeGoalX = ix
         this.routeGoalY = iy
         this.lastRouteTime = this.time
@@ -661,7 +661,9 @@ export class OrganismSimulation {
             land = this.projectToSurface(g.x, g.y, this.maxReach * 0.3)
           }
           const gap = Math.hypot(land.x - p.posX[0], land.y - p.posY[0])
-          const landSane = land.x > 0.02 && land.x < this.viewportAspect - 0.02 && land.y > 0.02 && land.y < 0.98
+          // a jump that doesn't close distance to the goal is never taken
+          const progressJump = Math.hypot(land.x - ix, land.y - iy) < Math.hypot(p.posX[0] - ix, p.posY[0] - iy) - 0.05
+          const landSane = progressJump && land.x > 0.02 && land.x < this.viewportAspect - 0.02 && land.y > 0.02 && land.y < 0.98
           let arcClear = true
           if (this.obstacles.length) {
             const upx0 = -(land.y - p.posY[0])
@@ -678,7 +680,7 @@ export class OrganismSimulation {
             }
           }
           const cooled = this.time - this.lastJumpEnd > 3
-          const notReturn = Math.hypot(land.x - this.lastJumpFromX, land.y - this.lastJumpFromY) > 0.15
+          const notReturn = Math.hypot(land.x - this.lastJumpFromX, land.y - this.lastJumpFromY) > 0.25
           if (cooled && notReturn && arcClear && landSane && goalDist > 0.2 && gap > this.maxReach * 1.1 && gap < 0.4) {
             this.jumpSX = p.posX[0]
             this.jumpSY = p.posY[0]
@@ -1094,7 +1096,7 @@ export class OrganismSimulation {
             gy = p.posY[tipI]
           }
         }
-        const t = Math.max(0, Math.min(1, (0.22 - best) / (0.22 - 0.05)))
+        const t = Math.max(0, Math.min(1, (0.16 - best) / (0.16 - 0.045)))
         gi = Math.pow(t, 1.6)
       }
       const gk = 1 - Math.exp((-dt / 0.08) * Math.LN2)

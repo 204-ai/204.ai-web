@@ -154,7 +154,7 @@ export class NavigationField {
           if (nc < 0 || nc >= cols || nr < 0 || nr >= rows) continue
           const ni = nr * cols + nc
           if (this.blocked[ni] || closed[ni]) continue
-          const step = (dc && dr ? 1.41 : 1) * this.cost[ni] * (prefer[ni] ? 0.6 : 1)
+          const step = (dc && dr ? 1.41 : 1) * this.cost[ni] * (prefer[ni] ? 0.85 : 1)
           if (g[cur] + step < g[ni]) {
             g[ni] = g[cur] + step
             from[ni] = cur
