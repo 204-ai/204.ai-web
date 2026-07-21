@@ -40,24 +40,63 @@ export class OrganismSimulation {
     const rnd = mulberry32(seed)
     const p = particles
     this.restLengths = new Float32Array(p.count)
+    this.chainLen = new Float32Array(p.appendageCount)
     for (let a = 0; a < p.appendageCount; a++) {
       for (let j = 0; j < p.jointsPerAppendage - 1; j++) {
         const i0 = p.indexOf(a, j)
         const i1 = p.indexOf(a, j + 1)
         this.restLengths[i1] = Math.hypot(p.posX[i1] - p.posX[i0], p.posY[i1] - p.posY[i0])
+        this.chainLen[a] += this.restLengths[i1]
       }
       const root = p.indexOf(a, 0)
+      // slow, heavy cadence (§23) — fast oscillators read as nervous
       this.drivers.push({
-        swayFreq: 0.14 + rnd() * 0.22,
+        swayFreq: 0.06 + rnd() * 0.11,
         swayPhase: rnd() * Math.PI * 2,
         swayAmp: 0.25 + rnd() * 0.5,
-        curlFreq: 0.09 + rnd() * 0.16,
+        curlFreq: 0.04 + rnd() * 0.08,
         curlPhase: rnd() * Math.PI * 2,
         restAngle: Math.atan2(p.posY[root] - p.posY[0], p.posX[root] - p.posX[0]),
         rootDriftFreq: 0.02 + rnd() * 0.03,
         rootDriftAmp: 0.15 + rnd() * 0.25,
       })
+      this.plants.push({ x: 0, y: 0, active: false })
     }
+    this.maxReach = Math.max(...Array.from(this.chainLen)) + particles.radius[0]
+  }
+
+  private chainLen: Float32Array
+  private maxReach: number
+  /* planted tip anchors — the walking substrate (§22, user 2026-07-21) */
+  private plants: Array<{ x: number; y: number; active: boolean }> = []
+
+  /** Page anchoring: on scroll the whole state shifts so the creature stays
+      glued to the DOCUMENT, then walks back into view organically. */
+  shiftPageY(dySim: number) {
+    const p = this.particles
+    for (let i = 0; i < p.count; i++) {
+      p.posY[i] += dySim
+      p.prevY[i] += dySim
+    }
+    this.anchorY += dySim
+    for (const pl of this.plants) if (pl.active) pl.y += dySim
+  }
+
+  /* nearest walkable surface = obstacle boundaries + viewport edges */
+  private surfaceDist(x: number, y: number): number {
+    const edge = Math.min(x, this.viewportAspect - x, y, 1 - y)
+    const obs = this.obstacles.length ? sdObstacles(x, y, this.obstacles, this.obstacleRounding) : Infinity
+    return Math.min(edge, obs)
+  }
+
+  private surfaceNormalInto(x: number, y: number, out: Vec2): Vec2 {
+    const e = 1e-3
+    const dx = this.surfaceDist(x + e, y) - this.surfaceDist(x - e, y)
+    const dy = this.surfaceDist(x, y + e) - this.surfaceDist(x, y - e)
+    const len = Math.hypot(dx, dy) || 1
+    out.x = dx / len
+    out.y = dy / len
+    return out
   }
 
   /** One fixed step. dt = config.simulation.fixedDelta. */
@@ -135,9 +174,68 @@ export class OrganismSimulation {
       p.posY[0] += (tdy / tlen) * step
     }
 
+    // ---- surface rest + planting (walking substrate — §20/§22) ----
+    // the creature belongs ON surfaces: body hovers at limb height above
+    // the nearest floor/wall/obstacle edge, 2-3 aligned limbs plant tips
+    const sd = this.surfaceDist(p.posX[0], p.posY[0])
+    const inRange = sd < this.maxReach * 1.05
+    const n = this.surfaceNormalInto(p.posX[0], p.posY[0], this.normal)
+    const surfNX = n.x
+    const surfNY = n.y
+    if (inRange) {
+      // hover spring: settle at ~45% of reach above the surface (gravity-ish)
+      const hover = this.maxReach * 0.45
+      const err = sd - hover
+      p.posX[0] -= surfNX * err * Math.min(1, dt * 1.4)
+      p.posY[0] -= surfNY * err * Math.min(1, dt * 1.4)
+    }
+    // rank limbs by how much they face the surface; top 3 want to plant
+    const facing: Array<{ a: number; score: number }> = []
+    for (let a = 0; a < p.appendageCount; a++) {
+      const d = this.drivers[a]
+      const score = -(Math.cos(d.restAngle) * surfNX + Math.sin(d.restAngle) * surfNY)
+      facing.push({ a, score })
+    }
+    facing.sort((x, y) => y.score - x.score)
+    const wantPlant = new Set<number>()
+    if (inRange) for (let r = 0; r < Math.min(3, facing.length); r++) if (facing[r].score > 0.15) wantPlant.add(facing[r].a)
+    for (let a = 0; a < p.appendageCount; a++) {
+      const plant = this.plants[a]
+      const rootI = p.indexOf(a, 0)
+      if (plant.active) {
+        const stretch = Math.hypot(plant.x - p.posX[rootI], plant.y - p.posY[rootI])
+        // release when overstretched or the surface fell out of alignment —
+        // the release+replant cycle IS the gait
+        if (stretch > this.chainLen[a] * 1.06 || !wantPlant.has(a)) plant.active = false
+      }
+      if (!plant.active && wantPlant.has(a)) {
+        // plant ahead of travel: tip projected onto the surface with a lead
+        // along the tangent in the movement direction
+        const tipI = p.indexOf(a, p.jointsPerAppendage - 1)
+        let tx = p.posX[tipI]
+        let ty = p.posY[tipI]
+        const tangX = -surfNY
+        const tangY = surfNX
+        const lead = Math.sign(tangX * this.coreVelX + tangY * this.coreVelY) * this.chainLen[a] * 0.3
+        tx += tangX * lead
+        ty += tangY * lead
+        for (let it = 0; it < 3; it++) {
+          const td = this.surfaceDist(tx, ty)
+          this.surfaceNormalInto(tx, ty, this.normal)
+          tx -= this.normal.x * td
+          ty -= this.normal.y * td
+        }
+        if (Math.hypot(tx - p.posX[rootI], ty - p.posY[rootI]) < this.chainLen[a]) {
+          plant.x = tx
+          plant.y = ty
+          plant.active = true
+        }
+      }
+    }
+
     // limbs: serpentine traveling wave along the chain (anatomy-aligned,
-    // per-limb seeded — §15.2); the limb best aligned with the pointer
-    // extends toward it, others trail (§13/§18)
+    // per-limb seeded — §15.2); planted limbs grip their anchor, the limb
+    // best aligned with the pointer extends toward it, others trail
     for (let a = 0; a < p.appendageCount; a++) {
       const d = this.drivers[a]
       const sway = Math.sin(this.time * d.swayFreq * Math.PI * 2 + d.swayPhase) * d.swayAmp
@@ -155,18 +253,35 @@ export class OrganismSimulation {
         reachScale = 1 + bias * 0.75
       }
       const rootI = p.indexOf(a, 0)
+      const plant = this.plants[a]
+      const tipIdx = p.jointsPerAppendage - 1
       let cx = p.posX[rootI]
       let cy = p.posY[rootI]
       for (let j = 1; j < p.jointsPerAppendage; j++) {
         const i = p.indexOf(a, j)
-        const t = j / (p.jointsPerAppendage - 1)
-        // slow traveling wave down the limb — wriggle, not rigid pointing
+        const t = j / tipIdx
+        if (plant.active) {
+          // gripping limb: tip locks to the plant, mid joints relax into a
+          // catenary-ish sag between root and plant (wave damped)
+          if (j === tipIdx) {
+            p.posX[i] += (plant.x - p.posX[i]) * Math.min(1, dt * 10)
+            p.posY[i] += (plant.y - p.posY[i]) * Math.min(1, dt * 10)
+          } else {
+            const sag = Math.sin(t * Math.PI) * this.chainLen[a] * 0.08
+            const bx = p.posX[rootI] + (plant.x - p.posX[rootI]) * t + surfNX * sag
+            const by = p.posY[rootI] + (plant.y - p.posY[rootI]) * t + surfNY * sag
+            p.posX[i] += (bx - p.posX[i]) * Math.min(1, dt * 2.2)
+            p.posY[i] += (by - p.posY[i]) * Math.min(1, dt * 2.2)
+          }
+          continue
+        }
+        // free limb: slow traveling wave — wriggle, not rigid pointing
         const wave = Math.sin(t * 2.8 + d.curlPhase + this.time * d.curlFreq * Math.PI * 2) * 0.5 * (0.3 + 0.7 * t)
         const desired = targetAngle + wave
         cx += Math.cos(desired) * this.restLengths[i] * reachScale
         cy += Math.sin(desired) * this.restLengths[i] * reachScale
         const raw = this.reachableTowards(p.posX[rootI], p.posY[rootI], cx, cy, p.radius[i])
-        const k = Math.min(1, 1.1 * dt * (0.3 + t))
+        const k = Math.min(1, 0.55 * dt * (0.3 + t))
         p.posX[i] += (raw.x - p.posX[i]) * k
         p.posY[i] += (raw.y - p.posY[i]) * k
       }
@@ -232,15 +347,8 @@ export class OrganismSimulation {
         }
       }
 
-      // viewport bounds
-      const aspect = this.viewportAspect
-      for (let i = 0; i < p.count; i++) {
-        const m = 0.02 + p.radius[i]
-        if (p.posX[i] < m) p.posX[i] = m
-        if (p.posX[i] > aspect - m) p.posX[i] = aspect - m
-        if (p.posY[i] < m) p.posY[i] = m
-        if (p.posY[i] > 1 - m) p.posY[i] = 1 - m
-      }
+      // NOTE: no hard viewport clamp — the creature is page-anchored and may
+      // be scrolled out of view; the in-view anchor walks it back (§scroll)
     }
 
     // max-extension guard (§12): whatever the projections did, a chain link
@@ -270,6 +378,29 @@ export class OrganismSimulation {
         p.posY[rootI] = p.posY[0] + (rdy / rlen) * rmax
       }
     }
+
+    // tip speed cap (§23/§24): free joints never exceed maximumTipSpeed —
+    // kills the "accelerates like crazy" whip
+    const maxTip = this.config.behavior.maximumTipSpeed * this.viewportAspect * dt
+    for (let a = 0; a < p.appendageCount; a++) {
+      if (this.plants[a].active) continue
+      for (let j = 1; j < p.jointsPerAppendage; j++) {
+        const i = p.indexOf(a, j)
+        const dx = p.posX[i] - p.prevX[i]
+        const dy = p.posY[i] - p.prevY[i]
+        const disp = Math.hypot(dx, dy)
+        if (disp > maxTip) {
+          const s = maxTip / disp
+          p.posX[i] = p.prevX[i] + dx * s
+          p.posY[i] = p.prevY[i] + dy * s
+        }
+      }
+    }
+
+    // anchor stays in view: after scrolling away, the creature has an
+    // in-viewport destination to walk back to (organic catch-up, no snap)
+    this.anchorX = Math.min(Math.max(this.anchorX, 0.14), this.viewportAspect - 0.14)
+    this.anchorY = Math.min(Math.max(this.anchorY, 0.14), 0.86)
 
     // smoothed core velocity → torso motion stretch (§15.1)
     const cvx = (p.posX[0] - p.prevX[0]) / dt

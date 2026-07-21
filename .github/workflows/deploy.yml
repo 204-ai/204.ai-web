@@ -1,8 +1,8 @@
 name: Deploy (Firebase primary + GitHub Pages secondary)
 
+# HOLD (user 2026-07-21): deploys are MANUAL until explicit go —
+# run from the Actions tab. Restore the push trigger to resume auto-deploy.
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:

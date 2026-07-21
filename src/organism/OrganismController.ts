@@ -74,8 +74,17 @@ export class OrganismController {
     this.collector.invalidate()
   }
 
+  private lastScrollY = typeof window !== 'undefined' ? window.scrollY : 0
+
   /** Per-frame: DOM/GPU obstacle work only when dirty; sim at fixed step. */
   beforeFrame(timeMs: number) {
+    // page anchoring: scroll shifts the whole sim state so the creature
+    // stays glued to the document, then walks back into view on its own
+    const sy = window.scrollY
+    if (sy !== this.lastScrollY) {
+      this.simulation.shiftPageY((sy - this.lastScrollY) / Math.max(this.viewport.height, 1))
+      this.lastScrollY = sy
+    }
     if (this.collector.isDirty) {
       this.obstacles = this.collector.collect(this.viewport)
       this.mask.rasterize(this.obstacles, this.viewport, this.config.obstacles.comfortClearance)

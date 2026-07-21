@@ -2,7 +2,6 @@ import { Outlet, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
 import { Nav } from './Nav'
 import { CursorProvider } from './Cursor'
-import { OrganismLayer } from './OrganismLayer'
 import { trackPageView } from '../lib/analytics'
 
 export function Layout() {
@@ -23,7 +22,8 @@ export function Layout() {
   return (
     <CursorProvider>
       <div className="grain">
-        <OrganismLayer />
+        {/* organism disabled on the site until the lab version is approved
+            (user 2026-07-21) — iterate in organism-lab.html */}
         <Nav />
         {/* content sits above the organism canvas (SPEC V17) */}
         <main style={{ paddingTop: 'var(--nav-h)', overflow: 'clip', position: 'relative', zIndex: 1 }}>

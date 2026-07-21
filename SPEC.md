@@ -88,7 +88,7 @@ T35|x|organism M5 simulation: fixed-timestep PBD (segment/bend/cohesion/volume c
 T36|~|organism M6 obstacle contact: SDF sampling @ joints/tips/core+predicted, soft repulsion + hard projection, tangential slide, contact debug, no clipping|C14,V17
 T37|~|organism M7 pointer attention: smoothed pointer state, attention vs body targets, dead zones, observe behavior, no direct following|C14
 T38|.|organism M8 navigation: 64×36 cost grid, A* on-demand (⊥ per frame), route smoothing, unreachable → nearest point + 1-2 SNIFF tendrils (boundary-crawl: tangent step + SDF snap-back, per-tendril seed, subtle grasp — user 2026-07-21) + withdraw|C14
-T39|.|organism M9 locomotion+idle: anchor cycle crawl, state machine (Rest/Observe/Reach/Crawl/Brace/Settle/Withdraw w/ hysteresis), breathing 4-9s, gestures 4-14s seeded|C14,V19
+T39|~|organism M9 locomotion+idle: anchor cycle crawl, state machine (Rest/Observe/Reach/Crawl/Brace/Settle/Withdraw w/ hysteresis), breathing 4-9s, gestures 4-14s seeded|C14,V19
 T40|.|organism M10 polish: quality modes high/balanced/low, reduced-motion mode, profiling (≤3ms GPU target), param tuning, debug stripped from prod|C14,V18,V19
 T29|x|verify sprint: build+lint, V4 grep empty, V6 rerun, player-probe, V15 size audit, curl header check both hosts, both deploys green|V4,V5,V6,V14,V15,V16
 
