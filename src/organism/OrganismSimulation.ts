@@ -897,8 +897,11 @@ export class OrganismSimulation {
         let ok = Math.hypot(c.x - p.posX[rootI], c.y - p.posY[rootI]) < this.chainLen[a] * 0.95
         if (ok) {
           for (let o = 0; o < LEGS; o++) {
-            if (o === a || !this.plants[o].active) continue
-            if (Math.hypot(this.plants[o].x - c.x, this.plants[o].y - c.y) < this.chainLen[a] * 0.35) ok = false
+            if (o === a) continue
+            // separation vs planted feet AND in-flight swing targets —
+            // simultaneous swings raced onto the same landing spot
+            if (this.plants[o].active && Math.hypot(this.plants[o].x - c.x, this.plants[o].y - c.y) < this.chainLen[a] * 0.35) ok = false
+            if (this.swings[o].active && Math.hypot(this.swings[o].toX - c.x, this.swings[o].toY - c.y) < this.chainLen[a] * 0.35) ok = false
           }
         }
         if (ok) ok = this.bridgeClear(p.posX[rootI], p.posY[rootI], c.x, c.y)

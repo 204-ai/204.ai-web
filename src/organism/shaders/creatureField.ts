@@ -168,6 +168,7 @@ export function buildOutputNodes(opts: {
   const edgeSim = float(opts.edgeSoftnessPx).div(viewportHeightPx)
   const w = max(distance.fwidth(), edgeSim)
   const coverage = float(1).sub(smoothstep(w.negate(), w, distance))
+  const coverageRaw = coverage
 
   /* interior structure (§35): depth tone toward thick cores + slow
      organic mottling in creature space — a living interior, not a flat
@@ -177,7 +178,10 @@ export function buildOutputNodes(opts: {
   const m2 = simPos.y.mul(29).sub(time.mul(0.037)).sin()
   const mottle = m1.mul(m2).mul(0.5).add(0.5).mul(opts.internalShadingStrength).mul(0.45)
   const insideDeep = smoothstep(0, R * 0.5, distance.negate())
-  const shaded = vec3(float(1).sub(depth).sub(mottle.mul(insideDeep)))
+  /* contact-pressure highlight (§35): a faint brightness lift where the
+     body presses a boundary — weight made visible at the contact line */
+  const press = float(1).sub(smoothstep(0, R * 0.35, boundaryD.abs())).mul(coverageRaw).mul(0.12)
+  const shaded = vec3(float(1).sub(depth).sub(mottle.mul(insideDeep)).add(press))
   /* proximity glow: ONLY the nearest tip heats toward the accent
      (#c9442b) as it nears the cursor's touch radius — localized want */
   const ACCENT: Node = vec3(0.788, 0.267, 0.169)
