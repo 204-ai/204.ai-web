@@ -692,6 +692,21 @@ export class OrganismSimulation {
 
     /* ---- feet: deterministic targets + swing arcs ---- */
     if (S !== 'jump') {
+      // stagnation breaker (T41): traveling but no step for 1.2s = the
+      // mid-stride equilibrium — force the most-behind foot to step
+      let forceStep = -1
+      if (S === 'pursue' && moving && this.time - this.lastReleaseTime > 1.2) {
+        let worstDot = Infinity
+        for (let a = 0; a < LEGS; a++) {
+          const pl = this.plants[a]
+          if (!pl.active) continue
+          const dot = (pl.x - p.posX[0]) * travelDirX + (pl.y - p.posY[0]) * travelDirY
+          if (dot < worstDot) {
+            worstDot = dot
+            forceStep = a
+          }
+        }
+      }
       for (let a = 0; a < LEGS; a++) {
         const pl = this.plants[a]
         if (!pl.active) continue
@@ -700,7 +715,7 @@ export class OrganismSimulation {
         const bad = !this.bridgeClear(p.posX[rootI], p.posY[rootI], pl.x, pl.y) || stretch > this.chainLen[a] * 1.3 || !inRange
         const behind = (pl.x - p.posX[0]) * travelDirX + (pl.y - p.posY[0]) * travelDirY < -this.chainLen[a] * 0.3
         const gait = S === 'pursue' && (stretch > this.chainLen[a] * 1.06 || behind) && this.time - this.lastReleaseTime > 0.45
-        if (bad || gait) {
+        if (bad || gait || a === forceStep) {
           pl.active = false
           this.lastReleaseTime = this.time
           this.dbgReleases++
@@ -774,10 +789,37 @@ export class OrganismSimulation {
 
     /* ---- limbs: pure kinematic IK ---- */
     const calm = S === 'rest' || S === 'settle' || S === 'sniff' ? 0.45 : 1
+    // yearn: pointer present but the body holds short — seekers strain
+    // toward it (the seething sniff-poke feel, user 2026-07-21)
+    const yearn = this.pointerActive && goalDist > 0.18
+    const jdx0 = this.jumpEX - this.jumpSX
+    const jdy0 = this.jumpEY - this.jumpSY
+    const jl0 = Math.hypot(jdx0, jdy0) || 1
+    const jumpDirX = jdx0 / jl0
+    const jumpDirY = jdy0 / jl0
     for (let a = 0; a < p.appendageCount; a++) {
       const d = this.drivers[a]
       const rootX = p.posX[0] + Math.cos(d.restAngle) * p.radius[0] * 0.7
       const rootY = p.posY[0] + Math.sin(d.restAngle) * p.radius[0] * 0.7
+      if (S === 'jump') {
+        // spider leap: everything TRAILS the core; in the last quarter the
+        // legs swing forward toward the landing zone (legs-first touchdown)
+        const t01 = Math.min(1, this.jumpT)
+        const landing = a < LEGS && t01 > 0.72
+        let tx: number
+        let ty: number
+        if (landing) {
+          const SLOT_L = [-0.55, 0, 0.55]
+          const c = this.projectToSurface(this.jumpEX + -jumpDirY * SLOT_L[a % 3] * this.chainLen[a], this.jumpEY + jumpDirX * SLOT_L[a % 3] * this.chainLen[a], 0)
+          tx = c.x
+          ty = c.y
+        } else {
+          tx = rootX - jumpDirX * this.chainLen[a] * (0.75 + 0.1 * Math.sin(a * 2.3))
+          ty = rootY - jumpDirY * this.chainLen[a] * (0.75 + 0.1 * Math.sin(a * 2.3))
+        }
+        this.solveLimb(a, rootX, rootY, tx, ty, this.chainLen[a] * 0.12)
+        continue
+      }
       if (a < LEGS) {
         const pl = this.plants[a]
         const sw = this.swings[a]
@@ -803,7 +845,8 @@ export class OrganismSimulation {
       } else {
         let desX: number
         let desY: number
-        if (this.sniffing && this.pointerActive) {
+        if ((this.sniffing || yearn) && this.pointerActive) {
+          // strain toward the LIVE pointer — alive, wanting
           desX = this.pointerX
           desY = this.pointerY
         } else if (this.pointerActive && (pointerDirX !== 0 || pointerDirY !== 0)) {
@@ -818,10 +861,10 @@ export class OrganismSimulation {
           desX = rootX + Math.cos(sweep) * this.chainLen[a]
           desY = rootY + Math.sin(sweep) * this.chainLen[a]
         }
-        // extension: breathes while idle, but STRETCHES OUT when there is
-        // something to reach for (pointer/sniff) — seeker, not a bundle
-        const wantsReach = this.pointerActive || this.sniffing
-        const ext = this.chainLen[a] * (wantsReach ? 0.9 + 0.08 * Math.sin(this.time * 0.11 * Math.PI * 2 + a) : 0.55 + 0.28 * Math.sin(this.time * 0.07 * Math.PI * 2 + a * 1.9))
+        // extension: breathes while idle; STRAINS with poke pulses when
+        // yearning/sniffing — visible wanting, not a passive stretch
+        const poke = (this.sniffing || yearn) ? 0.06 * Math.sin(this.time * 0.55 * Math.PI * 2 + a * 2.1) : 0
+        const ext = this.chainLen[a] * ((this.sniffing || yearn) ? 0.92 + poke : this.pointerActive ? 0.85 + 0.08 * Math.sin(this.time * 0.11 * Math.PI * 2 + a) : 0.55 + 0.28 * Math.sin(this.time * 0.07 * Math.PI * 2 + a * 1.9))
         const ddx = desX - rootX
         const ddy = desY - rootY
         const dl = Math.hypot(ddx, ddy) || 1
@@ -830,7 +873,8 @@ export class OrganismSimulation {
         const sk = 1 - Math.exp((-dt / 0.5) * Math.LN2)
         this.seekX[a] += (gx - this.seekX[a]) * sk
         this.seekY[a] += (gy - this.seekY[a]) * sk
-        const snake = Math.sin(this.time * (0.16 + (a - LEGS) * 0.05) * Math.PI * 2 + d.curlPhase) * this.chainLen[a] * 0.24 * calm
+        const snakeCalm = this.sniffing || yearn ? 1 : calm
+        const snake = Math.sin(this.time * (0.16 + (a - LEGS) * 0.05) * Math.PI * 2 + d.curlPhase) * this.chainLen[a] * 0.24 * snakeCalm
         this.solveLimb(a, rootX, rootY, this.seekX[a], this.seekY[a], snake)
       }
     }
