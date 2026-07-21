@@ -54,7 +54,7 @@ export function MakerDetail() {
           <div className="t-label" style={{ marginBottom: 8 }}>/ REACH OUT</div>
           <SocialLinks socials={p.socials} person={p.name} />
           <Link to="/contact" className={`t-mono ${styles.cta}`}>
-            → WORK WITH THE ROOM
+            → WORK WITH US
           </Link>
         </aside>
       </div>

@@ -41,6 +41,17 @@ const t = (page) => (page ? `${page} — ${BRAND}` : HOME_TITLE)
 const DEFAULT_IMAGE =
   'https://cdn.prod.website-files.com/64ba5b3b418a540ade9f6e31/65b7a18446d60bb65c1641e7_204white.png'
 
+/* WhatsApp drops og:images over ~600KB — serve the -p-800 rendition instead
+   of full-res (Discord/Telegram don't care, but WhatsApp silently blanks).
+   %2F-style poster URLs have no renditions (small jpgs, fine as-is), and
+   small sources never got renditions from Webflow — list those here. */
+const NO_RENDITION = ['67489265485a73607410fa99_winesfromanother.png']
+function ogImage(u) {
+  if (!u || u.includes('%2F')) return u
+  if (NO_RENDITION.some((f) => u.includes(f))) return u
+  return u.replace(/(\.(?:png|jpe?g|webp))$/i, '-p-800$1')
+}
+
 /** @type {Array<{path: string, title: string, desc: string, image?: string}>} */
 const routes = [
   {
@@ -72,19 +83,19 @@ const routes = [
     path: `/work/${w.slug}`,
     title: t(`${w.title} · Work`),
     desc: w.note,
-    image: w.media?.still,
+    image: ogImage(w.media?.still),
   })),
   ...SERVICES_ALL.map((s) => ({
     path: `/services/${s.slug}`,
     title: t(`${s.label} · Service`),
     desc: s.body,
-    image: s.still,
+    image: ogImage(s.still),
   })),
   ...PEOPLE.map((p) => ({
     path: `/makers/${p.slug}`,
     title: t(`${p.name} · Maker`),
     desc: `${p.name}, ${p.role} at 204 — creative technology studio, Lisbon.`,
-    image: p.photo,
+    image: ogImage(p.photo),
   })),
 ]
 
