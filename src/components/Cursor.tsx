@@ -109,7 +109,14 @@ function CursorDot({ label }: { label: string | null }) {
           : ''
 
   return (
-    <div ref={ref} className={styles.root} style={{ opacity: visible ? 1 : 0 }} aria-hidden="true">
+    <div
+      ref={ref}
+      // blend lives on the root: its transform isolates children, so a blend
+      // set on the dot itself would never reach the page behind it
+      className={`${styles.root} ${effective.kind === 'label' ? '' : styles.blendRoot}`}
+      style={{ opacity: visible ? 1 : 0 }}
+      aria-hidden="true"
+    >
       <div className={`${styles.dot} ${cls}`}>{effective.kind === 'label' ? effective.label : ''}</div>
     </div>
   )
