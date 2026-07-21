@@ -116,6 +116,7 @@ export class OrganismController {
         ...rect,
         hw: rect.hw + paddingSim,
         hh: rect.hh + paddingSim,
+        pad: paddingSim,
       }))
       const aspect = this.viewport.width / Math.max(this.viewport.height, 1)
       this.nav.rebuild(

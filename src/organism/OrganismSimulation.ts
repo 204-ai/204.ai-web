@@ -31,7 +31,7 @@ const LEGS = 3
 const SWING_TIME = 0.26
 /* jumps off until walking earns trust — they read as erratic zips
    (user 2026-07-21); re-enable for true gap-crossings later */
-const JUMP_ENABLED = false
+const JUMP_ENABLED = true // safe now: progress-gated + arc-clear + absolute speed cap
 
 export class OrganismSimulation {
   private restLengths: Float32Array

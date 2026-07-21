@@ -16,6 +16,11 @@ export type SimRect = {
   allowTendrils: boolean
   /* circle obstacles: radius = hw (data-organism-shape="circle") */
   circle?: boolean
+  /* glyph colliders (data-organism-shape="text"): signed-distance grid in
+     sim units over the element bounds, built at collect time */
+  textGrid?: { gw: number; gh: number; data: Float32Array }
+  /* padding applied at sample time for grid colliders */
+  pad?: number
 }
 
 /** Signed distance from point to an axis-aligned rounded rect. */
@@ -27,11 +32,27 @@ export function sdRoundedRect(px: number, py: number, rect: SimRect, radius: num
   return Math.hypot(ax, ay) + Math.min(Math.max(qx, qy), 0) - radius
 }
 
+function sdTextGrid(px: number, py: number, r: SimRect): number {
+  const g = r.textGrid!
+  const x0 = r.cx - r.hw
+  const y1 = r.cy + r.hh
+  const u = ((px - x0) / (r.hw * 2)) * g.gw
+  const v = ((y1 - py) / (r.hh * 2)) * g.gh // grid rows top-down
+  const pad = r.pad ?? 0
+  if (u < 0 || u >= g.gw || v < 0 || v >= g.gh) {
+    // outside the element box: rect distance + margin toward glyphs
+    return sdRoundedRect(px, py, r, 0.004) + 0.004 - pad
+  }
+  const xi = Math.min(g.gw - 1, Math.max(0, Math.floor(u)))
+  const yi = Math.min(g.gh - 1, Math.max(0, Math.floor(v)))
+  return g.data[yi * g.gw + xi] - pad
+}
+
 /** Signed distance to the union of all obstacles (hard field). */
 export function sdObstacles(px: number, py: number, rects: SimRect[], rounding: number): number {
   let d = Infinity
   for (const r of rects) {
-    d = Math.min(d, r.circle ? Math.hypot(px - r.cx, py - r.cy) - r.hw : sdRoundedRect(px, py, r, rounding))
+    d = Math.min(d, r.textGrid ? sdTextGrid(px, py, r) : r.circle ? Math.hypot(px - r.cx, py - r.cy) - r.hw : sdRoundedRect(px, py, r, rounding))
   }
   return d
 }
