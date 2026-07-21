@@ -42,6 +42,9 @@ export class ParticleBuffer {
   readonly appendageId: Int8Array
   /* GPU mirror */
   readonly uniformData: THREE.Vector4[]
+  /* render-side low-pass state — absorbs single-frame solver toggles */
+  readonly renderX: Float32Array
+  readonly renderY: Float32Array
 
   constructor(config: OrganismConfig, seed = 204) {
     const { appendageCount, jointsPerAppendage } = config.anatomy
@@ -59,6 +62,8 @@ export class ParticleBuffer {
     this.role = new Uint8Array(this.count)
     this.appendageId = new Int8Array(this.count).fill(-1)
     this.uniformData = Array.from({ length: this.count }, () => new THREE.Vector4())
+    this.renderX = new Float32Array(this.count)
+    this.renderY = new Float32Array(this.count)
 
     this.role[0] = ParticleRole.Core
     this.invMass[0] = 0.35
@@ -125,7 +130,7 @@ export class ParticleBuffer {
         this.posX[i] = x
         this.posY[i] = y
         // float-curve taper (§13): strong root, slim mid, pinched tip
-        this.radius[i] = rootR * Math.pow(1 - t, 1.35) + tipR * Math.pow(t, 0.6)
+        this.radius[i] = rootR * Math.pow(1 - t, 1.15) + tipR * Math.pow(t, 0.6)
         this.activation[i] = 1
         const dir = angle + Math.sin(t * serpFreq * Math.PI + serpPhase) * serpAmp
         x += Math.cos(dir) * segLen * (1 - t * 0.3)
@@ -135,6 +140,8 @@ export class ParticleBuffer {
 
     this.prevX.set(this.posX)
     this.prevY.set(this.posY)
+    this.renderX.set(this.posX)
+    this.renderY.set(this.posY)
     this.syncUniforms()
   }
 

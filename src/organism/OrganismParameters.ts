@@ -63,11 +63,11 @@ export const defaultOrganismConfig: OrganismConfig = {
     appendageCount: 5,
     jointsPerAppendage: 6,
     torsoRadius: 0.04,
-    minimumTipRadius: 0.004,
+    minimumTipRadius: 0.006,
     maximumTipRadius: 0.014,
   },
   behavior: {
-    pointerInterest: 0.8,
+    pointerInterest: 0.95,
     maximumCoreSpeed: 0.055,
     maximumTipSpeed: 0.2,
     gestureIntervalMin: 4,

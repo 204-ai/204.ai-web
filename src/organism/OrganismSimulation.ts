@@ -170,8 +170,8 @@ export class OrganismSimulation {
         pointerDirY = dy / dist
         const interest = this.config.behavior.pointerInterest
         // stop short: hold ~0.12 sim units away from the cursor
-        ix = ix * (1 - interest) + (this.pointerX - pointerDirX * 0.18) * interest
-        iy = iy * (1 - interest) + (this.pointerY - pointerDirY * 0.18) * interest
+        ix = ix * (1 - interest) + (this.pointerX - pointerDirX * 0.09) * interest
+        iy = iy * (1 - interest) + (this.pointerY - pointerDirY * 0.09) * interest
       }
     }
     // torso needs real clearance — a pocket tighter than the body is not a
@@ -180,6 +180,17 @@ export class OrganismSimulation {
     // never per frame (§21); the route feeds the intention, it does not
     // animate the body directly
     this.sniffing = false
+    let starved = false
+    if (this.pointerActive) {
+      const dNow = Math.hypot(this.pointerX - p.posX[0], this.pointerY - p.posY[0])
+      if (dNow < this.lastPointerDist - 0.015) this.lastProgressTime = this.time
+      this.lastPointerDist = dNow
+      // mosquito rule (user 2026-07-21): far from the cursor and not
+      // closing for 2s → find another way in
+      starved = dNow > 0.25 && this.time - this.lastProgressTime > 2
+    } else {
+      this.lastPointerDist = Infinity
+    }
     if (this.nav) {
       const pts0 = this.route?.points ?? []
       const exhaustedFar = this.route !== null && this.routeIdx >= pts0.length && Math.hypot(ix - p.posX[0], iy - p.posY[0]) > 0.12
@@ -187,8 +198,10 @@ export class OrganismSimulation {
         !this.route ||
         Math.hypot(ix - this.routeGoalX, iy - this.routeGoalY) > Math.max(this.config.navigation.rerouteThreshold, 0.15) ||
         exhaustedFar ||
+        (starved && this.time - this.lastRouteTime > 2) ||
         this.time - this.lastRouteTime > 6
       if (stale) {
+        if (starved) this.lastProgressTime = this.time // one shot per stall
         this.route = this.nav.route(p.posX[0], p.posY[0], ix, iy, this.hasLOS)
         this.routeGoalX = ix
         this.routeGoalY = iy
@@ -211,7 +224,7 @@ export class OrganismSimulation {
       ix += Math.sin(this.time * 0.05 + 1.7) * 0.03 + Math.sin(this.time * 0.023) * 0.02
       iy += Math.cos(this.time * 0.041 + 0.4) * 0.025 + Math.sin(this.time * 0.017 + 2.1) * 0.018
     }
-    let rawTarget = this.reachableTowards(p.posX[0], p.posY[0], ix, iy, p.radius[0] * 1.35)
+    let rawTarget = this.reachableTowards(p.posX[0], p.posY[0], ix, iy, p.radius[0] * 1.15)
     // corner following (until M8 A*): if the straight ray is blocked but the
     // desire is far, walk along the wall tangent toward it — the creature
     // rounds corners instead of idling at them
@@ -249,7 +262,8 @@ export class OrganismSimulation {
     const tdx = target.x - p.posX[0]
     const tdy = target.y - p.posY[0]
     const tlen = Math.hypot(tdx, tdy)
-    const step = Math.min(tlen * dt * 1.2, maxStep)
+    let step = Math.min(tlen * dt * 1.2, maxStep)
+    if (tlen > 0.08) step = Math.max(step, maxStep * 0.6) // hungry: keep closing
     if (tlen > 0.015) {
       p.posX[0] += (tdx / tlen) * step
       p.posY[0] += (tdy / tlen) * step
@@ -513,7 +527,7 @@ export class OrganismSimulation {
     // sleep threshold: microscopic displacements collapse to rest — the
     // creature holds a pose without shimmering (§24)
     for (let i = 0; i < p.count; i++) {
-      if (Math.hypot(p.posX[i] - p.prevX[i], p.posY[i] - p.prevY[i]) < 0.00006) {
+      if (Math.hypot(p.posX[i] - p.prevX[i], p.posY[i] - p.prevY[i]) < 0.0002) {
         p.posX[i] = p.prevX[i]
         p.posY[i] = p.prevY[i]
       }
@@ -582,6 +596,8 @@ export class OrganismSimulation {
   private routeGoalY = 0
   private lastRouteTime = -10
   private sniffing = false
+  private lastPointerDist = Infinity
+  private lastProgressTime = 0
 
   invalidateRoute() {
     this.route = null
@@ -627,13 +643,17 @@ export class OrganismSimulation {
     return { x: fromX, y: fromY }
   }
 
-  /** Upload render state, interpolated between prev and current (V19). */
-  writeUniforms(alpha: number) {
+  /** Upload render state: sim interpolation + a ~45ms render low-pass —
+      organic goo, never a single-frame back-and-forth machine (V19). */
+  writeUniforms(alpha: number, frameDt: number) {
     const p = this.particles
+    const k = 1 - Math.exp((-Math.max(frameDt, 1e-3) / 0.045) * Math.LN2)
     for (let i = 0; i < p.count; i++) {
       const x = p.prevX[i] + (p.posX[i] - p.prevX[i]) * alpha
       const y = p.prevY[i] + (p.posY[i] - p.prevY[i]) * alpha
-      p.uniformData[i].set(x, y, p.radius[i], p.activation[i])
+      p.renderX[i] += (x - p.renderX[i]) * k
+      p.renderY[i] += (y - p.renderY[i]) * k
+      p.uniformData[i].set(p.renderX[i], p.renderY[i], p.radius[i], p.activation[i])
     }
   }
 }

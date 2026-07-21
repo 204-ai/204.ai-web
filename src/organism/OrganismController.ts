@@ -62,7 +62,7 @@ export class OrganismController {
   prewarm(steps = 150) {
     this.beforeFrame(0)
     for (let i = 0; i < steps; i++) this.simulation.step(this.config.simulation.fixedDelta)
-    this.simulation.writeUniforms(1)
+    this.simulation.writeUniforms(1, 1 / 4) /* prewarm: converge low-pass */
     this.deriveTorso()
     this.deriveCreases()
   }
@@ -89,6 +89,7 @@ export class OrganismController {
   }
 
   private lastScrollY = typeof window !== 'undefined' ? window.scrollY : 0
+  private lastFrameMs: number | null = null
 
   /** Per-frame: DOM/GPU obstacle work only when dirty; sim at fixed step. */
   beforeFrame(timeMs: number) {
@@ -122,7 +123,9 @@ export class OrganismController {
     this.simulation.viewportAspect = this.viewport.width / Math.max(this.viewport.height, 1)
     const steps = this.timestep.advance(timeMs)
     for (let s = 0; s < steps; s++) this.simulation.step(this.config.simulation.fixedDelta)
-    this.simulation.writeUniforms(this.timestep.alpha)
+    const frameDt = this.lastFrameMs === null ? 1 / 60 : Math.min(0.1, (timeMs - this.lastFrameMs) / 1000)
+    this.lastFrameMs = timeMs
+    this.simulation.writeUniforms(this.timestep.alpha, frameDt)
     this.deriveTorso()
     this.deriveCreases()
   }
