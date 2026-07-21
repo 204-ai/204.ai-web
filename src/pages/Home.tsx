@@ -188,9 +188,17 @@ export function Home() {
             {HERO_CHAPTERS.map((f, i) => {
               const active = i === activeFrame
               return (
-                <button
+                <div
                   key={f.code}
+                  role="button"
+                  tabIndex={0}
                   onClick={() => selectFrame(i)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      selectFrame(i)
+                    }
+                  }}
                   className={`${styles.chapter} ${active ? styles.chapterActive : ''}`}
                 >
                   <span className={styles.thumb}>
@@ -207,7 +215,14 @@ export function Home() {
                     </span>
                     <span className={`t-mono ${styles.chapterClient}`}>{f.client.toUpperCase()}</span>
                   </span>
-                </button>
+                  <Link
+                    to={`/work/${f.slug}`}
+                    className={`t-mono ${styles.chapterLink}`}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    VIEW →
+                  </Link>
+                </div>
               )
             })}
           </div>

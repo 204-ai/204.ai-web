@@ -98,10 +98,10 @@ export function MediaStill({ scene, media, mini = false, playing = false, letter
       {mini ? (
         <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.55) 100%)' }} />
       ) : (
-        <>
-          <div style={{ position: 'absolute', left: 0, right: 0, top: 0, height: '26%', background: 'linear-gradient(180deg, rgba(0,0,0,0.5) 0%, transparent 100%)' }} />
-          <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: '20%', background: 'linear-gradient(0deg, rgba(0,0,0,0.45) 0%, transparent 100%)' }} />
-        </>
+        <div className="media-scrims" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', transition: 'opacity 0.35s' }}>
+          <div style={{ position: 'absolute', left: 0, right: 0, top: 0, height: '32%', background: 'linear-gradient(180deg, rgba(0,0,0,0.72) 0%, transparent 100%)' }} />
+          <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: '26%', background: 'linear-gradient(0deg, rgba(0,0,0,0.62) 0%, transparent 100%)' }} />
+        </div>
       )}
     </div>
   )

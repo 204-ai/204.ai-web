@@ -29,6 +29,24 @@
   overflow: hidden;
 }
 
+/* hovering the player clears the grading + captions to inspect footage */
+.still :global(.media-scrims),
+.captionLeft,
+.captionRight,
+.stillFooter {
+  transition: opacity 0.35s;
+}
+
+.still:hover :global(.media-scrims) {
+  opacity: 0;
+}
+
+.still:hover .captionLeft,
+.still:hover .captionRight,
+.still:hover .stillFooter {
+  opacity: 0.2;
+}
+
 .captionLeft {
   position: absolute;
   left: 24px;
@@ -169,6 +187,22 @@
   text-align: left;
   min-height: 0;
   overflow: hidden;
+}
+
+.chapterLink {
+  position: absolute;
+  right: 16px;
+  bottom: 12px;
+  font-size: clamp(9px, 0.7vw, 11px);
+  letter-spacing: 1.5px;
+  color: var(--accent-text);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.chapter:hover .chapterLink,
+.chapterActive .chapterLink {
+  opacity: 1;
 }
 
 .chapterCat {
@@ -397,6 +431,10 @@
     order: 3;
     margin-left: auto;
     align-self: flex-start;
+  }
+
+  .chapterLink {
+    display: none;
   }
 
   .thumb {
