@@ -36,7 +36,7 @@ export function Work() {
         <h1 className={`t-label ${styles.titleRow}`}>
           § 02 / SELECTED WORK <span className={styles.count}>— LEDGER · {String(works.length).padStart(2, '0')}</span>
         </h1>
-        <div className={styles.filters} role="group" aria-label="Filter by category">
+        <div className={`${styles.filters} anim-fade`} role="group" aria-label="Filter by category">
           {CATEGORIES.map((c) => (
             <button
               key={c}
@@ -51,7 +51,7 @@ export function Work() {
       </div>
 
       {/* table-style list */}
-      <div className={styles.table}>
+      <div className={`${styles.table} anim-fade`}>
         <div className={`t-mono ${styles.cols}`} aria-hidden="true">
           <div>ref</div>
           <div>project</div>

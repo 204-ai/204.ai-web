@@ -36,14 +36,14 @@ export function ServiceDetail() {
       {/* media left; selected work in this practice rides beside it,
           intro + CTA follow underneath */}
       <div className={styles.top}>
-        <div className={styles.hero}>
+        <div className={`${styles.hero} anim-media`}>
           <MediaStill
             scene={s.scene}
             media={s.still || s.video ? { still: s.still, video: s.video } : undefined}
             playing
           />
         </div>
-        <aside>
+        <aside className="anim-fade">
           {related.length > 0 ? (
             <>
               <div className="t-label" style={{ marginBottom: 4 }}>/ SELECTED WORK IN THIS PRACTICE</div>
@@ -67,7 +67,7 @@ export function ServiceDetail() {
       </div>
 
       {related.length > 0 && (
-        <div className={styles.introBlock}>
+        <div className={`${styles.introBlock} anim-fade`}>
           <p className={`t-serif ${styles.intro}`}>{s.intro ?? s.body}</p>
           <Link to="/contact" className={`t-mono ${styles.cta}`}>
             → BRING THIS TO YOUR EVENT
@@ -76,7 +76,7 @@ export function ServiceDetail() {
       )}
 
       {s.modes && (
-        <section className={styles.section}>
+        <section className={`${styles.section} anim-fade`}>
           <div className="t-label" style={{ marginBottom: 4 }}>/ ONE SYSTEM — MULTIPLE MODES</div>
           {s.modes.map((m) => (
             <div key={m.n} className={styles.modeRow}>
@@ -89,7 +89,7 @@ export function ServiceDetail() {
       )}
 
       {s.features && (
-        <section className={styles.section}>
+        <section className={`${styles.section} anim-fade`}>
           <div className="t-label" style={{ marginBottom: 14 }}>/ FEATURES</div>
           <div className={styles.features}>
             {s.features.map((f) => (
@@ -103,11 +103,11 @@ export function ServiceDetail() {
       )}
 
       <nav className={styles.pager} aria-label="More services">
-        <Link to={`/services/${prev.slug}`} className={styles.pagerLink}>
+        <Link to={`/services/${prev.slug}`} className={`${styles.pagerLink} anim-wipe-l`}>
           <span className={`t-mono ${styles.pagerLabel}`}>← PREV</span>
           <span className={`t-display ${styles.pagerTitle}`}>{prev.label}</span>
         </Link>
-        <Link to={`/services/${next.slug}`} className={`${styles.pagerLink} ${styles.pagerRight}`}>
+        <Link to={`/services/${next.slug}`} className={`${styles.pagerLink} ${styles.pagerRight} anim-wipe-r`}>
           <span className={`t-mono ${styles.pagerLabel}`}>NEXT →</span>
           <span className={`t-display ${styles.pagerTitle}`}>{next.label}</span>
         </Link>

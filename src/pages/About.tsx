@@ -24,7 +24,7 @@ export function About() {
           promise that we won't. 204 is a creative technology studio working at the intersection of AI, motion,
           identity and live environments — translating ideas into responsive worlds.
         </p>
-        <div className={styles.stats}>
+        <div className={`${styles.stats} anim-fade`}>
           {STATS.map(([k, v]) => (
             <div key={k}>
               <div className={`t-display ${styles.statValue}`}>{v}</div>
@@ -33,7 +33,7 @@ export function About() {
           ))}
         </div>
 
-        <div className={styles.practice}>
+        <div className={`${styles.practice} anim-fade`}>
           <div className="t-label" style={{ marginBottom: 4 }}>/ WORLDBUILDING IN PRACTICE</div>
           {PRACTICE.map((p) => (
             <div key={p.n} className={styles.practiceRow}>
@@ -45,7 +45,7 @@ export function About() {
         </div>
       </div>
 
-      <div className={styles.side}>
+      <div className={`${styles.side} anim-fade`}>
         <div className="t-label" style={{ marginBottom: 16 }}>/ THE MAKERS</div>
         {PEOPLE.map((p, i) => (
           <Link key={p.name} to={`/makers/${p.slug}`} className={styles.person}>

@@ -39,7 +39,7 @@ export function Contact() {
           need it by. We read everything and reply within two working days.
         </p>
 
-        <dl className={`t-mono ${styles.info}`}>
+        <dl className={`t-mono ${styles.info} anim-fade`}>
           {INFO.map(([k, v, href]) => (
             <div key={k} className={styles.infoRow}>
               <dt className={styles.infoKey}>{k}</dt>
@@ -57,7 +57,7 @@ export function Contact() {
         </dl>
       </div>
 
-      <div className={styles.panel}>
+      <div className={`${styles.panel} anim-fade`}>
         <div className="t-label" style={{ marginBottom: 20 }}>/ BRIEF INTAKE · v02</div>
         {sent ? (
           <div className={styles.sent}>

@@ -338,12 +338,6 @@
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .strapRow {
-    animation: ncRiseIn 0.55s cubic-bezier(0.2, 0.7, 0.3, 1) 0.18s both;
-  }
-}
-
 .strapRow {
   display: flex;
   justify-content: space-between;

@@ -33,7 +33,7 @@ export function MakerDetail() {
       <div className={`t-serif ${styles.role}`}>{p.role}</div>
 
       <div className={styles.columns}>
-        <div className={styles.photoWrap}>
+        <div className={`${styles.photoWrap} anim-media`}>
           {p.photo ? (
             <img src={p.photo} alt={p.name} className={styles.photo} />
           ) : (
@@ -48,7 +48,7 @@ export function MakerDetail() {
           )}
         </div>
 
-        <aside className={styles.side}>
+        <aside className={`${styles.side} anim-fade`}>
           {p.bio && <p className={`t-serif ${styles.bio}`}>{p.bio}</p>}
           <div className="t-label" style={{ marginBottom: 8 }}>/ REACH OUT</div>
           <SocialLinks socials={p.socials} />
@@ -59,11 +59,11 @@ export function MakerDetail() {
       </div>
 
       <nav className={styles.pager} aria-label="More makers">
-        <Link to={`/makers/${prev.slug}`} className={styles.pagerLink}>
+        <Link to={`/makers/${prev.slug}`} className={`${styles.pagerLink} anim-wipe-l`}>
           <span className={`t-mono ${styles.pagerLabel}`}>← PREV</span>
           <span className={`t-display ${styles.pagerTitle}`}>{prev.name}</span>
         </Link>
-        <Link to={`/makers/${next.slug}`} className={`${styles.pagerLink} ${styles.pagerRight}`}>
+        <Link to={`/makers/${next.slug}`} className={`${styles.pagerLink} ${styles.pagerRight} anim-wipe-r`}>
           <span className={`t-mono ${styles.pagerLabel}`}>NEXT →</span>
           <span className={`t-display ${styles.pagerTitle}`}>{next.name}</span>
         </Link>

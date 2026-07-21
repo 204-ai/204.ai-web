@@ -35,10 +35,10 @@ export function WorkDetail() {
 
       {/* media front and center, spec sheet beside it on large screens */}
       <div className={styles.mediaRow}>
-        <div className={styles.hero}>
+        <div className={`${styles.hero} anim-media`}>
           <MediaStill scene={w.scene} media={w.media} playing letterbox />
         </div>
-        <aside className={styles.meta}>
+        <aside className={`${styles.meta} anim-fade`}>
           <div className="t-label" style={{ marginBottom: 12 }}>/ SPEC SHEET</div>
           {(
             [
@@ -60,7 +60,7 @@ export function WorkDetail() {
         </aside>
       </div>
 
-      <div className={styles.main}>
+      <div className={`${styles.main} anim-fade`}>
         {w.body && <p className={`t-serif ${styles.body}`}>{w.body}</p>}
 
         {w.youtube?.map((id) => <YoutubeEmbed key={id} id={id} title={w.title} />)}
@@ -78,11 +78,11 @@ export function WorkDetail() {
 
       {/* prev / next */}
       <nav className={styles.pager} aria-label="More work">
-        <Link to={`/work/${prev.slug}`} className={styles.pagerLink}>
+        <Link to={`/work/${prev.slug}`} className={`${styles.pagerLink} anim-wipe-l`}>
           <span className={`t-mono ${styles.pagerLabel}`}>← PREV</span>
           <span className={`t-display ${styles.pagerTitle}`}>{prev.title}</span>
         </Link>
-        <Link to={`/work/${next.slug}`} className={`${styles.pagerLink} ${styles.pagerRight}`}>
+        <Link to={`/work/${next.slug}`} className={`${styles.pagerLink} ${styles.pagerRight} anim-wipe-r`}>
           <span className={`t-mono ${styles.pagerLabel}`}>NEXT →</span>
           <span className={`t-display ${styles.pagerTitle}`}>{next.title}</span>
         </Link>

@@ -20,11 +20,11 @@ export function Services() {
         <span style={{ color: 'var(--dim)' }}>One room.</span>
       </h1>
 
-      <div className={styles.pillarHead}>
+      <div className={`${styles.pillarHead} anim-fade`}>
         <span className="t-label">/ .CONTENT — AI-POWERED VISUALS & GENERATIVE STORYTELLING</span>
         <span className={styles.pillarRule} />
       </div>
-      <div className={styles.grid}>
+      <div className={`${styles.grid} anim-fade`}>
         {SERVICES_CONTENT.map((s, i) => (
           <ServiceCard key={s.n} s={s} last={i === SERVICES_CONTENT.length - 1} />
         ))}
@@ -34,13 +34,13 @@ export function Services() {
         <span className="t-label">/ .INTERACTIVE — INSTALLATIONS, MOTION TRACKING & RESPONSIVE ENVIRONMENTS</span>
         <span className={styles.pillarRule} />
       </div>
-      <div className={styles.grid}>
+      <div className={`${styles.grid} anim-fade`}>
         {SERVICES_INTERACTIVE.map((s, i) => (
           <ServiceCard key={s.n} s={s} last={i === SERVICES_INTERACTIVE.length - 1} />
         ))}
       </div>
 
-      <div className={`t-mono ${styles.footer}`}>
+      <div className={`t-mono ${styles.footer} anim-fade`}>
         <span>RATES ON REQUEST</span>
         <span>EVERY FORMAT STANDS ALONE OR SCALES TO YOUR VENUE</span>
         <Link to="/contact" className={styles.footerLink}>

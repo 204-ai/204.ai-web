@@ -131,7 +131,7 @@ export function Home() {
       {/* hero media — featured work player + chapter rail */}
       <section className={styles.hero} aria-label={`${STUDIO.name} showreel`}>
         <div
-          className={styles.still}
+          className={`${styles.still} anim-media`}
           onClick={hasPlayer ? togglePlay : undefined}
           onKeyDown={hasPlayer ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); togglePlay() } } : undefined}
           role={hasPlayer ? 'button' : undefined}
@@ -182,7 +182,7 @@ export function Home() {
         </div>
 
         {/* right rail: thumbnail stack */}
-        <div className={styles.rail}>
+        <div className={`${styles.rail} anim-fade`}>
           <div className={`t-mono ${styles.railHead}`}>/ CHAPTERS</div>
           <div className={styles.railList}>
             {HERO_CHAPTERS.map((f, i) => {
@@ -237,7 +237,7 @@ export function Home() {
           <span style={{ color: 'var(--dim)' }}>AI AS</span> <span style={{ color: 'var(--accent)' }}>TOOL</span>
           <span style={{ color: 'var(--dim)' }}>.</span>
         </h1>
-        <div className={styles.strapRow}>
+        <div className={`${styles.strapRow} anim-fade`}>
           <p className={`t-mono ${styles.intro}`}>
             204 is a creative technology studio working at the intersection of AI, motion, identity and live
             environments. Based at RnA Studio, Lisbon — operating everywhere there's a signal.
