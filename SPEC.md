@@ -15,18 +15,22 @@ Ship production static site for studio "204 · NO-CONTENT". Implement design/ Di
 - C9: content (works, services, people, copy) verbatim from design/shared.jsx + direction-a.jsx. One data module. SUPERSEDED by C10 for real content.
 - C11: content lives in content/*.json (works/services/people/studio) — code carries no copy. src/data/studio.ts = typed schema + derivations (ids, NC codes, slugs, stats, hero chapters, categories); scripts/generate-meta.mjs reads the same JSON for share meta + sitemap. CMS later = point it at content/.
 - C10: real content source = 204-no-content.webflow.io scrape (snapshot design/scrape/extracted.json). Copy ADAPTED into Night Shift voice — inform, don't transplant; no invented facts. Design/layout unchanged.
+- C12: media self-hosted in repo `public/media/`, committed plain git (no LFS). One-time pipeline `scripts/media-pipeline.mjs` (sharp + ffmpeg, local-only, ⊥ in CI deploy path): imgs → webp site renditions (full ≤1920w + `-p-800`) & jpg `-p-800` for og/share; video → single H.264 mp4 (1080p cap, CRF web-tuned), webm dropped (B5: Infinity duration). Originals cached `media-src/` (gitignored).
+- C13: Firebase project `studio204-web` (display "204 · NO-CONTENT"), Blaze billing. Hosting = primary deploy → https://studio204-web.web.app, base `/`, canonical. GH Pages stays live secondary until custom domain cutover. Both deploy jobs in same workflow, both ! green.
 
 ## §I interfaces
 - I.routes: `/` home, `/work`, `/work/:slug` detail, `/services`, `/services/:slug` detail, `/about`, `/contact`, `*` → 404.
 - I.build: `npm run dev`, `npm run build` (tsc + vite build → dist/), `npm run preview`, `npm run lint`.
 - I.deploy: `dist/` output. SPA rewrite: `public/_redirects` (`/* /index.html 200`) + `vercel.json` rewrite.
 - I.seo: per-route `<title>` + meta description via route head hook. `index.html` base meta + og tags. `robots.txt`.
+- I.firebase: `firebase.json` (hosting: public=dist, SPA rewrite → /index.html, per-path Cache-Control headers), `.firebaserc` (default=studio204-web). CI deploy: FirebaseExtended/action-hosting-deploy w/ repo secret `FIREBASE_SERVICE_ACCOUNT_STUDIO204_WEB` (service acct JSON). Local: `firebase deploy --only hosting`.
+- I.media: `scripts/media-pipeline.mjs` — scan content/*.json + src/index.html/scripts for cdn.prod.website-files.com urls → fetch originals → media-src/ → optimize → public/media/ + write url→path manifest → rewrite refs. Idempotent, rerun-safe.
 
 ## §V invariants
 - V1: prod bundle contains zero references to unpkg/babel-standalone/react.development. `grep -r "unpkg\|babel" dist/assets` → empty.
 - V2: token values in code match §C4 exactly; defined once in `:root` CSS vars; components reference vars, never re-hardcode hex (exception: SVG scene art inside CinematicStill).
 - V3: all 5 routes deep-linkable: direct URL load renders correct page (SPA fallback).
-- V4: fonts + app code self-hosted, no third-party JS/CSS at runtime. TEMP exception (until redesign approved, then self-host): project media (img/video) may hotlink cdn.prod.website-files.com; youtube embeds + OSM map tiles allowed on demand-load (click-to-load only); GA4 gtag.js (G-E2HCBBXBVP, same property as the Webflow site) loads at runtime by explicit request.
+- V4: fonts + app code + media ALL self-hosted, no third-party runtime requests except: GA4 gtag.js (G-E2HCBBXBVP, explicit request) & click-to-load youtube + OSM tiles. `grep -r "website-files" src content index.html scripts dist` → empty (design/ scrape snapshot exempt, read-only ref).
 - V5: `npm run build` exits 0 with zero TS errors. `npm run lint` exits 0.
 - V6: no horizontal overflow at 360px, 768px, 1280px, 1920px viewport widths.
 - V7: rAF/interval animations (CinematicStill, hover preview timecode) gated by `prefers-reduced-motion: reduce` → static frame.
@@ -36,6 +40,9 @@ Ship production static site for studio "204 · NO-CONTENT". Implement design/ Di
 - V11: floating overlays (work hover preview) stay fully inside viewport; never extend document scroll height or sit under fixed nav.
 - V12: display type + hero scale fluidly past 1280 (vw-based clamps, caps ≈1.5× design size); display tracking = prototype value `-0.02px` (NOT em).
 - V13: content constrained to max 1720px centered shell on wide screens; nav bar full-bleed w/ inner capped; nav/labels/chapter type fluid (no fixed tiny px on hidpi).
+- V14: ∀ /media/** response → `Cache-Control: public, max-age=31536000, immutable`; hashed /assets/** same; index.html + generated route HTML → no-cache/short. Content change → new filename (⊥ edit in place under same name).
+- V15: media weight budget: public/media total ≤ 80MB; ∀ video ≤ 40MB (quality > squeeze, user call 2026-07-21); ∀ img file ≤ 2MB; ∀ site-rendered img ≤ 500KB @ used rendition.
+- V16: dual deploy: GH Pages build (VITE_BASE=/204.ai-web/) & Firebase build (base /) both exit 0; canonical + sitemap urls → Firebase (SITE_URL=https://studio204-web.web.app) until domain cutover.
 
 ## §T tasks
 id|status|desc|cites
@@ -62,6 +69,12 @@ T23|x|content architecture: extract all data to content/*.json, studio.ts become
 T22|x|share meta + analytics: og/twitter tags per route (client via useHead + static per-route HTML at build for non-JS scrapers → also fixes GH Pages deep-link 404), sitemap.xml (SITE_URL env), GA4 wired to existing property w/ SPA page_views + named events (cta_click, generate_lead, select_chapter, reel_play_toggle, video_open, map_load, social_click, filter_work)|I.seo,V10
 T21|x|service detail pages /services/:slug: cards click through (READ MORE affordance), product loop hero video, modes list, feature grid, related-work links by category, prev/next pager, 404 on unknown slug; copy from scraped product pages|I.routes,C10,V10
 T20|x|work detail pages /work/:slug: ledger rows click through; hero media, meta grid, longform copy (scraped where available), click-to-load youtube (RUBr/Venom), photo gallery (Hulaween/1N), prev/next nav, unknown slug → 404|I.routes,C10,V4,V10
+T24|x|Firebase bootstrap (interactive w/ user): firebase login, projects:create studio204-web + display name, verify Blaze billing link, firebase.json + .firebaserc, local `firebase deploy --only hosting` smoke → studio204-web.web.app live|C13,I.firebase
+T25|x|media pipeline scripts/media-pipeline.mjs: url scan → fetch → media-src/ → sharp (webp full+800, jpg -p-800 og) + ffmpeg (mp4 1080p CRF, drop webm) → public/media/ + manifest; report per-file before/after sizes|C12,I.media,V15
+T26|.|ref rewrite: content/*.json media urls → /media/..., logo (index.html + useHead + generate-meta), -p-800 helpers → local paths (src/lib/media.ts, useHead.ts, generate-meta.mjs), drop cdn preconnect/dns-prefetch, video entries mp4-only|C12,V4
+T27|.|firebase.json headers: /media/** + /assets/** immutable 1y, html no-cache; SPA rewrite; verify w/ curl -I on deployed site|I.firebase,V14
+T28|.|CI: add Firebase deploy job (action-hosting-deploy, service acct secret) alongside GH Pages job; Firebase build base=/ SITE_URL=studio204-web.web.app, canonical/sitemap → Firebase|C13,I.firebase,V16
+T29|.|verify sprint: build+lint, V4 grep empty, V6 rerun, player-probe, V15 size audit, curl header check both hosts, both deploys green|V4,V5,V6,V14,V15,V16
 
 ## §B bugs
 id|date|cause|fix
@@ -69,4 +82,5 @@ B1|2026-07-20|work hover preview absolute w/o viewport clamp → clipped bottom 
 B2|2026-07-20|nav status lines not optically flush right (block/text-align)|flex column + flex-end, cosmetic
 B3|2026-07-20|t-display tracking -0.02em (prototype = -0.02px ≈ none) + fixed 1280-design px caps → tiny type + dead space on large/hidpi screens|V12 + fluid clamps
 B4|2026-07-20|home not composed to viewport: fixed-height hero + oversized strap pushed CTA below fold on FHD; fixed-width chapter thumbs forced rail taller than hero (last item clipped); nav divider floating|hero flex-fills 100dvh-composed root, strap 6.2vw, thumbs derive width from row height, status divider stretched
+B6|2026-07-21|long-form video (Yards reel 2.4min) 36.5MB @ 1080p/CRF23 tripped orig 15MB cap; user: quality > squeeze|V15 relaxed → video ≤ 40MB; ladder (1080p23→720p26→720p28→540p30) only if > 38MB
 B5|2026-07-20|hero player state frozen at 0: inline ref arrow on <video> changed identity every render → React 19 ran ref cleanup + re-invoked host bindVideo, resetting progress/timecode state on each timeupdate render; also <source> swaps don't reload video (chapter switch kept old footage) and webm transcodes report Infinity duration|memoized merged ref, key video by src, mp4-first sources
