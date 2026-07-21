@@ -88,13 +88,7 @@ export function MediaStill({ scene, media, mini = false, playing = false, letter
           style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
         />
       )}
-      {/* letterbox bars for the cinematic hero */}
-      {letterbox && (
-        <>
-          <div style={{ position: 'absolute', left: 0, right: 0, top: 0, height: 20, background: '#000' }} />
-          <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: 20, background: '#000' }} />
-        </>
-      )}
+
       {/* dark scrim keeps busy photos as subtle as the placeholder scenes in bg use */}
       {scrim && <div style={{ position: 'absolute', inset: 0, background: 'rgba(10,10,10,0.38)' }} />}
       {/* grain + vignette so real footage sits in the same grade as the scenes */}
