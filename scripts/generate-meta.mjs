@@ -47,6 +47,7 @@ const DEFAULT_IMAGE =
    small sources never got renditions from Webflow — list those here. */
 const NO_RENDITION = ['67489265485a73607410fa99_winesfromanother.png']
 function ogImage(u) {
+  if (u && u.startsWith('data:')) return undefined // inline placeholders can't be share cards
   if (!u || u.includes('%2F')) return u
   if (NO_RENDITION.some((f) => u.includes(f))) return u
   return u.replace(/(\.(?:png|jpe?g|webp))$/i, '-p-800$1')

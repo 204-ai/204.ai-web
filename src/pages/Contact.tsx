@@ -1,13 +1,15 @@
 import { useState, type FormEvent } from 'react'
 import { ICONS, type IconName } from '../components/icons'
 import { useHead } from '../hooks/useHead'
-import { trackLead } from '../lib/analytics'
+import { trackLead, trackMapLoad } from '../lib/analytics'
 import { BUDGET_RANGES, CONTACT } from '../data/studio'
 import styles from './Contact.module.css'
 
+const MAPS_URL = 'https://www.google.com/maps/search/?api=1&query=R.+Ferreira+Lapa+12A,+1150-157+Lisboa'
+
 const INFO: Array<[IconName, string, string, string?]> = [
   ['email', 'EMAIL', CONTACT.email, `mailto:${CONTACT.email}`],
-  ['studio', 'STUDIO', CONTACT.studio],
+  ['studio', 'STUDIO', CONTACT.studio, MAPS_URL],
   ['instagram', 'INSTAGRAM', CONTACT.instagram, CONTACT.instagramUrl],
   ['linkedin', 'LINKEDIN', CONTACT.linkedin, CONTACT.linkedinUrl],
 ]
@@ -74,6 +76,11 @@ export function Contact() {
             </div>
           ))}
         </dl>
+
+        <div className={styles.findUs}>
+          <div className="t-label" style={{ marginBottom: 12 }}>/ FIND US</div>
+          <MapEmbed />
+        </div>
       </div>
 
       <div className={`${styles.panel} anim-fade`}>
@@ -141,6 +148,38 @@ export function Contact() {
           </form>
         )}
       </div>
+    </div>
+  )
+}
+
+// Click-to-load — no third-party tiles until asked (SPEC V4), dark-filtered
+// into the palette; the Google Maps link rides on the map as an overlay chip.
+function MapEmbed() {
+  const [loaded, setLoaded] = useState(false)
+  return (
+    <div className={styles.map}>
+      {loaded ? (
+        <iframe
+          src="https://www.openstreetmap.org/export/embed.html?bbox=-9.1494%2C38.7236%2C-9.1374%2C38.7296&layer=mapnik&marker=38.7266%2C-9.1434"
+          title="RnA Studio on the map"
+        />
+      ) : (
+        <button
+          onClick={() => {
+            trackMapLoad()
+            setLoaded(true)
+          }}
+          className={styles.mapButton}
+        >
+          <span className={styles.mapCross} aria-hidden="true">
+            ⌖
+          </span>
+          <span className={`t-mono ${styles.mapLabel}`}>LOAD MAP · OPENSTREETMAP</span>
+        </button>
+      )}
+      <a href={MAPS_URL} target="_blank" rel="noreferrer" className={`t-mono ${styles.mapsChip}`}>
+        → OPEN IN GOOGLE MAPS
+      </a>
     </div>
   )
 }

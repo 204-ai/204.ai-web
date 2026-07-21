@@ -9,6 +9,7 @@ const OG_DEFAULT_IMAGE =
    sources stay as-is. Keep both in sync. */
 const NO_RENDITION = ['67489265485a73607410fa99_winesfromanother.png']
 function ogImage(img?: string): string | undefined {
+  if (img && img.startsWith('data:')) return undefined // inline placeholders can't be share cards
   if (!img || img.includes('%2F')) return img
   if (NO_RENDITION.some((f) => img.includes(f))) return img
   return img.replace(/(\.(?:png|jpe?g|webp))$/i, '-p-800$1')

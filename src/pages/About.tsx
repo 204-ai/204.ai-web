@@ -1,7 +1,5 @@
-import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useHead } from '../hooks/useHead'
-import { trackMapLoad } from '../lib/analytics'
 import { CONTACT, PEOPLE, PRACTICE, RNA_STUDIO_URL, STATS } from '../data/studio'
 import styles from './About.module.css'
 
@@ -70,60 +68,7 @@ export function About() {
           </a>
         </div>
 
-        <div className={styles.findUs}>
-          <div className="t-label" style={{ marginBottom: 12 }}>/ FIND US</div>
-          <div className={`t-mono ${styles.addressRow}`}>
-            <span className={styles.addressKey}>STUDIO</span>
-            <span>R. Ferreira Lapa 12A</span>
-          </div>
-          <div className={`t-mono ${styles.addressRow}`}>
-            <span className={styles.addressKey}>CITY</span>
-            <span>1150-157 Lisboa, Portugal</span>
-          </div>
-          <div className={`t-mono ${styles.addressRow}`}>
-            <span className={styles.addressKey}>GEO</span>
-            <span>38.7266 N · 9.1434 W</span>
-          </div>
-          <MapEmbed />
-          <a
-            href="https://www.google.com/maps/search/?api=1&query=R.+Ferreira+Lapa+12A,+1150-157+Lisboa"
-            target="_blank"
-            rel="noreferrer"
-            className={`t-mono ${styles.mapsLink}`}
-          >
-            → OPEN IN GOOGLE MAPS
-          </a>
-        </div>
       </div>
-    </div>
-  )
-}
-
-// Click-to-load — no third-party tiles until asked (SPEC V4), dark-filtered
-// so the map sits in the palette.
-function MapEmbed() {
-  const [loaded, setLoaded] = useState(false)
-  return (
-    <div className={styles.map}>
-      {loaded ? (
-        <iframe
-          src="https://www.openstreetmap.org/export/embed.html?bbox=-9.1494%2C38.7236%2C-9.1374%2C38.7296&layer=mapnik&marker=38.7266%2C-9.1434"
-          title="RnA Studio on the map"
-        />
-      ) : (
-        <button
-          onClick={() => {
-            trackMapLoad()
-            setLoaded(true)
-          }}
-          className={styles.mapButton}
-        >
-          <span className={styles.mapCross} aria-hidden="true">
-            ⌖
-          </span>
-          <span className={`t-mono ${styles.mapLabel}`}>LOAD MAP · OPENSTREETMAP</span>
-        </button>
-      )}
     </div>
   )
 }
