@@ -581,8 +581,21 @@ export class OrganismSimulation {
     this.smTX += (rawTX - this.smTX) * tvk
     this.smTY += (rawTY - this.smTY) * tvk
     const tl2 = Math.hypot(this.smTX, this.smTY)
-    const travelDirX = tl2 > 0.05 ? this.smTX / tl2 : 0
-    const travelDirY = tl2 > 0.05 ? this.smTY / tl2 : 0
+    let travelDirX = tl2 > 0.05 ? this.smTX / tl2 : 0
+    let travelDirY = tl2 > 0.05 ? this.smTY / tl2 : 0
+    // corner steering: a travel direction pointing INTO the surface fights
+    // the hard projection (corner jiggle → yeet). Deflect it along the
+    // tangent — the body rounds the apex on the shell arc instead.
+    {
+      const into = travelDirX * surfNX + travelDirY * surfNY
+      if (into < -0.2 && sd < this.maxReach * 0.6) {
+        travelDirX -= surfNX * into
+        travelDirY -= surfNY * into
+        const tn = Math.hypot(travelDirX, travelDirY) || 1
+        travelDirX /= tn
+        travelDirY /= tn
+      }
+    }
     this.dbgMoving = moving
     this.dbgGoalDist = goalDist
     this.dbgTravel = [travelDirX, travelDirY]
@@ -596,7 +609,7 @@ export class OrganismSimulation {
     if (this.state !== 'jump') {
       const goalIsNew = Math.hypot(ix - this.failedGoalX, iy - this.failedGoalY) > 0.15
       if (this.sniffing && this.state !== 'sniff') this.setState('sniff')
-      else if (this.state === 'rest' && goalDist > 0.4 && inState > 1.5 && goalIsNew) this.setState('pursue')
+      else if (this.state === 'rest' && goalDist > 0.22 && inState > 1.5 && goalIsNew) this.setState('pursue')
       else if (this.state === 'pursue' && goalDist < 0.14 && inState > 1) this.setState('settle')
       else if (this.state === 'pursue' && inState > 1 && this.time - this.pursueBestAt > 2.5) {
         // remember the failed goal — no lurching retry loop (§18 hysteresis)
@@ -743,7 +756,7 @@ export class OrganismSimulation {
         for (const pl of this.plants) if (pl.active) anyPlant = true
         const speedNorm = Math.min(1, Math.hypot(this.coreVelX, this.coreVelY) / 0.08)
         const dip = 0.02 * Math.exp(-(this.time - this.lastPlantTime) / 0.35)
-        const hover = this.maxReach * (0.3 + Math.sin(this.time * 0.11 * Math.PI * 2 + 0.7) * 0.06 - speedNorm * 0.08 - dip)
+        const hover = this.maxReach * (0.3 + Math.sin(this.time * 0.11 * Math.PI * 2 + 0.7) * 0.02 - speedNorm * 0.08 - dip)
         const clampE = anyPlant ? 0.05 : 0.14
         const gainE = anyPlant ? 1.6 : 3.2
         const err = Math.max(-clampE, Math.min(clampE, sd - hover))
@@ -941,17 +954,17 @@ export class OrganismSimulation {
         if (pl.active) {
           tx = pl.x
           ty = pl.y
-          bend = this.chainLen[a] * 0.08 // taut standing leg, slight arc
+          bend = this.chainLen[a] * 0.05 // taut standing leg, slight arc
         } else if (sw.active) {
           const e = sw.t * sw.t * (3 - 2 * sw.t)
           const lift = Math.sin(sw.t * Math.PI) * this.chainLen[a] * 0.35
           tx = sw.fromX + (sw.toX - sw.fromX) * e + surfNX * lift
           ty = sw.fromY + (sw.toY - sw.fromY) * e + surfNY * lift
-          bend = this.chainLen[a] * 0.22
+          bend = this.chainLen[a] * 0.12
         } else {
           tx = rootX + Math.cos(d.restAngle) * this.chainLen[a] * 0.55
           ty = rootY + Math.sin(d.restAngle) * this.chainLen[a] * 0.55
-          bend = this.chainLen[a] * 0.1
+          bend = this.chainLen[a] * 0.06
         }
         this.solveLimb(a, rootX, rootY, tx, ty, bend, pl.active)
       } else {
