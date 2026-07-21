@@ -39,8 +39,11 @@ export class NavigationField {
         const d = Math.min(edge + torsoClearance /* edges are walkable shells */, obstacles.length ? sdObstacles(x, y, obstacles, rounding) : Infinity)
         const i = r * cols + c
         this.blocked[i] = d < torsoClearance ? 1 : 0
-        // discourage the comfort band without forbidding it
-        this.cost[i] = 1 + (d < comfort ? 3 * (1 - Math.max(d, 0) / comfort) : 0)
+        // discourage the comfort band without forbidding it; prefer cells
+        // near surfaces (shell affinity — the creature walks, it doesn't
+        // cut across open space it would have to jump)
+        const offShell = Math.min(edge, d) > 0.12 ? 4 : 1 // strongly prefer wall paths
+        this.cost[i] = (1 + (d < comfort ? 3 * (1 - Math.max(d, 0) / comfort) : 0)) * offShell
       }
     }
   }
@@ -82,7 +85,31 @@ export class NavigationField {
   }
 
   /** A* with octile heuristic; smoothed by line-of-sight shortcutting. */
-  route(sx: number, sy: number, gx: number, gy: number, hasLineOfSight: (ax: number, ay: number, bx: number, by: number) => boolean): RouteResult {
+  route(
+    sx: number,
+    sy: number,
+    gx: number,
+    gy: number,
+    hasLineOfSight: (ax: number, ay: number, bx: number, by: number) => boolean,
+    prev?: Array<{ x: number; y: number }>,
+  ): RouteResult {
+    // previous-route preference (§21): cells near the old path cost less —
+    // symmetric obstacles no longer flip sides on every recompute
+    const prefer = new Uint8Array(this.cols * this.rows)
+    if (prev) {
+      for (const pt of prev) {
+        const ci = this.cellOf(pt.x, pt.y)
+        const c0 = ci % this.cols
+        const r0 = Math.floor(ci / this.cols)
+        for (let dr = -2; dr <= 2; dr++) {
+          for (let dc = -2; dc <= 2; dc++) {
+            const c = c0 + dc
+            const r = r0 + dr
+            if (c >= 0 && c < this.cols && r >= 0 && r < this.rows) prefer[r * this.cols + c] = 1
+          }
+        }
+      }
+    }
     const start = this.nearestOpen(this.cellOf(sx, sy))
     const goalCellRaw = this.cellOf(gx, gy)
     const goal = this.nearestOpen(goalCellRaw)
@@ -127,7 +154,7 @@ export class NavigationField {
           if (nc < 0 || nc >= cols || nr < 0 || nr >= rows) continue
           const ni = nr * cols + nc
           if (this.blocked[ni] || closed[ni]) continue
-          const step = (dc && dr ? 1.41 : 1) * this.cost[ni]
+          const step = (dc && dr ? 1.41 : 1) * this.cost[ni] * (prefer[ni] ? 0.6 : 1)
           if (g[cur] + step < g[ni]) {
             g[ni] = g[cur] + step
             from[ni] = cur

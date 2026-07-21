@@ -243,7 +243,7 @@ export class OrganismSimulation {
         this.time - this.lastRouteTime > 6
       if (stale) {
         if (starved) this.lastProgressTime = this.time // one shot per stall
-        this.route = this.nav.route(p.posX[0], p.posY[0], ix, iy, this.hasLOS)
+        this.route = this.nav.route(p.posX[0], p.posY[0], ix, iy, this.hasLOS, this.route?.points)
         this.routeGoalX = ix
         this.routeGoalY = iy
         this.lastRouteTime = this.time
@@ -344,7 +344,8 @@ export class OrganismSimulation {
             land = { x: g.x - gn.x * (gd - this.maxReach * 0.3), y: g.y - gn.y * (gd - this.maxReach * 0.3) }
           }
           const gap = Math.hypot(land.x - p.posX[0], land.y - p.posY[0])
-          if (goalDist > 0.3 && gap > this.maxReach * 1.2 && gap < 0.6) {
+          const landSane = land.x > 0.02 && land.x < this.viewportAspect - 0.02 && land.y > 0.02 && land.y < 0.98
+          if (landSane && goalDist > 0.2 && gap > this.maxReach * 1.1 && gap < 0.4) {
             this.jumpSX = p.posX[0]
             this.jumpSY = p.posY[0]
             this.jumpEX = land.x
@@ -369,9 +370,13 @@ export class OrganismSimulation {
       const speedNorm = Math.min(1, Math.hypot(this.coreVelX, this.coreVelY) / 0.08)
       const dip = 0.08 * Math.exp(-(this.time - this.lastPlantTime) / 0.35)
       const hover = this.maxReach * (0.3 + Math.sin(this.time * 0.11 * Math.PI * 2 + 0.7) * 0.06 - speedNorm * 0.08 - dip)
-      const err = Math.max(-0.05, Math.min(0.05, sd - hover))
-      p.posX[0] -= surfNX * err * Math.min(1, dt * 1.6)
-      p.posY[0] -= surfNY * err * Math.min(1, dt * 1.6)
+      let anyPlant = false
+      for (const pl of this.plants) if (pl.active) { anyPlant = true; break }
+      const clampE = anyPlant ? 0.05 : 0.14
+      const gainE = anyPlant ? 1.6 : 3.2
+      const err = Math.max(-clampE, Math.min(clampE, sd - hover))
+      p.posX[0] -= surfNX * err * Math.min(1, dt * gainE)
+      p.posY[0] -= surfNY * err * Math.min(1, dt * gainE)
     }
     // role-based anatomy (user 2026-07-21): first 3 limbs are WALKERS that
     // hang toward the surface, the rest are UPPER tentacles — rest angles
@@ -447,14 +452,17 @@ export class OrganismSimulation {
         // real stride ahead; idle: wide stable stance
         let tx: number
         let ty: number
+        // per-leg landing slots — identical leads bunched 2-3 feet onto
+        // the same spot (user 2026-07-21)
+        const SLOT = [-0.55, -0.2, 0.2, 0.55]
         if (moving) {
           const sgn = Math.sign(tangX * travelDirX + tangY * travelDirY || 1)
-          tx = p.posX[rootI] + tangX * sgn * this.chainLen[a] * 0.75
-          ty = p.posY[rootI] + tangY * sgn * this.chainLen[a] * 0.75
+          const lead = [0.5, 0.72, 0.94, 0.62][a % 4]
+          tx = p.posX[rootI] + tangX * (sgn * this.chainLen[a] * lead + SLOT[a % 4] * this.chainLen[a] * 0.5)
+          ty = p.posY[rootI] + tangY * (sgn * this.chainLen[a] * lead + SLOT[a % 4] * this.chainLen[a] * 0.5)
         } else {
-          const sgn = a < 2 ? -1 : 1
-          tx = p.posX[rootI] + tangX * sgn * this.chainLen[a] * 0.5
-          ty = p.posY[rootI] + tangY * sgn * this.chainLen[a] * 0.5
+          tx = p.posX[rootI] + tangX * SLOT[a % 4] * this.chainLen[a] * 1.15
+          ty = p.posY[rootI] + tangY * SLOT[a % 4] * this.chainLen[a] * 1.15
         }
         for (let it = 0; it < 3; it++) {
           const td = this.surfaceDist(tx, ty)
@@ -467,7 +475,30 @@ export class OrganismSimulation {
         const tipR = p.radius[p.indexOf(a, p.jointsPerAppendage - 1)]
         tx += this.normal.x * tipR * 1.2
         ty += this.normal.y * tipR * 1.2
-        if (Math.hypot(tx - p.posX[rootI], ty - p.posY[rootI]) < this.chainLen[a] && this.bridgeClear(p.posX[rootI], p.posY[rootI], tx, ty)) {
+        // minimum foot separation: nudge along the tangent away from the
+        // nearest existing plant until clear (max 2 nudges)
+        for (let tries = 0; tries < 2; tries++) {
+          let tooClose = false
+          for (let o = 0; o < Math.min(4, p.appendageCount); o++) {
+            if (o === a || !this.plants[o].active) continue
+            if (Math.hypot(this.plants[o].x - tx, this.plants[o].y - ty) < this.chainLen[a] * 0.4) {
+              tooClose = true
+              break
+            }
+          }
+          if (!tooClose) break
+          tx += tangX * this.chainLen[a] * 0.35 * (a < 2 ? -1 : 1)
+          ty += tangY * this.chainLen[a] * 0.35 * (a < 2 ? -1 : 1)
+        }
+        let stillClose = false
+        for (let o = 0; o < Math.min(4, p.appendageCount); o++) {
+          if (o === a || !this.plants[o].active) continue
+          if (Math.hypot(this.plants[o].x - tx, this.plants[o].y - ty) < this.chainLen[a] * 0.35) {
+            stillClose = true
+            break
+          }
+        }
+        if (!stillClose && Math.hypot(tx - p.posX[rootI], ty - p.posY[rootI]) < this.chainLen[a] && this.bridgeClear(p.posX[rootI], p.posY[rootI], tx, ty)) {
           plant.x = tx
           plant.y = ty
           plant.active = true
@@ -482,7 +513,8 @@ export class OrganismSimulation {
     // best aligned with the pointer extends toward it, others trail
     for (let a = 0; a < p.appendageCount; a++) {
       const d = this.drivers[a]
-      const sway = Math.sin(this.time * d.swayFreq * Math.PI * 2 + d.swayPhase) * d.swayAmp
+      const calm = S === 'rest' || S === 'settle' ? 0.45 : 1
+      const sway = Math.sin(this.time * d.swayFreq * Math.PI * 2 + d.swayPhase) * d.swayAmp * calm
       let targetAngle = d.restAngle + sway * 0.45
       let reachScale = 1
       // walkers (a<3) keep their feet — only UPPER tentacles reach for the
@@ -499,7 +531,7 @@ export class OrganismSimulation {
         const farness = Math.min(1, Math.hypot(dx0, dy0) / 0.5)
         const bias = align * align * (0.3 + 0.7 * farness)
         targetAngle += delta * 0.7 * bias
-        reachScale = 1 + bias * 1.1
+        reachScale = Math.min(1.35, 1 + bias * 1.1)
         if (this.sniffing) {
           // grasp toward thin air: slow per-tendril wobble + reach pulsing —
           // intentional sniffing, not stiff pointing (user 2026-07-21)
@@ -669,6 +701,32 @@ export class OrganismSimulation {
     this.anchorX = Math.min(Math.max(this.anchorX, 0.14), this.viewportAspect - 0.14)
     this.anchorY = Math.min(Math.max(this.anchorY, 0.14), 0.86)
 
+    // §24 hard guarantees — regardless of what any force computed:
+    // (a) the core never leaves the page neighborhood; (b) no particle
+    // moves more than 2% of the viewport in one step (anti-teleport)
+    {
+      const bx0 = -0.2
+      const bx1 = this.viewportAspect + 0.2
+      const by0 = -1.5
+      const by1 = 2.5
+      if (p.posX[0] < bx0 || p.posX[0] > bx1 || p.posY[0] < by0 || p.posY[0] > by1) {
+        p.posX[0] = Math.min(Math.max(p.posX[0], bx0), bx1)
+        p.posY[0] = Math.min(Math.max(p.posY[0], by0), by1)
+        p.prevX[0] = p.posX[0]
+        p.prevY[0] = p.posY[0]
+      }
+      const maxDisp = 0.02
+      for (let i = 0; i < p.count; i++) {
+        const dx = p.posX[i] - p.prevX[i]
+        const dy = p.posY[i] - p.prevY[i]
+        const dd = Math.hypot(dx, dy)
+        if (dd > maxDisp) {
+          p.posX[i] = p.prevX[i] + (dx / dd) * maxDisp
+          p.posY[i] = p.prevY[i] + (dy / dd) * maxDisp
+        }
+      }
+    }
+
     // sleep threshold: microscopic displacements collapse to rest — the
     // creature holds a pose without shimmering (§24)
     for (let i = 0; i < p.count; i++) {
@@ -716,7 +774,7 @@ export class OrganismSimulation {
         // plants (weight transfer) and coasts between steps — pulsed
         // locomotion instead of a rope-drag glide
         const surge = this.time < this.surgeUntil
-        const gain = moving ? (surge ? 4.2 : 1.6) : 1.2
+        const gain = moving ? (surge ? 3.2 : 1.6) : 1.2
         // height is the hover spring's job — a normal term here fights
         // travel whenever the wall sits behind the direction of motion
         const pullX = sumX / planted + travelDirX * this.maxReach * 0.5
@@ -875,7 +933,8 @@ export class OrganismSimulation {
       organic goo, never a single-frame back-and-forth machine (V19). */
   writeUniforms(alpha: number, frameDt: number) {
     const p = this.particles
-    const k = 1 - Math.exp((-Math.max(frameDt, 1e-3) / 0.045) * Math.LN2)
+    const tau = this.state === 'rest' || this.state === 'settle' || this.state === 'sniff' ? 0.09 : 0.045
+    const k = 1 - Math.exp((-Math.max(frameDt, 1e-3) / tau) * Math.LN2)
     for (let i = 0; i < p.count; i++) {
       const x = p.prevX[i] + (p.posX[i] - p.prevX[i]) * alpha
       const y = p.prevY[i] + (p.posY[i] - p.prevY[i]) * alpha

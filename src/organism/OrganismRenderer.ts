@@ -65,6 +65,7 @@ export class OrganismRenderer {
       indexOf: (a: number, j: number) => particles.indexOf(a, j),
       opacity: config.appearance.opacity,
       edgeSoftnessPx: config.appearance.edgeSoftnessPx,
+      internalShadingStrength: config.appearance.internalShadingStrength,
       includeDebug: import.meta.env.DEV,
     })
 

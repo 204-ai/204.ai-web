@@ -8,6 +8,9 @@ export type OrganismConfig = {
     color: number
     opacity: number
     edgeSoftnessPx: number
+    /* 0 = flat silhouette; small values darken thick interiors slightly so
+       overlapping tentacle mass reads (handoff §35, subtle only) */
+    internalShadingStrength: number
   }
   simulation: {
     fixedDelta: number
@@ -50,6 +53,7 @@ export const defaultOrganismConfig: OrganismConfig = {
     color: 0xffffff,
     opacity: 0.96,
     edgeSoftnessPx: 1.25,
+    internalShadingStrength: 0.12,
   },
   simulation: {
     fixedDelta: 1 / 60,

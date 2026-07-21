@@ -15,7 +15,10 @@ import type { OrganismConfig } from './OrganismParameters'
 import { viewportPxToSimulation, type Viewport } from './obstacle/ObstacleCoordinates'
 
 export const LOBE_COUNT = 3
-export const CREASE_COUNT = 2
+/* creases retired: they severed thin tentacles crossing their channel —
+   concavity now comes from limb gaps + webbing (user 2026-07-21).
+   Count stays 1 with an off-screen dummy (uniformArray([]) crashes three) */
+export const CREASE_COUNT = 1
 
 export class OrganismController {
   readonly particles: ParticleBuffer
@@ -169,20 +172,10 @@ export class OrganismController {
     const u = p.uniformData
     const coreX = u[0].x
     const coreY = u[0].y
-    for (let c = 0; c < CREASE_COUNT; c++) {
-      // pick root pairs spread across appendages deterministically
-      const a0 = (c * 2) % p.appendageCount
-      const a1 = (a0 + 1) % p.appendageCount
-      const r0 = p.indexOf(a0, 0)
-      const r1 = p.indexOf(a1, 0)
-      const mx = (u[r0].x + u[r1].x) / 2
-      const my = (u[r0].y + u[r1].y) / 2
-      const dx = mx - coreX
-      const dy = my - coreY
-      const len = Math.hypot(dx, dy) || 1
-      // channel from just outside the core toward the midpoint, pointing out
-      this.creaseData[c].set(coreX + (dx / len) * u[0].z * 0.55, coreY + (dy / len) * u[0].z * 0.55, mx + (dx / len) * 0.12, my + (dy / len) * 0.12)
-    }
+    // retired — park the dummy crease far off-screen (see CREASE_COUNT)
+    for (let c = 0; c < CREASE_COUNT; c++) this.creaseData[c].set(-5, -5, -5, -5)
+    void coreX
+    void coreY
   }
 
   dispose() {

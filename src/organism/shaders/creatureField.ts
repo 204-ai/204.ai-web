@@ -146,6 +146,7 @@ export function buildOutputNodes(opts: {
   indexOf: (a: number, j: number) => number
   opacity: number
   edgeSoftnessPx: number
+  internalShadingStrength: number
   includeDebug: boolean
 }) {
   const { distance: rawDistance, uvNode, simPos, viewportHeightPx, debugView } = opts
@@ -167,8 +168,13 @@ export function buildOutputNodes(opts: {
   const w = max(distance.fwidth(), edgeSim)
   const coverage = float(1).sub(smoothstep(w.negate(), w, distance))
 
+  /* faint interior depth (§35): brightness dips toward thick cores —
+     edges stay crisp white, mass becomes legible without 3D shading */
+  const depth = smoothstep(0, R * 1.3, distance.negate()).mul(opts.internalShadingStrength)
+  const bodyColor = vec3(float(1).sub(depth))
+
   if (!opts.includeDebug) {
-    return { colorNode: vec3(1, 1, 1), opacityNode: coverage.mul(opts.opacity) }
+    return { colorNode: bodyColor, opacityNode: coverage.mul(opts.opacity) }
   }
 
   const maskS = texture(opts.maskTex, uvNode)
@@ -197,28 +203,24 @@ export function buildOutputNodes(opts: {
   // 5: outline — stroke along the zero isoline, shape readable over content
   const outlineHit = smoothstep(w.mul(3), float(0), distance.abs())
 
-  // 6: limbs — each appendage in its own color for visual inspection
+  // 6: colored skeleton — joint discs tinted per appendage over a faint
+  // silhouette (the earlier nearest-limb fill tinted the whole screen)
   const PALETTE = [vec3(1, 0.3, 0.25), vec3(1, 0.75, 0.2), vec3(0.35, 1, 0.4), vec3(0.3, 0.75, 1), vec3(0.7, 0.4, 1), vec3(1, 0.4, 0.85)]
-  let limbColor: Node = vec3(0.9, 0.9, 0.9)
-  let bestD: Node = float(1e5)
+  let limbsView: Node = vec3(0.16).mul(coverage)
   for (let a = 0; a < opts.appendageCount; a++) {
-    let dA: Node = float(1e5)
     for (let j = 0; j < opts.jointsPerAppendage; j++) {
       const pp = opts.particles.element(opts.indexOf(a, j))
-      dA = min(dA, simPos.sub(pp.xy).length().sub(pp.z))
+      const hit = smoothstep(0.004, 0, simPos.sub(pp.xy).length().sub(0.006))
+      limbsView = limbsView.add(PALETTE[a % PALETTE.length].mul(hit))
     }
-    const closer = dA.lessThan(bestD)
-    limbColor = closer.select(PALETTE[a % PALETTE.length], limbColor)
-    bestD = min(bestD, dA)
   }
-  const limbsView = limbColor.mul(coverage.clamp(0.15, 1))
 
   const dv = debugView
   const colorNode = dv
     .equal(1)
     .select(
       maskS.xyz,
-      dv.equal(2).select(sdfView, dv.equal(3).select(fieldView, dv.equal(4).select(skelView, dv.equal(5).select(vec3(1, 0.35, 0.2), dv.equal(6).select(limbsView, vec3(1, 1, 1)))))),
+      dv.equal(2).select(sdfView, dv.equal(3).select(fieldView, dv.equal(4).select(skelView, dv.equal(5).select(vec3(1, 0.35, 0.2), dv.equal(6).select(limbsView, bodyColor))))),
     )
   const opacityNode = dv
     .equal(0)
