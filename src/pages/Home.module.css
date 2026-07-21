@@ -363,19 +363,43 @@
 }
 
 .cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   border: 1px solid var(--fg);
-  font-size: 11px;
-  letter-spacing: 2px;
+  font-size: clamp(11px, 0.85vw, 14px);
+  letter-spacing: 2.5px;
   text-transform: uppercase;
-  padding: 14px 22px;
+  padding: 18px 28px;
   transition:
-    background 0.15s,
-    color 0.15s;
+    background 0.18s,
+    color 0.18s,
+    border-color 0.18s;
+}
+
+.ctaCount {
+  color: var(--accent-text);
+  transition: color 0.18s;
+}
+
+.ctaArrow {
+  transition: transform 0.28s cubic-bezier(0.2, 0.7, 0.3, 1);
 }
 
 .cta:hover {
   background: var(--fg);
   color: var(--bg);
+  border-color: var(--fg);
+}
+
+.cta:hover .ctaCount {
+  color: var(--accent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cta:hover .ctaArrow {
+    transform: translateX(5px);
+  }
 }
 
 /* ─── responsive ─── */

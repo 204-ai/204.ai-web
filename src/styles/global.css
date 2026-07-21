@@ -41,6 +41,44 @@ body {
 html {
   background: var(--bg);
   color-scheme: dark;
+  /* reserve the gutter so pages/animations that toggle overflow don't
+     shift the layout when the scrollbar appears */
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: #2e2e2e var(--bg);
+}
+
+@supports not (scrollbar-gutter: stable) {
+  html {
+    overflow-y: scroll;
+  }
+}
+
+/* ─── scrollbar, graded to the design (WebKit) ─── */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2e2e2e;
+  border: 2px solid var(--bg);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: var(--accent);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--bg);
 }
 
 body {
