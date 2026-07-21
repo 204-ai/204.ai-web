@@ -1,14 +1,15 @@
 import { useState, type FormEvent } from 'react'
+import { ICONS, type IconName } from '../components/icons'
 import { useHead } from '../hooks/useHead'
 import { trackLead } from '../lib/analytics'
 import { BUDGET_RANGES, CONTACT } from '../data/studio'
 import styles from './Contact.module.css'
 
-const INFO: Array<[string, string, string?]> = [
-  ['EMAIL', CONTACT.email, `mailto:${CONTACT.email}`],
-  ['STUDIO', CONTACT.studio],
-  ['INSTAGRAM', CONTACT.instagram, CONTACT.instagramUrl],
-  ['LINKEDIN', CONTACT.linkedin, CONTACT.linkedinUrl],
+const INFO: Array<[IconName, string, string, string?]> = [
+  ['email', 'EMAIL', CONTACT.email, `mailto:${CONTACT.email}`],
+  ['studio', 'STUDIO', CONTACT.studio],
+  ['instagram', 'INSTAGRAM', CONTACT.instagram, CONTACT.instagramUrl],
+  ['linkedin', 'LINKEDIN', CONTACT.linkedin, CONTACT.linkedinUrl],
 ]
 
 export function Contact() {
@@ -16,12 +17,25 @@ export function Contact() {
     'Contact',
     'Send a brief, not a form. Three lines: who you are, what you’re making, when you need it by.',
   )
-  const [brief, setBrief] = useState({ name: '', org: '', budget: '', scope: '' })
+  const [brief, setBrief] = useState({ name: '', org: '', email: '', budget: '', scope: '' })
   const [sent, setSent] = useState(false)
 
   const submit = (e: FormEvent) => {
     e.preventDefault()
     trackLead(brief.budget)
+    // no backend (SPEC C8) — deliver the brief via the visitor's mail client
+    const subject = `Brief — ${brief.name || 'new project'}`
+    const body = [
+      `Name: ${brief.name}`,
+      brief.org && `Organisation: ${brief.org}`,
+      `Reply to: ${brief.email}`,
+      brief.budget && `Budget: ${brief.budget}`,
+      '',
+      brief.scope,
+    ]
+      .filter(Boolean)
+      .join('\n')
+    window.location.href = `mailto:${CONTACT.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
     setSent(true)
   }
 
@@ -42,9 +56,12 @@ export function Contact() {
         </p>
 
         <dl className={`t-mono ${styles.info} anim-fade`}>
-          {INFO.map(([k, v, href]) => (
+          {INFO.map(([icon, k, v, href]) => (
             <div key={k} className={styles.infoRow}>
-              <dt className={styles.infoKey}>{k}</dt>
+              <dt className={styles.infoKey}>
+                <span className={styles.infoIcon}>{ICONS[icon]}</span>
+                {k}
+              </dt>
               <dd className={styles.infoValue}>
                 {href ? (
                   <a href={href} target={href.startsWith('http') ? '_blank' : undefined} rel="noreferrer">
@@ -65,23 +82,28 @@ export function Contact() {
           <div className={styles.sent}>
             <div className={`t-mono ${styles.sentBadge}`}>● RECEIVED</div>
             <div className={`t-display ${styles.sentTitle}`}>Thank you.</div>
-            <div className={styles.sentNote}>We'll read it today and reply by {replyBy}.</div>
+            <div className={styles.sentNote}>
+              We'll read it today and reply to {brief.email || 'you'} by {replyBy}.
+            </div>
           </div>
         ) : (
           <form onSubmit={submit}>
             {(
               [
-                ['name', 'Name'],
-                ['org', 'Organisation'],
+                ['name', 'Name', 'text', 'name', false],
+                ['org', 'Organisation', 'text', 'organization', false],
+                ['email', 'Email — so we can get back to you', 'email', 'email', true],
               ] as const
-            ).map(([k, l]) => (
+            ).map(([k, l, type, auto, required]) => (
               <label key={k} className={styles.field}>
                 <span className={`t-mono ${styles.fieldLabel}`}>{l.toUpperCase()}</span>
                 <input
                   value={brief[k]}
                   onChange={(e) => setBrief({ ...brief, [k]: e.target.value })}
                   className={styles.input}
-                  autoComplete={k === 'name' ? 'name' : 'organization'}
+                  type={type}
+                  autoComplete={auto}
+                  required={required}
                 />
               </label>
             ))}
