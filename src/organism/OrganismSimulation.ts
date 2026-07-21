@@ -96,6 +96,8 @@ export class OrganismSimulation {
   private surgeUntil = -10
   private stanceX = 1.02
   private stanceY = 0.42
+  private smTX = 0
+  private smTY = 0
   private stanceInit = false
   private lastJumpEnd = -10
   private lastJumpFromX = 1e9
@@ -504,8 +506,16 @@ export class OrganismSimulation {
     const tlen = Math.hypot(tdx, tdy)
     const goalDist = finalGoalDist >= 0 ? finalGoalDist : tlen
     const moving = goalDist > (this.pointerActive ? 0.13 : 0.05)
-    const travelDirX = moving && tlen > 1e-4 ? tdx / tlen : 0
-    const travelDirY = moving && tlen > 1e-4 ? tdy / tlen : 0
+    const rawTX = moving && tlen > 1e-4 ? tdx / tlen : 0
+    const rawTY = moving && tlen > 1e-4 ? tdy / tlen : 0
+    // stalking: travel direction is EASED — waypoint switches turn the
+    // body, they never yank it sideways (user 2026-07-21)
+    const tvk = 1 - Math.exp((-dt / 0.5) * Math.LN2)
+    this.smTX += (rawTX - this.smTX) * tvk
+    this.smTY += (rawTY - this.smTY) * tvk
+    const tl2 = Math.hypot(this.smTX, this.smTY)
+    const travelDirX = tl2 > 0.05 ? this.smTX / tl2 : 0
+    const travelDirY = tl2 > 0.05 ? this.smTY / tl2 : 0
     this.dbgMoving = moving
     this.dbgGoalDist = goalDist
     this.dbgTravel = [travelDirX, travelDirY]
@@ -642,7 +652,7 @@ export class OrganismSimulation {
           this.stanceX += (cX - this.stanceX) * ck
           this.stanceY += (cY - this.stanceY) * ck
           const surge = this.time < this.surgeUntil
-          const gain = surge ? 2.2 : 1.6
+          const gain = surge ? 1.8 : 1.3
           const pullX = this.stanceX + travelDirX * this.maxReach * 0.5
           const pullY = this.stanceY + travelDirY * this.maxReach * 0.5
           let mx = (pullX - p.posX[0]) * Math.min(1, dt * gain)
@@ -729,7 +739,7 @@ export class OrganismSimulation {
       // stagnation breaker (T41): traveling but no step for 1.2s = the
       // mid-stride equilibrium — force the most-behind foot to step
       let forceStep = -1
-      if (S === 'pursue' && moving && this.time - this.lastReleaseTime > 1.2) {
+      if (S === 'pursue' && moving && this.time - this.lastReleaseTime > 1.8) {
         let worstDot = Infinity
         for (let a = 0; a < LEGS; a++) {
           const pl = this.plants[a]
@@ -748,7 +758,7 @@ export class OrganismSimulation {
         const stretch = Math.hypot(pl.x - p.posX[rootI], pl.y - p.posY[rootI])
         const bad = !this.bridgeClear(p.posX[rootI], p.posY[rootI], pl.x, pl.y) || stretch > this.chainLen[a] * 1.3 || !inRange
         const behind = (pl.x - p.posX[0]) * travelDirX + (pl.y - p.posY[0]) * travelDirY < -this.chainLen[a] * 0.3
-        const gait = S === 'pursue' && (stretch > this.chainLen[a] * 1.06 || behind) && this.time - this.lastReleaseTime > 0.45
+        const gait = S === 'pursue' && (stretch > this.chainLen[a] * 1.06 || behind) && this.time - this.lastReleaseTime > 0.8
         if (bad || gait || a === forceStep) {
           pl.active = false
           this.lastReleaseTime = this.time

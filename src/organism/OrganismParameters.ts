@@ -53,7 +53,7 @@ export const defaultOrganismConfig: OrganismConfig = {
     color: 0xffffff,
     opacity: 0.96,
     edgeSoftnessPx: 1.25,
-    internalShadingStrength: 0.26,
+    internalShadingStrength: 0.45,
   },
   simulation: {
     fixedDelta: 1 / 60,
@@ -72,7 +72,7 @@ export const defaultOrganismConfig: OrganismConfig = {
   },
   behavior: {
     pointerInterest: 0.95,
-    maximumCoreSpeed: 0.07,
+    maximumCoreSpeed: 0.05,
     maximumTipSpeed: 0.2,
     gestureIntervalMin: 4,
     gestureIntervalMax: 14,
