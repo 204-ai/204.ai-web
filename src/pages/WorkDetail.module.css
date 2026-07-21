@@ -170,6 +170,15 @@
   text-align: right;
 }
 
+.metaLink {
+  color: var(--accent-text);
+  transition: color 0.15s;
+}
+
+.metaLink:hover {
+  color: var(--accent);
+}
+
 .cta {
   display: inline-block;
   margin-top: 20px;

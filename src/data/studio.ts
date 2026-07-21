@@ -34,6 +34,9 @@ interface RawWork {
   body?: string
   youtube?: string[]
   gallery?: string[]
+  /* optional service slug override; defaults to the first service whose
+     relatedCat matches the work's category */
+  practice?: string
 }
 
 export interface Work extends RawWork {

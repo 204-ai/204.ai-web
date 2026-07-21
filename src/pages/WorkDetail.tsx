@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { MediaStill } from '../components/MediaStill'
 import { useHead } from '../hooks/useHead'
 import { trackVideoOpen } from '../lib/analytics'
-import { WORKS } from '../data/studio'
+import { SERVICES_ALL, WORKS } from '../data/studio'
 import { NotFound } from './NotFound'
 import styles from './WorkDetail.module.css'
 
@@ -22,6 +22,10 @@ export function WorkDetail() {
 
   const prev = WORKS[(idx - 1 + WORKS.length) % WORKS.length]
   const next = WORKS[(idx + 1) % WORKS.length]
+  // close the loop back to the practice this project belongs to
+  const practice = w.practice
+    ? SERVICES_ALL.find((s) => s.slug === w.practice)
+    : SERVICES_ALL.find((s) => s.relatedCat === w.cat)
 
   return (
     <div className={styles.root}>
@@ -55,6 +59,14 @@ export function WorkDetail() {
               <span className={styles.metaValue}>{v}</span>
             </div>
           ))}
+          {practice && (
+            <div className={`t-mono ${styles.metaRow}`}>
+              <span className={styles.metaKey}>PRACTICE</span>
+              <Link to={`/services/${practice.slug}`} className={`${styles.metaValue} ${styles.metaLink}`}>
+                {practice.label} →
+              </Link>
+            </div>
+          )}
           <p className={styles.metaNote}>{w.note}</p>
           <Link to="/contact" className={`t-mono ${styles.cta}`}>
             → SOMETHING LIKE THIS?
