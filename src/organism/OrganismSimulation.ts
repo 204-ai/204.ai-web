@@ -297,9 +297,19 @@ export class OrganismSimulation {
       const px2 = -by / bl
       const py2 = bx / bl
       const d2 = this.drivers[a]
+      // two incommensurate components traveling in OPPOSITE directions +
+      // slowly drifting amplitude — interference never repeats, so the
+      // motion weaves instead of pulsing on a beat (user 2026-07-21)
+      const sp1 = (0.28 + d2.curlFreq * 1.6) * Math.PI
+      const sp2 = sp1 * 0.618
+      const ampMod = 0.55 + 0.45 * Math.sin(this.time * 0.043 * Math.PI * 2 + d2.curlPhase * 1.7)
       for (let j = 1; j < n - 1; j++) {
         const t = j / (n - 1)
-        const w = Math.sin(t * Math.PI * 1.7 + this.time * (0.5 + d2.curlFreq * 3) * Math.PI + d2.curlPhase) * Math.sin(t * Math.PI)
+        const w =
+          (Math.sin(t * Math.PI * 1.7 + this.time * sp1 + d2.curlPhase) * 0.7 +
+            Math.sin(t * Math.PI * 2.9 - this.time * sp2 + d2.curlPhase * 2.3) * 0.3) *
+          Math.sin(t * Math.PI) *
+          ampMod
         X[j] += px2 * w * bend
         Y[j] += py2 * w * bend
       }
@@ -788,7 +798,11 @@ export class OrganismSimulation {
           desX = this.slowPX
           desY = this.slowPY
         } else {
-          const sweep = d.restAngle + Math.sin(this.time * (0.05 + (a - LEGS) * 0.021) * Math.PI * 2 + a * 2.6) * 1.1 * calm
+          const sweep =
+            d.restAngle +
+            (Math.sin(this.time * (0.05 + (a - LEGS) * 0.021) * Math.PI * 2 + a * 2.6) * 0.75 +
+              Math.sin(this.time * (0.031 + (a - LEGS) * 0.013) * Math.PI * 2 + a * 1.3) * 0.45) *
+              calm
           desX = rootX + Math.cos(sweep) * this.chainLen[a]
           desY = rootY + Math.sin(sweep) * this.chainLen[a]
         }
