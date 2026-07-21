@@ -60,11 +60,11 @@ export const defaultOrganismConfig: OrganismConfig = {
   /* scale target (user call 2026-07-21): whole creature ≈ ≤2× the home
      strap type height → torso ~0.07 sim units, limb reach ~0.12-0.2 */
   anatomy: {
-    appendageCount: 5,
+    appendageCount: 6,
     jointsPerAppendage: 6,
-    torsoRadius: 0.04,
-    minimumTipRadius: 0.006,
-    maximumTipRadius: 0.014,
+    torsoRadius: 0.028,
+    minimumTipRadius: 0.005,
+    maximumTipRadius: 0.011,
   },
   behavior: {
     pointerInterest: 0.95,

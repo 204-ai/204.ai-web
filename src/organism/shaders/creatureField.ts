@@ -98,6 +98,20 @@ export function creatureDistance(
     }
   }
 
+  // webbing (user 2026-07-21): thin membrane spanning adjacent walker legs
+  // near the body — scalloped skin between distinct limbs, not extra fat
+  const walkers = Math.min(4, layout.appendageCount)
+  for (let a = 0; a < walkers - 1; a++) {
+    const a1 = part(layout.indexOf(a, 1))
+    const b1 = part(layout.indexOf(a + 1, 1))
+    const web1 = sdTaperedSegment(p, a1.xy, b1.xy, float(R * 0.1), float(R * 0.1))
+    d = sminN(d, web1, R * 0.9)
+    const a2 = part(layout.indexOf(a, 2))
+    const b2 = part(layout.indexOf(a + 1, 2))
+    const web2 = sdTaperedSegment(p, a2.xy, b2.xy, float(R * 0.045), float(R * 0.045))
+    d = sminN(d, web2, R * 0.45)
+  }
+
   // creases: narrow subtractive channels between limb roots → concavity,
   // pinched joints (§14.3)
   for (let c = 0; c < layout.creaseCount; c++) {

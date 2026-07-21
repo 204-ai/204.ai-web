@@ -224,7 +224,10 @@ export class OrganismSimulation {
       ix += Math.sin(this.time * 0.05 + 1.7) * 0.03 + Math.sin(this.time * 0.023) * 0.02
       iy += Math.cos(this.time * 0.041 + 0.4) * 0.025 + Math.sin(this.time * 0.017 + 2.1) * 0.018
     }
-    let rawTarget = this.reachableTowards(p.posX[0], p.posY[0], ix, iy, p.radius[0] * 1.15)
+    const followingRoute = this.route !== null && this.routeIdx < this.route.points.length
+    let rawTarget = followingRoute
+      ? { x: ix, y: iy } // A* already vetted clearance cell-wise — trust it
+      : this.reachableTowards(p.posX[0], p.posY[0], ix, iy, p.radius[0] * 1.15)
     // corner following (until M8 A*): if the straight ray is blocked but the
     // desire is far, walk along the wall tangent toward it — the creature
     // rounds corners instead of idling at them
@@ -286,15 +289,15 @@ export class OrganismSimulation {
     // floors, walls and obstacle edges without ever reading as a starfish
     const downAngle = Math.atan2(-surfNY, -surfNX)
     const upAngle = Math.atan2(surfNY, surfNX)
-    const WALKER_SPREAD = [-0.85, 0, 0.85]
-    const UPPER_SPREAD = [-0.55, 0.55]
+    const WALKER_SPREAD = [-1.1, -0.4, 0.4, 1.1]
+    const UPPER_SPREAD = [-0.5, 0.5]
     for (let a = 0; a < p.appendageCount; a++) {
       const d = this.drivers[a]
-      const isWalker = a < 3
+      const isWalker = a < 4
       const want = inRange
         ? isWalker
-          ? downAngle + WALKER_SPREAD[a % 3]
-          : upAngle + UPPER_SPREAD[(a - 3) % 2]
+          ? downAngle + WALKER_SPREAD[a % 4]
+          : upAngle + UPPER_SPREAD[(a - 4) % 2]
         : d.restAngle
       let delta = want - d.restAngle
       while (delta > Math.PI) delta -= Math.PI * 2
@@ -302,7 +305,7 @@ export class OrganismSimulation {
       d.restAngle += delta * Math.min(1, dt * 0.8)
     }
     const wantPlant = new Set<number>()
-    if (inRange) for (let a = 0; a < Math.min(3, p.appendageCount); a++) wantPlant.add(a)
+    if (inRange) for (let a = 0; a < Math.min(4, p.appendageCount); a++) wantPlant.add(a)
     for (let a = 0; a < p.appendageCount; a++) {
       const plant = this.plants[a]
       const rootI = p.indexOf(a, 0)
@@ -355,7 +358,7 @@ export class OrganismSimulation {
       // walkers (a<3) keep their feet — only UPPER tentacles reach for the
       // pointer, stretching MORE when it is farther away (planted reach-out,
       // user 2026-07-21)
-      if (a >= 3 && this.pointerActive && (pointerDirX !== 0 || pointerDirY !== 0)) {
+      if (a >= 4 && this.pointerActive && (pointerDirX !== 0 || pointerDirY !== 0)) {
         const pointerAngle = Math.atan2(pointerDirY, pointerDirX)
         let delta = pointerAngle - d.restAngle
         while (delta > Math.PI) delta -= Math.PI * 2
@@ -377,6 +380,10 @@ export class OrganismSimulation {
       const rootI = p.indexOf(a, 0)
       const plant = this.plants[a]
       const tipIdx = p.jointsPerAppendage - 1
+      // segmented curving (user 2026-07-21): slowly evolving curl + S-bend
+      // accumulate along the chain — tentacles coil and wave, never spokes
+      const curl = Math.sin(this.time * d.curlFreq * Math.PI * 2 + d.curlPhase) * 1.4
+      const sBend = Math.sin(this.time * d.swayFreq * Math.PI * 2 + d.swayPhase + 1.3) * 1.1
       let cx = p.posX[rootI]
       let cy = p.posY[rootI]
       for (let j = 1; j < p.jointsPerAppendage; j++) {
@@ -397,9 +404,9 @@ export class OrganismSimulation {
           }
           continue
         }
-        // free limb: slow traveling wave — wriggle, not rigid pointing
-        const wave = Math.sin(t * 2.8 + d.curlPhase + this.time * d.curlFreq * Math.PI * 2) * 0.26 * (0.3 + 0.7 * t)
-        const desired = targetAngle + wave
+        // free limb: cumulative curl + S-bend + faint traveling wave
+        const wave = Math.sin(t * 2.8 + d.curlPhase + this.time * d.curlFreq * Math.PI * 2) * 0.12 * (0.3 + 0.7 * t)
+        const desired = targetAngle + curl * t + sBend * Math.sin(t * Math.PI) + wave
         cx += Math.cos(desired) * this.restLengths[i] * reachScale
         cy += Math.sin(desired) * this.restLengths[i] * reachScale
         const raw = this.reachableTowards(p.posX[rootI], p.posY[rootI], cx, cy, p.radius[i])
