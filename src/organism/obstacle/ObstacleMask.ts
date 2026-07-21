@@ -11,6 +11,41 @@ import type { CollectedObstacle } from './DomObstacleCollector'
 import type { Viewport } from './ObstacleCoordinates'
 
 export class ObstacleMask {
+  /* tinted ink bitmaps rendered from CPU glyph grids, cached per grid+style */
+  private inkCache = new WeakMap<Float32Array, Map<string, HTMLCanvasElement>>()
+
+  private tintedInk(grid: NonNullable<import('../math/sdf').SimRect['textGrid']>, style: string): HTMLCanvasElement | null {
+    let byStyle = this.inkCache.get(grid.data)
+    if (!byStyle) {
+      byStyle = new Map()
+      this.inkCache.set(grid.data, byStyle)
+    }
+    const hit = byStyle.get(style)
+    if (hit) return hit
+    const cv = document.createElement('canvas')
+    cv.width = grid.gw
+    cv.height = grid.gh
+    const c2 = cv.getContext('2d')
+    if (!c2) return null
+    const img = c2.createImageData(grid.gw, grid.gh)
+    // parse rgb()/rgba() style
+    const m = style.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/)
+    const rr = m ? +m[1] : 255
+    const gg = m ? +m[2] : 255
+    const bb = m ? +m[3] : 255
+    for (let i = 0; i < grid.gw * grid.gh; i++) {
+      if (grid.data[i] < 0) {
+        img.data[i * 4] = rr
+        img.data[i * 4 + 1] = gg
+        img.data[i * 4 + 2] = bb
+        img.data[i * 4 + 3] = 255
+      }
+    }
+    c2.putImageData(img, 0, 0)
+    byStyle.set(style, cv)
+    return cv
+  }
+
   readonly texture: THREE.CanvasTexture
   private canvas: HTMLCanvasElement
   private ctx: CanvasRenderingContext2D
@@ -51,26 +86,22 @@ export class ObstacleMask {
     const fillShape = (o: CollectedObstacle, pad: number, style: string) => {
       const rect = o.rect
       ctx.fillStyle = style
-      if (rect.textGrid && o.text) {
-        // draw the actual glyphs (scaled into mask px); padding via stroke
-        const [x0, y0] = toMask(rect.cx - rect.hw, rect.cy + rect.hh)
-        const [x1, y1] = toMask(rect.cx + rect.hw, rect.cy - rect.hh)
-        const elWpx = x1 - x0
-        const elHpx = y1 - y0
-        const scale = elHpx / (rect.hh * 2) // mask px per sim unit (y)
-        ctx.save()
-        ctx.translate(x0, y0)
-        const fontScale = elHpx // font box ≈ element height in mask px
-        ctx.font = `${o.text.weight} ${fontScale}px ${o.text.family}`
-        ctx.textBaseline = 'alphabetic'
-        // horizontal squeeze to exactly fit the element width
-        const measured = ctx.measureText(o.text.content).width || 1
-        ctx.scale(elWpx / measured, 1)
-        ctx.lineWidth = Math.max(0.5, pad * scale * 2)
-        ctx.strokeStyle = style
-        ctx.fillText(o.text.content, 0, elHpx * 0.8)
-        ctx.strokeText(o.text.content, 0, elHpx * 0.8)
-        ctx.restore()
+      if (rect.textGrid) {
+        // SINGLE SOURCE OF TRUTH: render from the CPU ink grid — a second
+        // font rasterization drifted (line-box vs glyph-box) and ghosted
+        // the SDF behind the text
+        const tinted = this.tintedInk(rect.textGrid, style)
+        if (tinted) {
+          const [x0, y0] = toMask(rect.cx - rect.hw, rect.cy + rect.hh)
+          const [x1, y1] = toMask(rect.cx + rect.hw, rect.cy - rect.hh)
+          const scale = (y1 - y0) / (rect.hh * 2) // mask px per sim unit
+          const padPx = Math.max(0, pad * scale)
+          ctx.imageSmoothingEnabled = false
+          // dilate by padding: draw at ring offsets
+          const offs: Array<[number, number]> = [[0, 0]]
+          if (padPx > 0.4) for (let k = 0; k < 8; k++) offs.push([Math.cos((k / 8) * Math.PI * 2) * padPx, Math.sin((k / 8) * Math.PI * 2) * padPx])
+          for (const [ox, oy] of offs) ctx.drawImage(tinted, x0 + ox, y0 + oy, x1 - x0, y1 - y0)
+        }
         return
       }
       if (rect.circle) {
