@@ -82,6 +82,9 @@ export class OrganismSimulation {
   private lastDecisionAt = -10
   private pauseUntil = -1
   private rng = mulberry32(4211)
+  private nextGestureAt = 3
+  private gestureUntil = -1
+  private gestureLimb = -1
 
   /* state machine (M9) */
   state: 'rest' | 'pursue' | 'settle' | 'sniff' | 'jump' = 'rest'
@@ -268,7 +271,7 @@ export class OrganismSimulation {
    * kinematic (pos AND prev written — zero velocity, zero jitter by
    * construction). `bend` arcs the chain perpendicular to root→target.
    */
-  private solveLimb(a: number, rootX: number, rootY: number, tx: number, ty: number, bend: number, quietTip = false) {
+  private solveLimb(a: number, rootX: number, rootY: number, tx: number, ty: number, bend: number, waveScale = 1) {
     const p = this.particles
     const n = p.jointsPerAppendage
     const X: number[] = []
@@ -327,9 +330,9 @@ export class OrganismSimulation {
       const ampMod = 0.55 + 0.45 * Math.sin(this.time * 0.043 * Math.PI * 2 + d2.curlPhase * 1.7)
       for (let j = 1; j < n - 1; j++) {
         const t = j / (n - 1)
-        // quietTip: contact-adjacent joints stay STILL — the wave lives
-        // near the root and dies toward the planted foot (user 2026-07-21)
-        const env = quietTip ? Math.pow(1 - t, 1.4) : 1
+        // waveScale 0 = structural limb, no undulation at all (legs —
+        // user 2026-07-21: feet undulation was residual jiggle)
+        const env = waveScale
         const w =
           (Math.sin(t * Math.PI * 1.15 + this.time * sp1 + d2.curlPhase) * 0.7 +
             Math.sin(t * Math.PI * 2.1 - this.time * sp2 + d2.curlPhase * 2.3) * 0.3) *
@@ -756,7 +759,8 @@ export class OrganismSimulation {
         for (const pl of this.plants) if (pl.active) anyPlant = true
         const speedNorm = Math.min(1, Math.hypot(this.coreVelX, this.coreVelY) / 0.08)
         const dip = 0.02 * Math.exp(-(this.time - this.lastPlantTime) / 0.35)
-        const hover = this.maxReach * (0.3 + Math.sin(this.time * 0.11 * Math.PI * 2 + 0.7) * 0.02 - speedNorm * 0.08 - dip)
+        const crouch = this.state === 'sniff' ? 0.09 : 0
+        const hover = this.maxReach * (0.3 - crouch + Math.sin(this.time * 0.11 * Math.PI * 2 + 0.7) * 0.02 - speedNorm * 0.08 - dip)
         const clampE = anyPlant ? 0.05 : 0.14
         const gainE = anyPlant ? 1.6 : 3.2
         const err = Math.max(-clampE, Math.min(clampE, sd - hover))
@@ -912,6 +916,14 @@ export class OrganismSimulation {
       }
     }
 
+    /* lurk gestures (§19): in restful states one seeker occasionally
+       performs a deep probe — alive, watching, wanting */
+    if ((S === 'rest' || S === 'settle' || S === 'sniff') && this.time > this.nextGestureAt) {
+      this.gestureLimb = LEGS + Math.floor(this.rng() * (p.appendageCount - LEGS))
+      this.gestureUntil = this.time + 1.1 + this.rng() * 0.6
+      this.nextGestureAt = this.time + 5 + this.rng() * 6
+    }
+
     /* ---- limbs: pure kinematic IK ---- */
     const calm = S === 'rest' || S === 'settle' || S === 'sniff' ? 0.45 : 1
     // yearn: pointer present but the body holds short — seekers strain
@@ -942,7 +954,7 @@ export class OrganismSimulation {
           tx = rootX - jumpDirX * this.chainLen[a] * (0.75 + 0.1 * Math.sin(a * 2.3))
           ty = rootY - jumpDirY * this.chainLen[a] * (0.75 + 0.1 * Math.sin(a * 2.3))
         }
-        this.solveLimb(a, rootX, rootY, tx, ty, this.chainLen[a] * 0.12)
+        this.solveLimb(a, rootX, rootY, tx, ty, this.chainLen[a] * 0.12, 0.3)
         continue
       }
       if (a < LEGS) {
@@ -966,7 +978,7 @@ export class OrganismSimulation {
           ty = rootY + Math.sin(d.restAngle) * this.chainLen[a] * 0.55
           bend = this.chainLen[a] * 0.06
         }
-        this.solveLimb(a, rootX, rootY, tx, ty, bend, pl.active)
+        this.solveLimb(a, rootX, rootY, tx, ty, bend, sw.active ? 0.35 : 0)
       } else {
         let desX: number
         let desY: number
@@ -992,7 +1004,8 @@ export class OrganismSimulation {
         const strain = this.sniffing || yearn ? 0.92 + 0.08 * Math.sin(this.time * 0.045 * Math.PI * 2 + a * 1.3) + poke : 0
         // peaks touch FULL extension (clamped by the solver), then relax —
         // able to fully stretch, never parked there (user 2026-07-21)
-        const ext = this.chainLen[a] * (this.sniffing || yearn ? Math.min(1, strain) : this.pointerActive ? 0.85 + 0.08 * Math.sin(this.time * 0.11 * Math.PI * 2 + a) : 0.72 + 0.2 * Math.sin(this.time * 0.07 * Math.PI * 2 + a * 1.9))
+        const gesturing = a === this.gestureLimb && this.time < this.gestureUntil
+        const ext = this.chainLen[a] * (gesturing ? 0.95 : this.sniffing || yearn ? Math.min(1, strain) : this.pointerActive ? 0.85 + 0.08 * Math.sin(this.time * 0.11 * Math.PI * 2 + a) : 0.72 + 0.2 * Math.sin(this.time * 0.07 * Math.PI * 2 + a * 1.9))
         const ddx = desX - rootX
         const ddy = desY - rootY
         const dl = Math.hypot(ddx, ddy) || 1
