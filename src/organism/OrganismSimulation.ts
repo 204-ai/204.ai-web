@@ -86,6 +86,7 @@ export class OrganismSimulation {
   private gestureUntil = -1
   private gestureLimb = -1
   private creepAt = 5
+  private stanceFixes = 0
 
   /* state machine (M9) */
   state: 'rest' | 'pursue' | 'settle' | 'sniff' | 'jump' = 'rest'
@@ -257,6 +258,7 @@ export class OrganismSimulation {
         this.pursueBestDist = Infinity
         this.pursueBestAt = this.time
       }
+      if (next === 'settle') this.stanceFixes = 0
     }
   }
 
@@ -361,6 +363,15 @@ export class OrganismSimulation {
       }
     }
     if (this.obstacles.length) {
+      // joints AND segment midpoints stay out of solids
+      for (let j = 1; j < n; j++) {
+        const dj = sdObstacles(X[j], Y[j], this.obstacles, this.obstacleRounding)
+        if (dj < 0) {
+          obstacleNormal(X[j], Y[j], this.obstacles, this.obstacleRounding, this.normal2)
+          X[j] -= this.normal2.x * dj
+          Y[j] -= this.normal2.y * dj
+        }
+      }
       for (let j = 0; j < n - 1; j++) {
         const mx = (X[j] + X[j + 1]) / 2
         const my = (Y[j] + Y[j + 1]) / 2
@@ -867,9 +878,10 @@ export class OrganismSimulation {
           const pl = this.plants[a]
           if (pl.active) act.push({ a, proj: (pl.x - p.posX[0]) * tangX + (pl.y - p.posY[0]) * tangY })
         }
-        if (act.length >= 2) {
+        if (act.length >= 2 && this.stanceFixes < 3) {
           const spread = Math.max(...act.map((x) => x.proj)) - Math.min(...act.map((x) => x.proj))
           if (spread < this.chainLen[0] * 0.7) {
+            this.stanceFixes++
             act.sort((x, y) => Math.abs(x.proj) - Math.abs(y.proj))
             this.plants[act[0].a].active = false
             this.lastReleaseTime = this.time

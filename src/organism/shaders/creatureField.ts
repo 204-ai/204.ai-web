@@ -170,18 +170,33 @@ export function buildOutputNodes(opts: {
   const coverage = float(1).sub(smoothstep(w.negate(), w, distance))
   const coverageRaw = coverage
 
-  /* interior structure (§35): depth tone toward thick cores + slow
-     organic mottling in creature space — a living interior, not a flat
-     white-gray fill */
-  const depth = smoothstep(0, R * 0.4, distance.negate()).mul(opts.internalShadingStrength)
+  /* interior anatomy (user 2026-07-21): bright rim shell → markedly
+     darker interior, with each limb's CORE reading as a lighter ridge —
+     internal structure, not a flat white blotch */
+  const rim = float(1).sub(smoothstep(0, R * 0.24, distance.negate()))
+  // per-limb core ridges: light along each limb's centerline
+  let limbCore: Node = float(0)
+  for (let a = 0; a < opts.appendageCount; a++) {
+    let dA: Node = float(1e5)
+    for (let j = 0; j < opts.jointsPerAppendage; j++) {
+      const pp = opts.particles.element(opts.indexOf(a, j))
+      dA = min(dA, simPos.sub(pp.xy).length().sub(pp.z.mul(0.35)))
+    }
+    limbCore = max(limbCore, float(1).sub(smoothstep(0, R * 0.3, dA)))
+  }
   const m1 = simPos.x.mul(34).add(time.mul(0.05)).sin()
   const m2 = simPos.y.mul(29).sub(time.mul(0.037)).sin()
-  const mottle = m1.mul(m2).mul(0.5).add(0.5).mul(opts.internalShadingStrength).mul(0.45)
-  const insideDeep = smoothstep(0, R * 0.5, distance.negate())
-  /* contact-pressure highlight (§35): a faint brightness lift where the
-     body presses a boundary — weight made visible at the contact line */
-  const press = float(1).sub(smoothstep(0, R * 0.35, boundaryD.abs())).mul(coverageRaw).mul(0.12)
-  const shaded = vec3(float(1).sub(depth).sub(mottle.mul(insideDeep)).add(press))
+  const mottle = m1.mul(m2).mul(0.5).add(0.5)
+  const interiorBase = 1 - opts.internalShadingStrength * 1.25
+  /* contact-pressure highlight (§35) */
+  const press = float(1).sub(smoothstep(0, R * 0.35, boundaryD.abs())).mul(coverageRaw).mul(0.1)
+  const tone = float(interiorBase)
+    .add(rim.mul(1 - interiorBase))
+    .add(limbCore.mul(0.16))
+    .sub(mottle.mul(0.06))
+    .add(press)
+    .clamp(0.2, 1)
+  const shaded = vec3(tone)
   /* proximity glow: ONLY the nearest tip heats toward the accent
      (#c9442b) as it nears the cursor's touch radius — localized want */
   const ACCENT: Node = vec3(0.788, 0.267, 0.169)
