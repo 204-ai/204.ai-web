@@ -91,9 +91,18 @@ export function MediaStill({ scene, media, mini = false, playing = false, letter
 
       {/* dark scrim keeps busy photos as subtle as the placeholder scenes in bg use */}
       {scrim && <div style={{ position: 'absolute', inset: 0, background: 'rgba(10,10,10,0.38)' }} />}
-      {/* grain + vignette so real footage sits in the same grade as the scenes */}
+      {/* grain so real footage sits in the same grade as the scenes */}
       <div style={{ position: 'absolute', inset: 0, mixBlendMode: 'overlay', opacity: mini ? 0.12 : 0.18, backgroundImage: GRAIN_URL }} />
-      <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.55) 100%)' }} />
+      {/* small tiles keep a soft vignette; large media only gets caption
+          scrims top + bottom so the footage itself stays clean */}
+      {mini ? (
+        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.55) 100%)' }} />
+      ) : (
+        <>
+          <div style={{ position: 'absolute', left: 0, right: 0, top: 0, height: '26%', background: 'linear-gradient(180deg, rgba(0,0,0,0.5) 0%, transparent 100%)' }} />
+          <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: '20%', background: 'linear-gradient(0deg, rgba(0,0,0,0.45) 0%, transparent 100%)' }} />
+        </>
+      )}
     </div>
   )
 }

@@ -10,7 +10,7 @@
 /* ─── hero ─── */
 .hero {
   position: relative;
-  margin: 14px 28px 0;
+  margin: 28px 28px 0;
   overflow: hidden;
   background: #0f0f0f;
   border-radius: 2px;
@@ -295,7 +295,7 @@
 
 /* ─── strap ─── */
 .strap {
-  padding: 34px 28px 28px;
+  padding: 28px 28px 28px;
 }
 
 .strapType {
@@ -368,7 +368,7 @@
     min-height: 0;
     max-height: none;
     height: auto;
-    margin: 14px 16px 0;
+    margin: 16px 16px 0;
   }
 
   .still {
