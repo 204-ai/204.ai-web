@@ -565,7 +565,7 @@ export class OrganismSimulation {
         this.routeIdx = 0
       }
       const pts = this.route!.points
-      while (this.routeIdx < pts.length && Math.hypot(pts[this.routeIdx].x - p.posX[0], pts[this.routeIdx].y - p.posY[0]) < 0.1) this.routeIdx++
+      while (this.routeIdx < pts.length && Math.hypot(pts[this.routeIdx].x - p.posX[0], pts[this.routeIdx].y - p.posY[0]) < 0.085) this.routeIdx++ // tighter: less corner shortcutting
       if (this.routeIdx < pts.length) {
         finalGoalDist = Math.hypot(ix - p.posX[0], iy - p.posY[0])
         ix = pts[this.routeIdx].x
@@ -861,7 +861,12 @@ export class OrganismSimulation {
           // low-pass: per-step speed pulses read jerky (user 2026-07-22) —
           // desired velocity is smoothed over ~0.22s into organic glide
           const env = Math.max(0, Math.min(1, (this.surgeUntil - this.time) / 0.45))
-          const gain = 1.2 + 0.15 * Math.sin(env * Math.PI)
+          // corner damp (user 2026-07-22): when the committed travel dir and
+          // the instantaneous desired dir disagree (turning), ease off —
+          // fluid deliberate cornering instead of whipping through
+          const cornerDot = travelDirX * rawTX + travelDirY * rawTY
+          const cornerEase = 0.55 + 0.45 * Math.max(0, Math.min(1, cornerDot))
+          const gain = (1.2 + 0.15 * Math.sin(env * Math.PI)) * cornerEase
           const pullX = this.stanceX + travelDirX * this.maxReach * 0.5
           const pullY = this.stanceY + travelDirY * this.maxReach * 0.5
           const vk = 1 - Math.exp((-dt / 0.22) * Math.LN2)

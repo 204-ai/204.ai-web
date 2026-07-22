@@ -119,7 +119,8 @@ export class ParticleBuffer {
       const serpPhase = rnd() * Math.PI * 2
       const serpAmp = 0.35 + rnd() * 0.5
       const rootR = torsoRadius * (0.21 + rnd() * 0.1) * thickness // slimmer roots — chunky base (user 2026-07-22)
-      const tipR = minimumTipRadius + rnd() * (maximumTipRadius - minimumTipRadius)
+      // tip capped vs root: slimmed roots inverted the taper on thin limbs
+      const tipR = Math.min(minimumTipRadius + rnd() * (maximumTipRadius - minimumTipRadius), rootR * 0.6)
       const segLen = torsoRadius * (0.44 + rnd() * 0.2) * lengthScale
 
       let x = this.posX[0] + Math.cos(angle) * torsoRadius * 0.55
