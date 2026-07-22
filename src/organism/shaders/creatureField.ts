@@ -222,7 +222,7 @@ export function buildOutputNodes(opts: {
     // a small ember, only a full touch carries the full-size glow
     const rr = opts.glow.z.mul(want.mul(0.65).add(0.35))
     glowF = max(glowF, float(1).sub(smoothstep(0, rr, gd)).mul(want))
-    haze = max(haze, float(1).sub(smoothstep(0, rr.mul(1.6), gd)).mul(want))
+    haze = max(haze, float(1).sub(smoothstep(0, rr.mul(1.3), gd)).mul(want))
     hot = max(hot, float(1).sub(smoothstep(0, rr.mul(0.35), gd)).mul(want))
   }
   glowF = glowF.clamp(0, 0.85)
@@ -237,7 +237,7 @@ export function buildOutputNodes(opts: {
   const bodyColor = shaded.mul(float(1).sub(accentCut)).add(glowColor.mul(structure).mul(accentCut))
   // interior breathes slightly translucent — depth without heaviness
   const insideAlpha = float(1).sub(smoothstep(0, R * 0.5, distance.negate()).mul(0.16))
-  const opacityWithHaze = coverage.mul(opts.opacity).mul(insideAlpha).add(haze.mul(haze).mul(0.4)).clamp(0, 1)
+  const opacityWithHaze = coverage.mul(opts.opacity).mul(insideAlpha).add(haze.mul(haze).mul(0.28)).clamp(0, 1)
 
   if (!opts.includeDebug) {
     return { colorNode: bodyColor, opacityNode: opacityWithHaze }

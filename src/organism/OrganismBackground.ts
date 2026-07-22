@@ -108,7 +108,7 @@ export async function mountOrganism(
   renderer.start((timeMs) => {
     const t0 = performance.now()
     controller.beforeFrame(timeMs)
-    renderer.glow.value.set(controller.simulation.glowX, controller.simulation.glowY, 0.06, controller.simulation.glowI)
+    renderer.glow.value.set(controller.simulation.glowX, controller.simulation.glowY, 0.045, controller.simulation.glowI)
     if (import.meta.env.DEV) {
       cpuAcc += performance.now() - t0
       cpuN++
