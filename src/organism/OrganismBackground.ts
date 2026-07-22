@@ -120,7 +120,7 @@ export async function mountOrganism(
       }
     }
   })
-  if (import.meta.env.DEV) {
+  if (import.meta.env.DEV || LAB_PAGE) {
     ;(window as unknown as Record<string, unknown>).__organismDebug = { controller }
   }
 

@@ -42,7 +42,7 @@ export class NavigationField {
         // discourage the comfort band without forbidding it; prefer cells
         // near surfaces (shell affinity — the creature walks, it doesn't
         // cut across open space it would have to jump)
-        const offShell = Math.min(edge, d) > 0.12 ? 4 : 1 // strongly prefer wall paths
+        const offShell = Math.min(edge, d) > 0.12 ? 6 : 1 // strongly prefer wall paths (climb > jump, user 2026-07-22)
         this.cost[i] = (1 + (d < comfort ? 3 * (1 - Math.max(d, 0) / comfort) : 0)) * offShell
       }
     }
@@ -120,9 +120,13 @@ export class NavigationField {
     const g = new Float32Array(n).fill(Infinity)
     const from = new Int32Array(n).fill(-1)
     const closed = new Uint8Array(n)
+    const inOpen = new Uint8Array(n)
     g[start] = 0
-    // tiny binary-heap-free open list is fine at 64×36
+    // tiny binary-heap-free open list is fine at 64×36 — but it MUST be
+    // deduplicated: duplicate pushes exploded past the safety cap in large
+    // off-shell frontiers and A* aborted mid-search (ceiling-stuck bug)
     const open: number[] = [start]
+    inOpen[start] = 1
     const gc = goal % cols
     const gr = Math.floor(goal / cols)
     const h = (i: number) => {
@@ -141,6 +145,7 @@ export class NavigationField {
         }
       }
       const cur = open.splice(bi, 1)[0]
+      inOpen[cur] = 0
       if (cur === goal) break
       if (closed[cur]) continue
       closed[cur] = 1
@@ -158,11 +163,14 @@ export class NavigationField {
           if (g[cur] + step < g[ni]) {
             g[ni] = g[cur] + step
             from[ni] = cur
-            open.push(ni)
+            if (!inOpen[ni]) {
+              inOpen[ni] = 1
+              open.push(ni)
+            }
           }
         }
       }
-      if (open.length > 2000) break // safety
+      if (open.length > n) break // safety (unreachable with dedupe)
     }
 
     // reconstruct
@@ -175,14 +183,24 @@ export class NavigationField {
     cells.reverse()
     let points = cells.map((i) => this.center(i))
 
-    // line-of-sight smoothing: keep only necessary waypoints
+    // line-of-sight smoothing: keep only necessary waypoints. A shortcut
+    // must also STAY NEAR THE SHELL — pure geometric LOS collapsed wall
+    // detours into "fly straight across open space", which a wall-walker
+    // cannot execute (ceiling-shuffle bug, user 2026-07-22)
+    const nearShell = (x: number, y: number) => this.cost[this.cellOf(x, y)] < 6
+    const shellCut = (ax0: number, ay0: number, bx: number, by: number) => {
+      for (const t of [0.25, 0.5, 0.75]) {
+        if (!nearShell(ax0 + (bx - ax0) * t, ay0 + (by - ay0) * t)) return false
+      }
+      return hasLineOfSight(ax0, ay0, bx, by)
+    }
     const smoothed: Array<{ x: number; y: number }> = []
     let ax = sx
     let ay = sy
     for (let i = 0; i < points.length; i++) {
       const isLast = i === points.length - 1
       const next = points[i + 1]
-      if (!isLast && next && hasLineOfSight(ax, ay, next.x, next.y)) continue
+      if (!isLast && next && shellCut(ax, ay, next.x, next.y)) continue
       smoothed.push(points[i])
       ax = points[i].x
       ay = points[i].y

@@ -120,7 +120,10 @@ export class ObstacleMask {
     for (const o of obstacles) {
       fillShape(o, o.paddingSim + comfortClearanceSim, 'rgb(0, 255, 0)')
       const weight = Math.round(Math.min(o.rect.weight / 4, 1) * 255)
-      fillShape(o, o.paddingSim, `rgba(255, 0, ${weight}, 1)`)
+      // hard channel at TRUE geometry (pad 0): the render cut plane must sit
+      // on the visible edge — padding in R read as a phantom "glass fence"
+      // standoff (user 2026-07-22); solver/nav keep padded analytic copies
+      fillShape(o, 0, `rgba(255, 0, ${weight}, 1)`)
       if (o.rect.allowTendrils) fillShape(o, o.paddingSim, 'rgba(0, 0, 128, 1)')
     }
     ctx.globalCompositeOperation = 'source-over'

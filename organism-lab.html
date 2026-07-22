@@ -7,7 +7,7 @@
     <style>
       * { margin: 0; box-sizing: border-box; }
       html, body { height: 100%; }
-      body { background: #0a0a0a; color: #ececec; font: 12px/1.4 monospace; min-height: 230vh; }
+      body { background: #0a0a0a; color: #ececec; font: 12px/1.4 'JetBrains Mono', monospace; min-height: 230vh; }
       .organism-background { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
       .box {
         position: absolute; z-index: 1; border: 1px solid rgba(236,236,236,0.3);
@@ -16,7 +16,9 @@
       #box1 { left: 35%; top: 40vh; width: 30%; height: 32vh; }
       #box2 { left: 12%; top: 150vh; width: 30%; height: 40vh; }
       #box3 { left: 6%; top: 14vh; width: 34%; height: 13vh; }
-      .word { position: absolute; left: 8%; top: 76vh; z-index: 1; font-weight: 900; font-size: 11vh; letter-spacing: -0.02px; color: #ececec; font-family: 'Archivo Black', 'Arial Black', 'Helvetica Neue', sans-serif; text-transform: uppercase; user-select: none; }
+      /* mirror .t-display from the main app (global.css): Archivo Black,
+         -0.02px tracking (NOT em), line-height 0.88, uppercase */
+      .word { position: absolute; left: 8%; top: 76vh; z-index: 1; font-weight: 400; font-size: 11vh; letter-spacing: -0.02px; line-height: 0.88; color: #ececec; font-family: 'Archivo Black', Impact, sans-serif; text-transform: uppercase; user-select: none; }
       .word span { display: inline-block; }
       #circle1 { left: 68%; top: 20vh; width: 21vh; height: 21vh; border-radius: 50%; }
       #hud { position: fixed; background: #0a0a0a; padding: 4px 8px; left: 12px; top: 10px; z-index: 2; color: rgba(236,236,236,0.6); }

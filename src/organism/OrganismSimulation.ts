@@ -105,12 +105,20 @@ export class OrganismSimulation {
   private jumpEX = 0
   private jumpEY = 0
 
+  /* dynamic roles (user 2026-07-22): seekers can take over leg duty */
+  isLeg: boolean[] = []
+  private slotOf: number[] = []
+  private lastRoleSwap = -10
+
   /* feet */
   plants: Array<{ x: number; y: number; active: boolean }> = []
   private swings: Swing[] = []
   private lastReleaseTime = -10
   private lastPlantTime = -10
   private surgeUntil = -10
+  /* low-passed core velocity (organic glide, no per-step pulses) */
+  private coreSmVX = 0
+  private coreSmVY = 0
   private stanceX = 1.02
   private stanceY = 0.42
   private smTX = 0
@@ -165,6 +173,8 @@ export class OrganismSimulation {
         rootDriftAmp: 0.15 + rnd() * 0.25,
       })
       this.plants.push({ x: 0, y: 0, active: false })
+      this.isLeg.push(a < LEGS)
+      this.slotOf.push(a < LEGS ? a : -1)
       this.swings.push({ active: false, fromX: 0, fromY: 0, toX: 0, toY: 0, t: 0 })
       const tip = p.indexOf(a, p.jointsPerAppendage - 1)
       this.seekX[a] = p.posX[tip]
@@ -486,6 +496,16 @@ export class OrganismSimulation {
       }
     }
 
+    /* shell the goal (user 2026-07-22): a cursor floating in open space is
+       untouchable for a wall-walker — routing at it makes decide() project
+       mid-air waypoints back to the CURRENT surface (ceiling wiggle). Walk
+       to the nearest wall point instead; seekers yearn the rest. */
+    if (this.pointerActive && this.surfaceDist(ix, iy) > this.maxReach * 0.9) {
+      const g = this.projectToSurface(ix, iy, this.maxReach * 0.27)
+      ix = g.x
+      iy = g.y
+    }
+
     /* hunger watchdog */
     this.sniffing = false
     let finalGoalDist = -1
@@ -544,14 +564,19 @@ export class OrganismSimulation {
       if (this.route) {
         for (let k = this.routeIdx; k < this.route.points.length; k++) {
           const wp = this.route.points[k]
-          acc += Math.hypot(wp.x - cx, wp.y - cy)
-          cx = wp.x
-          cy = wp.y
-          if (acc >= 0.28) {
-            px2 = wp.x
-            py2 = wp.y
+          const seg = Math.hypot(wp.x - cx, wp.y - cy)
+          if (acc + seg >= 0.28 && seg > 1e-6) {
+            // interpolate WITHIN the segment — smoothed routes can hold one
+            // far waypoint, and jumping to it re-created the far-carrot
+            // rubber band (ceiling shuffle, user 2026-07-22)
+            const t = (0.28 - acc) / seg
+            px2 = cx + (wp.x - cx) * t
+            py2 = cy + (wp.y - cy) * t
             break
           }
+          acc += seg
+          cx = wp.x
+          cy = wp.y
           px2 = wp.x
           py2 = wp.y
         }
@@ -649,7 +674,9 @@ export class OrganismSimulation {
       else if (this.state === 'sniff' && !this.sniffing && inState > 1) this.setState('pursue')
       if (JUMP_ENABLED && this.state === 'pursue' && this.route && this.routeIdx < this.route.points.length) {
         const wp = this.route.points[this.routeIdx]
-        if (this.surfaceDist(wp.x, wp.y) > this.maxReach * 0.6) {
+        // hop unlock: off-shell waypoint OR genuinely stuck (starved) —
+        // hanging from a ceiling with nowhere to walk is a jump case
+        if (this.surfaceDist(wp.x, wp.y) > this.maxReach * 0.6 || starved) {
           let land: Vec2 | null = null
           for (let k = this.routeIdx; k < this.route.points.length; k++) {
             const c = this.route.points[k]
@@ -683,12 +710,12 @@ export class OrganismSimulation {
           }
           const cooled = this.time - this.lastJumpEnd > 3
           const notReturn = Math.hypot(land.x - this.lastJumpFromX, land.y - this.lastJumpFromY) > 0.25
-          if (cooled && notReturn && arcClear && landSane && goalDist > 0.2 && gap > this.maxReach * 1.1 && gap < 0.4) {
+          if (cooled && notReturn && arcClear && landSane && goalDist > 0.2 && gap > this.maxReach * 1.1 && gap < 0.28) {
             this.jumpSX = p.posX[0]
             this.jumpSY = p.posY[0]
             this.jumpEX = land.x
             this.jumpEY = land.y
-            this.jumpDur = Math.max(0.35, gap / 0.5)
+            this.jumpDur = Math.max(0.5, gap / 0.3) // slower, shorter hops (user 2026-07-22)
             this.jumpT = 0
             for (const pl of this.plants) pl.active = false
             for (const sw of this.swings) sw.active = false
@@ -699,6 +726,37 @@ export class OrganismSimulation {
     }
     const S = this.state
 
+    /* role fluidity: if a seeker points far better along travel than the
+       worst-aligned leg, they trade jobs (reach-over transitions) */
+    if (S === 'pursue' && moving && this.time - this.lastRoleSwap > 3.5) {
+      let bestSeek = -1
+      let bestDot = -2
+      let worstLeg = -1
+      let worstDot = 2
+      for (let a = 0; a < p.appendageCount; a++) {
+        const d = this.drivers[a]
+        const dot = Math.cos(d.restAngle) * travelDirX + Math.sin(d.restAngle) * travelDirY
+        if (this.isLeg[a]) {
+          if (dot < worstDot) {
+            worstDot = dot
+            worstLeg = a
+          }
+        } else if (dot > bestDot) {
+          bestDot = dot
+          bestSeek = a
+        }
+      }
+      if (bestSeek >= 0 && worstLeg >= 0 && bestDot > worstDot + 0.65) {
+        this.isLeg[worstLeg] = false
+        this.isLeg[bestSeek] = true
+        this.slotOf[bestSeek] = this.slotOf[worstLeg]
+        this.slotOf[worstLeg] = -1
+        this.plants[worstLeg].active = false
+        this.swings[worstLeg].active = false
+        this.lastRoleSwap = this.time
+      }
+    }
+
     /* role angles reorganize around the surface */
     const downAngle = Math.atan2(-surfNY, -surfNX)
     const upAngle = Math.atan2(surfNY, surfNX)
@@ -706,10 +764,12 @@ export class OrganismSimulation {
     const UPPER_SPREAD = [-0.6, 0, 0.6]
     const yearnEarly = this.pointerActive && (pointerDirX !== 0 || pointerDirY !== 0)
     const pointerAngle = Math.atan2(pointerDirY, pointerDirX)
+    let seekOrd = 0
     for (let a = 0; a < p.appendageCount; a++) {
       const d = this.drivers[a]
-      const seekerWant = yearnEarly ? pointerAngle + UPPER_SPREAD[(a - LEGS) % 3] * 0.55 : upAngle + UPPER_SPREAD[(a - LEGS) % 3]
-      const want = inRange ? (a < LEGS ? downAngle + WALKER_SPREAD[a % 3] : seekerWant) : d.restAngle
+      const so = this.isLeg[a] ? 0 : seekOrd++
+      const seekerWant = yearnEarly ? pointerAngle + UPPER_SPREAD[so % 3] * 0.55 : upAngle + UPPER_SPREAD[so % 3]
+      const want = inRange ? (this.isLeg[a] ? downAngle + WALKER_SPREAD[this.slotOf[a] % 3] : seekerWant) : d.restAngle
       let delta = want - d.restAngle
       while (delta > Math.PI) delta -= Math.PI * 2
       while (delta < -Math.PI) delta += Math.PI * 2
@@ -740,7 +800,8 @@ export class OrganismSimulation {
         let planted = 0
         let sumX = 0
         let sumY = 0
-        for (let a = 0; a < LEGS; a++) {
+        for (let a = 0; a < p.appendageCount; a++) {
+          if (!this.isLeg[a]) continue
           const pl = this.plants[a]
           if (!pl.active) continue
           planted++
@@ -761,12 +822,34 @@ export class OrganismSimulation {
           const ck = 1 - Math.exp((-dt / 0.7) * Math.LN2)
           this.stanceX += (cX - this.stanceX) * ck
           this.stanceY += (cY - this.stanceY) * ck
-          const surge = this.time < this.surgeUntil
-          const gain = surge ? 1.35 : 1.2 // overlapping soft pulses = glide-walk
+          // continuous surge envelope (sin ramp, no gain cliff) + velocity
+          // low-pass: per-step speed pulses read jerky (user 2026-07-22) —
+          // desired velocity is smoothed over ~0.22s into organic glide
+          const env = Math.max(0, Math.min(1, (this.surgeUntil - this.time) / 0.45))
+          const gain = 1.2 + 0.15 * Math.sin(env * Math.PI)
           const pullX = this.stanceX + travelDirX * this.maxReach * 0.5
           const pullY = this.stanceY + travelDirY * this.maxReach * 0.5
-          let mx = (pullX - p.posX[0]) * Math.min(1, dt * gain)
-          let my = (pullY - p.posY[0]) * Math.min(1, dt * gain)
+          const vk = 1 - Math.exp((-dt / 0.22) * Math.LN2)
+          this.coreSmVX += ((pullX - p.posX[0]) * gain - this.coreSmVX) * vk
+          this.coreSmVY += ((pullY - p.posY[0]) * gain - this.coreSmVY) * vk
+          let mx = this.coreSmVX * dt
+          let my = this.coreSmVY * dt
+          // back-drift suppression (user 2026-07-22): when the stance
+          // centroid lags a direction change, the pull briefly points
+          // backward — strip most of the anti-travel component (sideways
+          // curving stays free)
+          const fwd = mx * travelDirX + my * travelDirY
+          if (fwd < 0) {
+            // full strip: any backward component reads as shuffle
+            mx -= travelDirX * fwd
+            my -= travelDirY * fwd
+          }
+          // equilibrium deadband: tiny residual corrections dither in place —
+          // threshold well under one walk step so real travel never gates
+          if (Math.hypot(mx, my) < maxStep * 0.12) {
+            mx = 0
+            my = 0
+          }
           const mlen = Math.hypot(mx, my)
           const cap = maxStep * 1.35
           if (mlen > cap) {
@@ -779,6 +862,11 @@ export class OrganismSimulation {
           p.posX[0] += travelDirX * maxStep * 0.35
           p.posY[0] += travelDirY * maxStep * 0.35
         }
+      }
+      if (S !== 'pursue') {
+        const dk = Math.exp((-dt / 0.25) * Math.LN2)
+        this.coreSmVX *= dk
+        this.coreSmVY *= dk
       }
       {
         let anyPlant = false
@@ -809,7 +897,8 @@ export class OrganismSimulation {
           p.posY[0] += this.normal2.y * push
         }
       }
-      for (let a = 0; a < LEGS; a++) {
+      for (let a = 0; a < p.appendageCount; a++) {
+        if (!this.isLeg[a]) continue
         const pl = this.plants[a]
         if (!pl.active) continue
         const dx = p.posX[0] - pl.x
@@ -855,7 +944,8 @@ export class OrganismSimulation {
       let forceStep = -1
       if (S === 'pursue' && moving && this.time - this.lastReleaseTime > 1.4) {
         let worstDot = Infinity
-        for (let a = 0; a < LEGS; a++) {
+        for (let a = 0; a < p.appendageCount; a++) {
+          if (!this.isLeg[a]) continue
           const pl = this.plants[a]
           if (!pl.active) continue
           const dot = (pl.x - p.posX[0]) * travelDirX + (pl.y - p.posY[0]) * travelDirY
@@ -865,7 +955,8 @@ export class OrganismSimulation {
           }
         }
       }
-      for (let a = 0; a < LEGS; a++) {
+      for (let a = 0; a < p.appendageCount; a++) {
+        if (!this.isLeg[a]) continue
         const pl = this.plants[a]
         if (!pl.active) continue
         const rootI = p.indexOf(a, 0)
@@ -881,7 +972,8 @@ export class OrganismSimulation {
       }
       if (S === 'settle' && inRange && this.time - this.lastReleaseTime > 0.4) {
         const act: Array<{ a: number; proj: number }> = []
-        for (let a = 0; a < LEGS; a++) {
+        for (let a = 0; a < p.appendageCount; a++) {
+          if (!this.isLeg[a]) continue
           const pl = this.plants[a]
           if (pl.active) act.push({ a, proj: (pl.x - p.posX[0]) * tangX + (pl.y - p.posY[0]) * tangY })
         }
@@ -897,17 +989,18 @@ export class OrganismSimulation {
         }
       }
       const SLOT = [-0.55, 0, 0.55]
-      for (let a = 0; a < LEGS; a++) {
+      for (let a = 0; a < p.appendageCount; a++) {
+        if (!this.isLeg[a]) continue
         const pl = this.plants[a]
         const sw = this.swings[a]
         if (pl.active || sw.active || !inRange) continue
         if (S === 'rest' && inState > 0.3) continue
         const rootI = p.indexOf(a, 0)
         const sgn = moving ? Math.sign(tangX * travelDirX + tangY * travelDirY || 1) : 1
-        const lead = moving ? sgn * this.chainLen[a] * [0.55, 0.8, 0.65][a % 3] : 0
+        const lead = moving ? sgn * this.chainLen[a] * [0.55, 0.8, 0.65][this.slotOf[a] % 3] : 0
         let c = this.projectToSurface(
-          p.posX[rootI] + tangX * (SLOT[a % 3] * this.chainLen[a] * 1.15 + lead),
-          p.posY[rootI] + tangY * (SLOT[a % 3] * this.chainLen[a] * 1.15 + lead),
+          p.posX[rootI] + tangX * (SLOT[this.slotOf[a] % 3] * this.chainLen[a] * 1.15 + lead),
+          p.posY[rootI] + tangY * (SLOT[this.slotOf[a] % 3] * this.chainLen[a] * 1.15 + lead),
           0,
         )
         const tipR = p.radius[p.indexOf(a, p.jointsPerAppendage - 1)]
@@ -915,8 +1008,8 @@ export class OrganismSimulation {
         c = { x: c.x + this.normal2.x * tipR * 1.2, y: c.y + this.normal2.y * tipR * 1.2 }
         let ok = Math.hypot(c.x - p.posX[rootI], c.y - p.posY[rootI]) < this.chainLen[a] * 0.95
         if (ok) {
-          for (let o = 0; o < LEGS; o++) {
-            if (o === a) continue
+          for (let o = 0; o < p.appendageCount; o++) {
+            if (o === a || !this.isLeg[o]) continue
             // separation vs planted feet AND in-flight swing targets —
             // simultaneous swings raced onto the same landing spot
             if (this.plants[o].active && Math.hypot(this.plants[o].x - c.x, this.plants[o].y - c.y) < this.chainLen[a] * 0.35) ok = false
@@ -934,7 +1027,8 @@ export class OrganismSimulation {
           sw.t = 0
         }
       }
-      for (let a = 0; a < LEGS; a++) {
+      for (let a = 0; a < p.appendageCount; a++) {
+        if (!this.isLeg[a]) continue
         const sw = this.swings[a]
         if (!sw.active) continue
         sw.t += dt / SWING_TIME
@@ -975,12 +1069,12 @@ export class OrganismSimulation {
         // spider leap: everything TRAILS the core; in the last quarter the
         // legs swing forward toward the landing zone (legs-first touchdown)
         const t01 = Math.min(1, this.jumpT)
-        const landing = a < LEGS && t01 > 0.72
+        const landing = this.isLeg[a] && t01 > 0.72
         let tx: number
         let ty: number
         if (landing) {
           const SLOT_L = [-0.55, 0, 0.55]
-          const c = this.projectToSurface(this.jumpEX + -jumpDirY * SLOT_L[a % 3] * this.chainLen[a], this.jumpEY + jumpDirX * SLOT_L[a % 3] * this.chainLen[a], 0)
+          const c = this.projectToSurface(this.jumpEX + -jumpDirY * SLOT_L[Math.max(0, this.slotOf[a]) % 3] * this.chainLen[a], this.jumpEY + jumpDirX * SLOT_L[Math.max(0, this.slotOf[a]) % 3] * this.chainLen[a], 0)
           tx = c.x
           ty = c.y
         } else {
@@ -990,7 +1084,7 @@ export class OrganismSimulation {
         this.solveLimb(a, rootX, rootY, tx, ty, this.chainLen[a] * 0.12, 0.3)
         continue
       }
-      if (a < LEGS) {
+      if (this.isLeg[a]) {
         const pl = this.plants[a]
         const sw = this.swings[a]
         let tx: number
@@ -1074,7 +1168,7 @@ export class OrganismSimulation {
       const span = Math.hypot(p.posX[tipI] - p.posX[rootI], p.posY[tipI] - p.posY[rootI])
       const ratio = span / (this.chainLen[a] * 0.85)
       const squash = Math.max(-0.45, Math.min(0.45, 1 - ratio))
-      const planted = a < LEGS && this.plants[a].active
+      const planted = this.isLeg[a] && this.plants[a].active
       for (let j = 0; j < p.jointsPerAppendage; j++) {
         const i = p.indexOf(a, j)
         const t = j / (p.jointsPerAppendage - 1)

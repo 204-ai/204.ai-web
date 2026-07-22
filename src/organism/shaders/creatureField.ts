@@ -161,14 +161,15 @@ export function buildOutputNodes(opts: {
      enter a protected region */
   const edgeD = min(min(simPos.x, opts.aspect.sub(simPos.x)), min(simPos.y, float(1).sub(simPos.y)))
   const boundaryD = min(sdfS.x, edgeD)
-  const distance = smaxN(rawDistance, boundaryD.negate(), R * 0.22)
+  // crisp cut (user 2026-07-22): the wide blend read as a smeared half-tone
+  // wall at contact — tiny k keeps the clip clean, membrane wraps naturally
+  const distance = smaxN(rawDistance, boundaryD.negate(), R * 0.09)
 
   /* analytic AA: edge width from derivatives, floored at edgeSoftness px
      converted to sim units (1 sim unit = viewport height in px) (§16) */
   const edgeSim = float(opts.edgeSoftnessPx).div(viewportHeightPx)
   const w = max(distance.fwidth(), edgeSim)
   const coverage = float(1).sub(smoothstep(w.negate(), w, distance))
-  const coverageRaw = coverage
 
   /* interior anatomy (user 2026-07-21): bright rim shell → markedly
      darker interior, with each limb's CORE reading as a lighter ridge —
@@ -184,18 +185,20 @@ export function buildOutputNodes(opts: {
     }
     limbCore = max(limbCore, float(1).sub(smoothstep(0, R * 0.3, dA)))
   }
+  // two mottle octaves: single low-freq product left flat "empty" mid-gray
+  // patches (user 2026-07-22) — the second octave fills the gaps
   const m1 = simPos.x.mul(34).add(time.mul(0.05)).sin()
   const m2 = simPos.y.mul(29).sub(time.mul(0.037)).sin()
-  const mottle = m1.mul(m2).mul(0.5).add(0.5)
+  const m3 = simPos.x.mul(61).sub(time.mul(0.043)).sin().mul(simPos.y.mul(53).add(time.mul(0.031)).sin())
+  const mottle = m1.mul(m2).mul(0.5).add(0.5).mul(0.6).add(m3.mul(0.5).add(0.5).mul(0.4))
   const interiorBase = 1 - opts.internalShadingStrength * 2.0 // deep interior (user: darker still)
-  /* contact-pressure highlight (§35) */
-  const press = float(1).sub(smoothstep(0, R * 0.35, boundaryD.abs())).mul(coverageRaw).mul(0.1)
+  /* contact-pressure highlight retired (user 2026-07-22): the bright smear
+     at obstacle contact read as an artifact, not squish */
   const tone = float(interiorBase)
     .add(rim.mul(1 - interiorBase))
-    .add(limbCore.mul(0.12))
-    .sub(mottle.mul(0.08))
-    .add(press)
-    .clamp(0.05, 1)
+    .add(limbCore.mul(0.05))
+    .add(mottle.mul(0.06)) // additive: cells stay visible over near-black base
+    .clamp(0.02, 1)
   const shaded = vec3(tone)
   /* proximity glow: ONLY the nearest tip heats toward the accent
      (#c9442b) as it nears the cursor's touch radius — localized want */
