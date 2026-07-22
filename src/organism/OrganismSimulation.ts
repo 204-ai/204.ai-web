@@ -76,8 +76,8 @@ export class OrganismSimulation {
   private routePosY = 0
   private lastRouteTime = -10
   private sniffing = false
-  private lastPointerDist = Infinity
   private lastProgressTime = 0
+  private hungerBest = Infinity
   private walkStalled = false
   /* discrete locomotion decisions (user 2026-07-21: self-propelled, no
      rubber band) — the body commits to a local destination and walks it */
@@ -550,14 +550,21 @@ export class OrganismSimulation {
     let starved = false
     if (this.pointerActive) {
       const dNow = Math.hypot(this.pointerX - p.posX[0], this.pointerY - p.posY[0])
-      if (dNow < this.lastPointerDist - 0.015) this.lastProgressTime = this.time
-      this.lastPointerDist = dNow
+      // progress = beating the BEST distance so far — sway near the closest
+      // approach point kept resetting a last-sample comparison and the
+      // stall clock (jump unlock) never fired (user 2026-07-22)
+      if (dNow > this.hungerBest + 0.12) this.hungerBest = dNow // goal moved away: re-baseline
+      if (dNow < this.hungerBest - 0.015) {
+        this.hungerBest = dNow
+        this.lastProgressTime = this.time
+      }
+
       starved = dNow > 0.25 && this.time - this.lastProgressTime > 2
       // capture stall BEFORE the starved reroute resets the progress clock —
       // jumps are a last resort, allowed only once walking stopped helping
       this.walkStalled = this.time - this.lastProgressTime > 3
     } else {
-      this.lastPointerDist = Infinity
+      this.hungerBest = Infinity
     }
 
     /* routing (on demand, with route memory) */
