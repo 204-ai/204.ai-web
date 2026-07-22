@@ -214,7 +214,9 @@ export function buildOutputNodes(opts: {
     const tip = opts.particles.element(opts.indexOf(a, opts.jointsPerAppendage - 1))
     // wide band + steep curve: distance differences read as brightness
     // differences, not on/off (user 2026-07-22)
-    const want = float(0.22).sub(tip.xy.sub(opts.glow.xy).length()).div(0.175).clamp(0, 1).pow(2.4).mul(opts.glow.w)
+    // tight onset (user 2026-07-22): only tips actually AT the cursor
+    // heat — a stretched seeker touching must not light distant feet
+    const want = float(0.14).sub(tip.xy.sub(opts.glow.xy).length()).div(0.095).clamp(0, 1).pow(2.2).mul(opts.glow.w)
     const gd = simPos.sub(tip.xy).length()
     glowF = max(glowF, float(1).sub(smoothstep(0, opts.glow.z, gd)).mul(want))
     haze = max(haze, float(1).sub(smoothstep(0, opts.glow.z.mul(1.6), gd)).mul(want))
