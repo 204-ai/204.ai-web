@@ -82,7 +82,7 @@ export function creatureDistance(
   let d = sdCircle(p, core.xy, core.z)
   for (let l = 0; l < layout.lobeCount; l++) {
     const lobe = u.lobes.element(l)
-    d = sminN(d, sdCircle(p, lobe.xy, lobe.z.mul(lobe.w)), R * 1.4)
+    d = sminN(d, sdCircle(p, lobe.xy, lobe.z.mul(lobe.w)), R * 0.85) // tighter: lobes shape, not inflate (user 2026-07-22)
   }
 
   // limbs: chains of tapered capsules; union softness varies root→tip so
@@ -92,7 +92,7 @@ export function creatureDistance(
       const p0 = part(layout.indexOf(a, j))
       const p1 = part(layout.indexOf(a, j + 1))
       const t = j / (layout.jointsPerAppendage - 1)
-      const k = j === 0 ? R * 0.7 : t < 0.55 ? R * 0.45 : R * 0.3
+      const k = j === 0 ? R * 0.48 : t < 0.55 ? R * 0.34 : R * 0.26 // slimmer joins — limbs articulate, not melt (tip k eased: beading)
       const seg = sdTaperedSegment(p, p0.xy, p1.xy, p0.z.mul(p0.w), p1.z.mul(p1.w))
       d = sminN(d, seg, k)
     }
@@ -104,12 +104,12 @@ export function creatureDistance(
   for (let a = 0; a < walkers - 1; a++) {
     const a1 = part(layout.indexOf(a, 1))
     const b1 = part(layout.indexOf(a + 1, 1))
-    const web1 = sdTaperedSegment(p, a1.xy, b1.xy, float(R * 0.05), float(R * 0.05))
-    d = sminN(d, web1, R * 0.4)
+    const web1 = sdTaperedSegment(p, a1.xy, b1.xy, float(R * 0.03), float(R * 0.03))
+    d = sminN(d, web1, R * 0.24)
     const a2 = part(layout.indexOf(a, 2))
     const b2 = part(layout.indexOf(a + 1, 2))
-    const web2 = sdTaperedSegment(p, a2.xy, b2.xy, float(R * 0.045), float(R * 0.045))
-    d = sminN(d, web2, R * 0.45)
+    const web2 = sdTaperedSegment(p, a2.xy, b2.xy, float(R * 0.028), float(R * 0.028))
+    d = sminN(d, web2, R * 0.26)
   }
 
   // creases: narrow subtractive channels between limb roots → concavity,
@@ -204,14 +204,25 @@ export function buildOutputNodes(opts: {
      (#c9442b) as it nears the cursor's touch radius — localized want */
   const ACCENT: Node = vec3(0.788, 0.267, 0.169)
   // NOTE: smoothstep with reversed edges is undefined in WGSL — invert
-  const gd = simPos.sub(opts.glow.xy).length()
-  const glowF = float(1).sub(smoothstep(0, opts.glow.z, gd)).mul(opts.glow.w).clamp(0, 0.85)
-  // aura: soft accent haze AROUND the tip, outside the silhouette too —
-  // an 8px tentacle tip can't carry a glow on its own
-  const haze = float(1).sub(smoothstep(0, opts.glow.z.mul(1.6), gd)).mul(opts.glow.w)
+  // multi-tip (user 2026-07-22): glow.xy = POINTER; every tip's want is
+  // computed here from its own distance to the cursor — all tips in range
+  // heat together, max-combined so clusters don't over-brighten
+  let glowF: Node = float(0)
+  let haze: Node = float(0)
+  let hot: Node = float(0)
+  for (let a = 0; a < opts.appendageCount; a++) {
+    const tip = opts.particles.element(opts.indexOf(a, opts.jointsPerAppendage - 1))
+    // wide band + steep curve: distance differences read as brightness
+    // differences, not on/off (user 2026-07-22)
+    const want = float(0.22).sub(tip.xy.sub(opts.glow.xy).length()).div(0.175).clamp(0, 1).pow(2.4).mul(opts.glow.w)
+    const gd = simPos.sub(tip.xy).length()
+    glowF = max(glowF, float(1).sub(smoothstep(0, opts.glow.z, gd)).mul(want))
+    haze = max(haze, float(1).sub(smoothstep(0, opts.glow.z.mul(1.6), gd)).mul(want))
+    hot = max(hot, float(1).sub(smoothstep(0, opts.glow.z.mul(0.35), gd)).mul(want))
+  }
+  glowF = glowF.clamp(0, 0.85)
   const accentW = glowF.add(haze.mul(float(1).sub(coverage))).clamp(0, 0.9)
-  // glow core brightens toward hot orange-white at the very center
-  const hot = float(1).sub(smoothstep(0, opts.glow.z.mul(0.35), gd)).mul(opts.glow.w).mul(0.5)
+  hot = hot.mul(0.5)
   const glowColor = ACCENT.add(vec3(hot))
   const bodyColor = shaded.mul(float(1).sub(accentW)).add(glowColor.mul(accentW))
   // interior breathes slightly translucent — depth without heaviness

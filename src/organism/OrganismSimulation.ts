@@ -78,6 +78,7 @@ export class OrganismSimulation {
   private sniffing = false
   private lastPointerDist = Infinity
   private lastProgressTime = 0
+  private walkStalled = false
   /* discrete locomotion decisions (user 2026-07-21: self-propelled, no
      rubber band) — the body commits to a local destination and walks it */
   private localSet = false
@@ -92,6 +93,7 @@ export class OrganismSimulation {
   private gestureLimb = -1
   private creepAt = 5
   private stanceFixes = 0
+  private idleShuffleAt = 8
 
   /* state machine (M9) */
   state: 'rest' | 'pursue' | 'settle' | 'sniff' | 'jump' = 'rest'
@@ -529,6 +531,9 @@ export class OrganismSimulation {
       if (dNow < this.lastPointerDist - 0.015) this.lastProgressTime = this.time
       this.lastPointerDist = dNow
       starved = dNow > 0.25 && this.time - this.lastProgressTime > 2
+      // capture stall BEFORE the starved reroute resets the progress clock —
+      // jumps are a last resort, allowed only once walking stopped helping
+      this.walkStalled = this.time - this.lastProgressTime > 1.5
     } else {
       this.lastPointerDist = Infinity
     }
@@ -697,9 +702,10 @@ export class OrganismSimulation {
       else if (this.state === 'sniff' && !this.sniffing && inState > 1) this.setState('pursue')
       if (JUMP_ENABLED && this.state === 'pursue' && this.route && this.routeIdx < this.route.points.length) {
         const wp = this.route.points[this.routeIdx]
-        // hop unlock: off-shell waypoint OR genuinely stuck (starved) —
-        // hanging from a ceiling with nowhere to walk is a jump case
-        if (this.surfaceDist(wp.x, wp.y) > this.maxReach * 0.6 || starved) {
+        // walk-first (user 2026-07-22): jumping needs BOTH a reason (off-
+        // shell waypoint / starved) AND stalled walking — close the
+        // distance on foot, hop only when feet stop making progress
+        if (this.walkStalled && (this.surfaceDist(wp.x, wp.y) > this.maxReach * 0.6 || starved)) {
           let land: Vec2 | null = null
           for (let k = this.routeIdx; k < this.route.points.length; k++) {
             const c = this.route.points[k]
@@ -731,7 +737,7 @@ export class OrganismSimulation {
               }
             }
           }
-          const cooled = this.time - this.lastJumpEnd > 3
+          const cooled = this.time - this.lastJumpEnd > 4.5
           const notReturn = Math.hypot(land.x - this.lastJumpFromX, land.y - this.lastJumpFromY) > 0.25
           if (cooled && notReturn && arcClear && landSane && goalDist > 0.2 && gap > this.maxReach * 1.1 && gap < 0.28 * this.creatureScale) {
             this.jumpSX = p.posX[0]
@@ -1005,6 +1011,19 @@ export class OrganismSimulation {
           this.dbgReleases++
         }
       }
+      // idle shuffle (user 2026-07-22): parked bodies still shift weight —
+      // release one planted foot every few seconds; the gait replants it a
+      // touch offset and the dip/surge reads as a living micro-step
+      if (S === 'rest' && this.time > this.idleShuffleAt) {
+        this.idleShuffleAt = this.time + 5 + this.rng() * 6
+        const act: number[] = []
+        for (let a = 0; a < p.appendageCount; a++) if (this.isLeg[a] && this.plants[a].active) act.push(a)
+        if (act.length >= 2) {
+          const pick = act[Math.floor(this.rng() * act.length)]
+          this.plants[pick].active = false
+          this.lastReleaseTime = this.time
+        }
+      }
       if (S === 'settle' && inRange && this.time - this.lastReleaseTime > 0.4) {
         const act: Array<{ a: number; proj: number }> = []
         for (let a = 0; a < p.appendageCount; a++) {
@@ -1081,9 +1100,12 @@ export class OrganismSimulation {
     /* lurk gestures (§19): in restful states one seeker occasionally
        performs a deep probe — alive, watching, wanting */
     if ((S === 'rest' || S === 'settle' || S === 'sniff') && this.time > this.nextGestureAt) {
-      this.gestureLimb = LEGS + Math.floor(this.rng() * (p.appendageCount - LEGS))
-      this.gestureUntil = this.time + 1.1 + this.rng() * 0.6
-      this.nextGestureAt = this.time + 5 + this.rng() * 6
+      // gesture limb = any current seeker (roles are dynamic)
+      const seekers: number[] = []
+      for (let a = 0; a < p.appendageCount; a++) if (!this.isLeg[a]) seekers.push(a)
+      this.gestureLimb = seekers.length ? seekers[Math.floor(this.rng() * seekers.length)] : -1
+      this.gestureUntil = this.time + 1.2 + this.rng() * 0.7
+      this.nextGestureAt = this.time + 3 + this.rng() * 3.5
     }
 
     /* ---- limbs: pure kinematic IK ---- */
@@ -1144,7 +1166,15 @@ export class OrganismSimulation {
       } else {
         let desX: number
         let desY: number
-        if ((this.sniffing || yearn) && this.pointerActive) {
+        const gesturing = a === this.gestureLimb && this.time < this.gestureUntil
+        const rootToPtr = this.pointerActive ? Math.hypot(this.pointerX - rootX, this.pointerY - rootY) : Infinity
+        const touching = gesturing && rootToPtr < this.chainLen[a] * 1.05
+        if (touching) {
+          // arrived + parked: the gesture limb TOUCHES the cursor itself —
+          // contact, not just orbiting near it (user 2026-07-22)
+          desX = this.pointerX
+          desY = this.pointerY
+        } else if ((this.sniffing || yearn) && this.pointerActive) {
           // investigate from all sides: each seeker aims at its own slowly
           // orbiting point on a ring AROUND the cursor — poking, curving
           // behind it, sniffing it from all sides (user 2026-07-21)
@@ -1176,8 +1206,7 @@ export class OrganismSimulation {
         const strain = this.sniffing || yearn ? 0.92 + 0.08 * Math.sin(this.time * 0.045 * Math.PI * 2 + a * 1.3) + poke : 0
         // peaks touch FULL extension (clamped by the solver), then relax —
         // able to fully stretch, never parked there (user 2026-07-21)
-        const gesturing = a === this.gestureLimb && this.time < this.gestureUntil
-        const ext = this.chainLen[a] * (gesturing ? 0.95 : this.sniffing || yearn ? Math.min(1, strain) : this.pointerActive ? 0.85 + 0.08 * Math.sin(this.time * 0.11 * Math.PI * 2 + a) : 0.72 + 0.2 * Math.sin(this.time * 0.07 * Math.PI * 2 + a * 1.9))
+        const ext = this.chainLen[a] * (touching ? 1 : gesturing ? 0.95 : this.sniffing || yearn ? Math.min(1, strain) : this.pointerActive ? 0.85 + 0.08 * Math.sin(this.time * 0.11 * Math.PI * 2 + a) : 0.72 + 0.2 * Math.sin(this.time * 0.07 * Math.PI * 2 + a * 1.9))
         const ddx = desX - rootX
         const ddy = desY - rootY
         const dl = Math.hypot(ddx, ddy) || 1
@@ -1213,29 +1242,17 @@ export class OrganismSimulation {
       }
     }
 
-    /* proximity glow: nearest tip to the pointer, intensity by closeness
-       (starts ~0.22 out, saturates at the 0.05 touch radius) */
+    /* proximity glow (user 2026-07-22: multi-tip): CPU only supplies the
+       POINTER position + a presence gate — per-tip intensity now lives in
+       the shader, so every tip in range glows instead of the accent
+       jumping to whichever tip is momentarily nearest */
     {
-      let gi = 0
-      let gx = this.glowX
-      let gy = this.glowY
+      const gi = this.pointerActive ? 1 : 0
+      const gk = 1 - Math.exp((-dt / 0.12) * Math.LN2)
       if (this.pointerActive) {
-        let best = Infinity
-        for (let a = 0; a < p.appendageCount; a++) {
-          const tipI = p.indexOf(a, p.jointsPerAppendage - 1)
-          const dd = Math.hypot(p.posX[tipI] - this.pointerX, p.posY[tipI] - this.pointerY)
-          if (dd < best) {
-            best = dd
-            gx = p.posX[tipI]
-            gy = p.posY[tipI]
-          }
-        }
-        const t = Math.max(0, Math.min(1, (0.16 - best) / (0.16 - 0.045)))
-        gi = Math.pow(t, 1.6)
+        this.glowX += (this.pointerX - this.glowX) * gk
+        this.glowY += (this.pointerY - this.glowY) * gk
       }
-      const gk = 1 - Math.exp((-dt / 0.08) * Math.LN2)
-      this.glowX += (gx - this.glowX) * gk
-      this.glowY += (gy - this.glowY) * gk
       this.glowI += (gi - this.glowI) * gk
     }
 
