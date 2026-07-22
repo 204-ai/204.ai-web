@@ -555,7 +555,7 @@ export class OrganismSimulation {
       starved = dNow > 0.25 && this.time - this.lastProgressTime > 2
       // capture stall BEFORE the starved reroute resets the progress clock —
       // jumps are a last resort, allowed only once walking stopped helping
-      this.walkStalled = this.time - this.lastProgressTime > 2.2
+      this.walkStalled = this.time - this.lastProgressTime > 3
     } else {
       this.lastPointerDist = Infinity
     }
@@ -761,7 +761,7 @@ export class OrganismSimulation {
           }
           const cooled = this.time - this.lastJumpEnd > 4.5
           const notReturn = Math.hypot(land.x - this.lastJumpFromX, land.y - this.lastJumpFromY) > 0.25
-          if (cooled && notReturn && arcClear && landSane && goalDist > 0.2 && gap > this.maxReach * 1.45 && gap < 0.34 * this.creatureScale) {
+          if (cooled && notReturn && arcClear && landSane && goalDist > 0.2 && gap > this.maxReach * 1.9 && gap < 0.34 * this.creatureScale) {
             // gaps within ~1.45 reach are STRETCH territory — fluid climbing
             // over shortcut hops (user 2026-07-22)
             this.jumpSX = p.posX[0]
