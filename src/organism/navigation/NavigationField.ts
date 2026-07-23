@@ -7,8 +7,9 @@
 import { sdObstacles, type SimRect } from '../math/sdf'
 
 export type RouteResult = {
-  /* smoothed waypoints, start exclusive */
-  points: Array<{ x: number; y: number }>
+  /* smoothed waypoints, start exclusive; jump=true → this waypoint is
+     reached by a PLANNED hop from the previous one */
+  points: Array<{ x: number; y: number; jump?: boolean }>
   /* true when the goal itself is unreachable and the route ends at the
      nearest reachable point instead (→ sniff-tendril behavior) */
   goalUnreachable: boolean
@@ -19,6 +20,9 @@ export class NavigationField {
   private rows: number
   private blocked: Uint8Array
   private cost: Float32Array
+  /* planned-jump edges: per-cell [targetCell, edgeCost] pairs (§21 ext:
+     small hops are part of PLANNING, not just a stuck-escape) */
+  private jumpLinks: Array<Array<[number, number]>> = []
   private aspect = 1.6
 
   constructor(cols: number, rows: number) {
@@ -44,6 +48,58 @@ export class NavigationField {
         // cut across open space it would have to jump)
         const offShell = Math.min(edge, d) > 0.12 ? 6 : 1 // strongly prefer wall paths (climb > jump, user 2026-07-22)
         this.cost[i] = (1 + (d < comfort ? 3 * (1 - Math.max(d, 0) / comfort) : 0)) * offShell
+      }
+    }
+    this.buildJumpLinks()
+  }
+
+  /** Jump edges: shell cell → shell cell across open space, within hop
+      range. Cost ≈ 1.35x the crossed distance + flat 5 — walking wins when
+      comparable, hopping wins over long wall detours. */
+  private buildJumpLinks() {
+    const { cols, rows } = this
+    const sx = this.aspect / cols
+    const sy = 1 / rows
+    const cellAvg = (sx + sy) / 2
+    const R = Math.ceil(0.32 / Math.min(sx, sy))
+    this.jumpLinks = new Array(cols * rows)
+    const shell = (i: number) => !this.blocked[i] && this.cost[i] < 6
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const i = r * cols + c
+        if (!shell(i) || (c + r) % 2 !== 0) continue
+        const links: Array<[number, number]> = []
+        for (let dr = -R; dr <= R && links.length < 6; dr += 2) {
+          for (let dc = -R; dc <= R && links.length < 6; dc += 2) {
+            const nc = c + dc
+            const nr = r + dr
+            if (nc < 0 || nc >= cols || nr < 0 || nr >= rows) continue
+            const ni = nr * cols + nc
+            if (!shell(ni)) continue
+            const dist = Math.hypot(dc * sx, dr * sy)
+            if (dist < 0.13 || dist > 0.32) continue
+            // mid samples: unblocked (arc feasibility) AND at least one
+            // genuinely off-shell — without that filter the 6-link cap
+            // fills with along-the-wall junk hops before any real gap
+            // crossing is found (hops shorter than ~2x shell band are
+            // stretch territory anyway and need no link)
+            let clear = true
+            let crossesGap = false
+            for (const t of [0.28, 0.5, 0.72]) {
+              const mc = Math.round(c + dc * t)
+              const mr = Math.round(r + dr * t)
+              const mi = mr * cols + mc
+              if (this.blocked[mi]) {
+                clear = false
+                break
+              }
+              if (this.cost[mi] >= 6) crossesGap = true
+            }
+            if (!clear || !crossesGap) continue
+            links.push([ni, (dist / cellAvg) * 1.35 + 5])
+          }
+        }
+        if (links.length) this.jumpLinks[i] = links
       }
     }
   }
@@ -199,10 +255,24 @@ export class NavigationField {
           }
         }
       }
+      const jl = this.jumpLinks[cur]
+      if (jl) {
+        for (const [ni, jc] of jl) {
+          if (closed[ni]) continue
+          if (g[cur] + jc < g[ni]) {
+            g[ni] = g[cur] + jc
+            from[ni] = cur
+            if (!inOpen[ni]) {
+              inOpen[ni] = 1
+              open.push(ni)
+            }
+          }
+        }
+      }
       if (open.length > n) break // safety (unreachable with dedupe)
     }
 
-    // reconstruct
+    // reconstruct; an edge spanning >1 cell = a planned hop
     const cells: number[] = []
     let cur = goal
     while (cur !== -1 && cur !== start) {
@@ -210,7 +280,16 @@ export class NavigationField {
       cur = from[cur]
     }
     cells.reverse()
-    let points = cells.map((i) => this.center(i))
+    let prevCell = start
+    let points = cells.map((i) => {
+      const pc = prevCell
+      prevCell = i
+      const dc = Math.abs((i % cols) - (pc % cols))
+      const dr = Math.abs(Math.floor(i / cols) - Math.floor(pc / cols))
+      const pt = this.center(i) as { x: number; y: number; jump?: boolean }
+      if (Math.max(dc, dr) > 1) pt.jump = true
+      return pt
+    })
 
     // line-of-sight smoothing: keep only necessary waypoints. A shortcut
     // must also STAY NEAR THE SHELL — pure geometric LOS collapsed wall
@@ -223,13 +302,14 @@ export class NavigationField {
       }
       return hasLineOfSight(ax0, ay0, bx, by)
     }
-    const smoothed: Array<{ x: number; y: number }> = []
+    const smoothed: Array<{ x: number; y: number; jump?: boolean }> = []
     let ax = sx
     let ay = sy
     for (let i = 0; i < points.length; i++) {
       const isLast = i === points.length - 1
       const next = points[i + 1]
-      if (!isLast && next && shellCut(ax, ay, next.x, next.y)) continue
+      // jump waypoints are structural: keep them and their launch points
+      if (!isLast && next && !points[i].jump && !next.jump && shellCut(ax, ay, next.x, next.y)) continue
       smoothed.push(points[i])
       ax = points[i].x
       ay = points[i].y

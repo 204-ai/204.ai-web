@@ -161,6 +161,7 @@ export class OrganismSimulation {
   dbgGoalDist = 0
   dbgTravel: [number, number] = [0, 0]
   dbgStride = ''
+  dbgJump = ''
 
   constructor(
     private particles: ParticleBuffer,
@@ -780,21 +781,28 @@ export class OrganismSimulation {
       else if (this.state === 'sniff' && !this.sniffing && inState > 1) this.setState('pursue')
       if (JUMP_ENABLED && this.state === 'pursue' && this.route && this.routeIdx < this.route.points.length) {
         const wp = this.route.points[this.routeIdx]
-        // walk-first (user 2026-07-22): jumping needs BOTH a reason (off-
-        // shell waypoint / starved) AND stalled walking — close the
-        // distance on foot, hop only when feet stop making progress
-        if (this.walkStalled && (this.surfaceDist(wp.x, wp.y) > this.maxReach * 0.6 || starved)) {
+        // PLANNED hops (user 2026-07-23): the router emits jump-flagged
+        // waypoints as part of multi-leg plans — execute them deliberately
+        // once within launch range, no stall required. Reactive jumps
+        // (walk-first: stalled + off-shell/starved) remain the fallback.
+        const plannedHop = wp.jump === true && Math.hypot(wp.x - p.posX[0], wp.y - p.posY[0]) < 0.34 * this.creatureScale && this.time - this.lastJumpEnd > 1.4
+        if (plannedHop || (this.walkStalled && (this.surfaceDist(wp.x, wp.y) > this.maxReach * 0.6 || starved))) {
           let land: Vec2 | null = null
-          for (let k = this.routeIdx; k < this.route.points.length; k++) {
-            const c = this.route.points[k]
-            if (this.surfaceDist(c.x, c.y) <= this.maxReach * 0.45) {
-              land = c
-              break
+          if (plannedHop) {
+            // the jump waypoint IS the landing — snap it to its shell
+            land = this.projectToSurface(wp.x, wp.y, this.maxReach * 0.27)
+          } else {
+            for (let k = this.routeIdx; k < this.route.points.length; k++) {
+              const c = this.route.points[k]
+              if (this.surfaceDist(c.x, c.y) <= this.maxReach * 0.45) {
+                land = c
+                break
+              }
             }
-          }
-          if (!land) {
-            const g = this.route.points[this.route.points.length - 1]
-            land = this.projectToSurface(g.x, g.y, this.maxReach * 0.3)
+            if (!land) {
+              const g = this.route.points[this.route.points.length - 1]
+              land = this.projectToSurface(g.x, g.y, this.maxReach * 0.3)
+            }
           }
           const gap = Math.hypot(land.x - p.posX[0], land.y - p.posY[0])
           // a jump that doesn't close distance to the goal is never taken
@@ -815,9 +823,11 @@ export class OrganismSimulation {
               }
             }
           }
-          const cooled = this.time - this.lastJumpEnd > 4.5
+          const cooled = this.time - this.lastJumpEnd > (plannedHop ? 1.4 : 4.5)
           const notReturn = Math.hypot(land.x - this.lastJumpFromX, land.y - this.lastJumpFromY) > 0.25
-          if (cooled && notReturn && arcClear && landSane && goalDist > 0.2 && gap > this.maxReach * 1.6 && gap < 0.34 * this.creatureScale) {
+          const gapOk = plannedHop ? gap > this.maxReach * 0.9 && gap < 0.34 * this.creatureScale : gap > this.maxReach * 1.6 && gap < 0.34 * this.creatureScale
+          this.dbgJump = `cool=${cooled} ret=${notReturn} arc=${arcClear} sane=${landSane} prog=${progressJump} gd=${goalDist.toFixed(2)} gap=${gap.toFixed(2)} gapOk=${gapOk} planned=${plannedHop}`
+          if (cooled && notReturn && arcClear && landSane && goalDist > 0.2 * (plannedHop ? 0.5 : 1) && gapOk) {
             // gaps within ~1.45 reach are STRETCH territory — fluid climbing
             // over shortcut hops (user 2026-07-22)
             this.jumpSX = p.posX[0]
