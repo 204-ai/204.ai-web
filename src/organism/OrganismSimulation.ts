@@ -131,6 +131,10 @@ export class OrganismSimulation {
   private lastJumpEnd = -10
   private lastJumpFromX = 1e9
   private lastJumpFromY = 1e9
+  /* per-step position snapshot for the goo-speed governor */
+  private stepStartX: Float32Array
+  private stepStartY: Float32Array
+
   /* seekers: eased targets */
   private seekX: Float32Array
   private seekY: Float32Array
@@ -159,6 +163,8 @@ export class OrganismSimulation {
   ) {
     const rnd = mulberry32(seed)
     const p = particles
+    this.stepStartX = new Float32Array(p.count)
+    this.stepStartY = new Float32Array(p.count)
     this.restLengths = new Float32Array(p.count)
     this.chainLen = new Float32Array(p.appendageCount)
     this.seekX = new Float32Array(p.appendageCount)
@@ -460,6 +466,8 @@ export class OrganismSimulation {
   step(dt: number) {
     const p = this.particles
     const cfg = this.config
+    this.stepStartX.set(p.posX)
+    this.stepStartY.set(p.posY)
     this.time += dt
     this.breathePhase += (dt * Math.PI * 2) / 6.4
     this.breathePhase2 += (dt * Math.PI * 2) / 9.7
@@ -1344,6 +1352,28 @@ export class OrganismSimulation {
         this.glowY += (this.pointerY - this.glowY) * gk
       }
       this.glowI += (gi - this.glowI) * gk
+    }
+
+    /* goo-speed governor (user 2026-07-23): HARD per-step cap on every
+       joint's motion relative to the core — a limb may never cross space
+       near-instantly, whatever upstream logic wanted. Kinematic clamp
+       (prev = pos) so it can never add jitter energy. */
+    {
+      const capR = cfg.behavior.maximumTipSpeed * dt * (this.state === 'jump' ? 1.6 : 1)
+      const cdx = p.posX[0] - this.stepStartX[0]
+      const cdy = p.posY[0] - this.stepStartY[0]
+      for (let i = 1; i < p.count; i++) {
+        const rx = p.posX[i] - this.stepStartX[i] - cdx
+        const ry = p.posY[i] - this.stepStartY[i] - cdy
+        const rl = Math.hypot(rx, ry)
+        if (rl > capR) {
+          const f = capR / rl
+          p.posX[i] = this.stepStartX[i] + cdx + rx * f
+          p.posY[i] = this.stepStartY[i] + cdy + ry * f
+          p.prevX[i] = p.posX[i]
+          p.prevY[i] = p.posY[i]
+        }
+      }
     }
 
     /* core velocity for motion stretch */

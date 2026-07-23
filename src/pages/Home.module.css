@@ -232,10 +232,6 @@
   background: rgba(255, 255, 255, 0.025);
 }
 
-.chapterActive .chapterCode {
-  color: var(--accent-text);
-}
-
 .chapterTitle {
   color: var(--dim);
   transition: color 0.2s;
@@ -303,15 +299,6 @@
   position: absolute;
   inset: 0;
   border: 1.5px solid var(--accent);
-}
-
-.chapterCode {
-  display: block;
-  font-size: clamp(9px, 0.68vw, 12px);
-  color: rgba(255, 255, 255, 0.62);
-  letter-spacing: 1.5px;
-  margin-bottom: 4px;
-  transition: color 0.2s;
 }
 
 .chapterTitle {

@@ -98,6 +98,7 @@ export interface HeroChapter {
   title: string
   client: string
   cat: Category
+  year: string
   scene: Scene
   media?: WorkMedia
 }
@@ -158,7 +159,7 @@ export type CategoryFilter = string
 export const HERO_CHAPTERS: HeroChapter[] = studioJson.heroChapters
   .map((slug) => WORKS.find((w) => w.slug === slug))
   .filter((w): w is Work => Boolean(w))
-  .map((w) => ({ code: w.code, slug: w.slug, title: w.title, client: w.client, cat: w.cat, scene: w.scene, media: w.media }))
+  .map((w) => ({ code: w.code, slug: w.slug, title: w.title, client: w.client, cat: w.cat, year: w.year, scene: w.scene, media: w.media }))
 
 export const PRACTICE: Array<{ n: string; label: string; body: string }> = studioJson.practice
 

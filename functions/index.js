@@ -22,7 +22,9 @@ const RECAPTCHA_MIN_SCORE = 0.5
 const PROJECT_ID = process.env.GCLOUD_PROJECT || 'studio204-web'
 
 const ALLOWED_ORIGINS = new Set([
-  'https://laubsauger.github.io',
+  'https://204-ai.github.io',
+  'https://204.ai',
+  'https://www.204.ai',
   'https://studio204-web.web.app',
   'https://studio204-web.firebaseapp.com',
   'http://localhost:5173',

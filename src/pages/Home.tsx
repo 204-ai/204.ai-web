@@ -153,9 +153,7 @@ export function Home() {
           {/* caption overlays */}
           <div className={`t-mono ${styles.captionLeft}`}>
             <div style={{ color: 'var(--accent)' }}>● NOW PLAYING</div>
-            <div style={{ marginTop: 2 }}>
-              CH.0{activeFrame + 1} / {current.title.toUpperCase()}
-            </div>
+            <div style={{ marginTop: 2 }}>{current.title.toUpperCase()}</div>
             <div style={{ opacity: 0.6 }}>{current.client.toUpperCase()}</div>
             <Link
               to={`/work/${current.slug}`}
@@ -166,8 +164,7 @@ export function Home() {
             </Link>
           </div>
           <div className={`t-mono ${styles.captionRight}`}>
-            <div>{current.code}</div>
-            <div style={{ opacity: 0.6 }}>204.AI · REAL-TIME</div>
+            <div>{[current.cat.toUpperCase(), current.year].filter((v) => v && v !== '—').join(' · ')}</div>
           </div>
           {/* play ring — only while paused (or when there's no video to control) */}
           {(!hasPlayer || isPaused) && (
@@ -179,7 +176,7 @@ export function Home() {
           )}
           {/* footer bar */}
           <div className={`t-mono ${styles.stillFooter}`}>
-            <span>{hasPlayer ? timecode : `CH.0${activeFrame + 1} · ${current.code}`}</span>
+            <span>{hasPlayer ? timecode : ''}</span>
             <span style={{ opacity: 0.6 }}>
               REEL · PART {activeFrame + 1} OF {HERO_CHAPTERS.length}
             </span>
@@ -219,13 +216,12 @@ export function Home() {
                   </span>
                   <span className={`t-mono ${styles.chapterCat}`}>{f.cat.toUpperCase()}</span>
                   <span>
-                    <span className={`t-mono ${styles.chapterCode}`}>
-                      CH.0{i + 1} · {f.code}
-                    </span>
                     <span className={`t-display ${styles.chapterTitle}`}>
                       {f.title}
                     </span>
-                    <span className={`t-mono ${styles.chapterClient}`}>{f.client.toUpperCase()}</span>
+                    <span className={`t-mono ${styles.chapterClient}`}>
+                      {[f.client.toUpperCase(), f.year].filter((v) => v && v !== '—').join(' · ')}
+                    </span>
                   </span>
                   <Link
                     to={`/work/${f.slug}`}
