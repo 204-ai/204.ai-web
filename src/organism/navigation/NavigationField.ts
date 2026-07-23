@@ -297,6 +297,11 @@ export class NavigationField {
     // cannot execute (ceiling-shuffle bug, user 2026-07-22)
     const nearShell = (x: number, y: number) => this.cost[this.cellOf(x, y)] < 6
     const shellCut = (ax0: number, ay0: number, bx: number, by: number) => {
+      // length cap: sparse mid-samples let long diagonals pass whenever they
+      // grazed a shell band — the walker then faced one giant un-walkable
+      // straight leg and parked (user 2026-07-23). Real paths keep their
+      // waypoints beyond this scale.
+      if (Math.hypot(bx - ax0, by - ay0) > 0.26) return false
       for (const t of [0.25, 0.5, 0.75]) {
         if (!nearShell(ax0 + (bx - ax0) * t, ay0 + (by - ay0) * t)) return false
       }
