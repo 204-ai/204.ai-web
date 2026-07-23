@@ -640,6 +640,10 @@ export class OrganismSimulation {
       this.hungerBest = Infinity
     }
 
+    // record the TRUE strategic goal before waypoint-following overwrites
+    // ix/iy (the overlay was drawing the current waypoint as "goal")
+    this.dbgGoal = [ix, iy]
+
     /* routing (on demand, with route memory) */
     if (this.nav) {
       const pts0 = this.route?.points ?? []
@@ -679,7 +683,6 @@ export class OrganismSimulation {
       }
     }
 
-    this.dbgGoal = [ix, iy]
     this.dbgStarved = starved
 
     /* DISCRETE destination commitment — no continuous cursor servo.
