@@ -577,6 +577,14 @@ export class OrganismSimulation {
       const dx = this.slowPX - p.posX[0]
       const dy = this.slowPY - p.posY[0]
       const dist = Math.hypot(dx, dy)
+      if (dist <= 0.05) {
+        // TOUCHING the cursor: goal is HERE. Without this the block below
+        // is skipped and the goal silently fell back to the wander anchor —
+        // creature plotted a cross-page route on contact, cancelled it on
+        // separation, looped forever (user 2026-07-23)
+        ix = p.posX[0]
+        iy = p.posY[0]
+      }
       if (dist > 0.05) {
         pointerDirX = dx / dist
         pointerDirY = dy / dist
