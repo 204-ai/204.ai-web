@@ -832,7 +832,7 @@ export class OrganismSimulation {
         // waypoints as part of multi-leg plans — execute them deliberately
         // once within launch range, no stall required. Reactive jumps
         // (walk-first: stalled + off-shell/starved) remain the fallback.
-        const plannedHop = wp.jump === true && Math.hypot(wp.x - p.posX[0], wp.y - p.posY[0]) < 0.34 * this.creatureScale && this.time - this.lastJumpEnd > 1.4
+        const plannedHop = wp.jump === true && Math.hypot(wp.x - p.posX[0], wp.y - p.posY[0]) < 0.46 && this.time - this.lastJumpEnd > 1.4
         if (plannedHop || (this.walkStalled && (this.surfaceDist(wp.x, wp.y) > this.maxReach * 0.6 || starved))) {
           let land: Vec2 | null = null
           if (plannedHop) {
@@ -841,7 +841,8 @@ export class OrganismSimulation {
           } else {
             for (let k = this.routeIdx; k < this.route.points.length; k++) {
               const c = this.route.points[k]
-              if (this.surfaceDist(c.x, c.y) <= this.maxReach * 0.45) {
+              // floored: reach*0.45 at small scales rejected every point
+              if (this.surfaceDist(c.x, c.y) <= Math.max(this.maxReach * 0.45, 0.05)) {
                 land = c
                 break
               }
@@ -871,8 +872,11 @@ export class OrganismSimulation {
             }
           }
           const cooled = this.time - this.lastJumpEnd > (plannedHop ? 1.4 : 4.5)
-          const notReturn = Math.hypot(land.x - this.lastJumpFromX, land.y - this.lastJumpFromY) > 0.25
-          const gapOk = plannedHop ? gap > this.maxReach * 0.9 && gap < 0.34 * this.creatureScale : gap > this.maxReach * 1.6 && gap < 0.34 * this.creatureScale
+          // scale-aware, and planned hops are exempt (the planner commits)
+          const notReturn = plannedHop || Math.hypot(land.x - this.lastJumpFromX, land.y - this.lastJumpFromY) > 0.25 * this.creatureScale
+          // windows floored for small bodies, capped for giants
+          const reactiveMax = Math.min(0.46, Math.max(0.34, 0.34 * this.creatureScale))
+          const gapOk = plannedHop ? gap > this.maxReach * 0.9 && gap < 0.46 : gap > this.maxReach * 1.6 && gap < reactiveMax
           this.dbgJump = `cool=${cooled} ret=${notReturn} arc=${arcClear} sane=${landSane} prog=${progressJump} gd=${goalDist.toFixed(2)} gap=${gap.toFixed(2)} gapOk=${gapOk} planned=${plannedHop}`
           if (cooled && notReturn && arcClear && landSane && goalDist > 0.2 * (plannedHop ? 0.5 : 1) && gapOk) {
             // gaps within ~1.45 reach are STRETCH territory — fluid climbing

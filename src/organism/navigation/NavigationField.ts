@@ -61,7 +61,7 @@ export class NavigationField {
     const sx = this.aspect / cols
     const sy = 1 / rows
     const cellAvg = (sx + sy) / 2
-    const R = Math.ceil(0.32 / Math.min(sx, sy))
+    const R = Math.ceil(0.4 / Math.min(sx, sy))
     this.jumpLinks = new Array(cols * rows)
     const shell = (i: number) => !this.blocked[i] && this.cost[i] < 6
     for (let r = 0; r < rows; r++) {
@@ -77,7 +77,7 @@ export class NavigationField {
             const ni = nr * cols + nc
             if (!shell(ni)) continue
             const dist = Math.hypot(dc * sx, dr * sy)
-            if (dist < 0.13 || dist > 0.32) continue
+            if (dist < 0.13 || dist > 0.4) continue // range up: medium gaps (game shelves ~0.3-0.45) need links
             // mid samples: unblocked (arc feasibility) AND at least one
             // genuinely off-shell — without that filter the 6-link cap
             // fills with along-the-wall junk hops before any real gap
