@@ -50,7 +50,7 @@ describe('C21 roles', () => {
     expect([ROLES.gallery.base.box, ROLES.gallery.renditions[0].box]).toEqual([true, true])
   })
   it('maker: base 800 + p-800 jpg og card + p-320/160', () => expect(set('maker')).toEqual(['base 800', '800 jpg', '320 webp', '160 webp']))
-  it('logo: base 320 + p-160', () => expect(set('logo')).toEqual(['base 320', '160 webp']))
+  it('logo: base 320 + p-320 + p-160 (C21; the Nav and logo loops request -p-320)', () => expect(set('logo')).toEqual(['base 320', '320 webp', '160 webp']))
   it('video: hero 1080p CRF23 only from a ≥1080 source; clips start at 720p CRF26', () => {
     expect(videoRungs('hero', 1080)[0]).toEqual([1080, 23])
     expect(videoRungs('hero', 720)[0]).toEqual([720, 26])
@@ -211,6 +211,7 @@ describe('V22 media audit', () => {
   const docs = {
     'content/works.json': JSON.stringify([{ media: { still: '/media/a-abc123.webp' } }, { media: { video: { mp4: '/media/big.mp4' } } }, { gallery: ['/media/g.webp'] }]),
     'src/x.ts': 'const og = `${base}media/logo-p-800.jpg`',
+    'src/x.test.ts': "const fixture = '/media/fixture-only.webp'",
   }
 
   it('flags orphans, missing refs and cap breaches; renditions are claimed by their base', () => {

@@ -12,6 +12,8 @@ invariant-worthy bugs in §B.
 
 ALL copy/data lives in `content/*.json`. `src/data/studio.ts` is only the
 typed schema + derivation layer on top; components never read JSON directly.
+On branch `v2-cinematic`, `content/*.json` is v2 since T52: see "v2 content
+schema" below. The field list right here describes v1, as on `main`.
 
 - `content/works.json` — project catalog, NEWEST FIRST. Fields per entry:
   title, client, cat (`interactive|mapping|branded|artistic`), year, runtime,
@@ -44,9 +46,11 @@ Recipes:
 `"schema": 2` in `content/studio.json` switches the loader: `src/data/content.ts`
 builds the v2 model (exported as `CONTENT`), and the Night Shift pages keep
 reading the old exports through `src/data/compat.ts` until T53–T60 replace
-them. Until the cutover, author v2 content in `content/v2/` with the same file
-names: `npm test` validates it, and T52 moves it into `content/` together with
-the media run.
+them. Since T52 the live `content/*.json` is v2 and its media paths point at
+pipeline outputs in `public/media/`. To add media, reference `assets/<file>`
+(originals live in the gitignored `media-src/cinematic/`), then run
+`node scripts/media-pipeline.mjs --from media-src/cinematic` and the same with
+`--rewrite`; `node scripts/media-audit.mjs` must pass afterwards.
 
 - `works.json`: title, client, practices (service ids, first = primary), year,
   note, media {still, video{mp4}, focus}; optional slug, aliases, place, date,
@@ -83,6 +87,7 @@ v2 recipes:
 ```bash
 npm run build   # tsc + vite + generate-meta (50+ static routes, must exit 0)
 npm run lint
+node scripts/media-audit.mjs     # V22/V15: no orphans, no missing, caps
 npm run preview -- --port 4573 &
 node scripts/v6-check.mjs        # overflow + per-route titles at 4 widths
 node scripts/player-probe.mjs    # hero player behavior (needs local Chrome)

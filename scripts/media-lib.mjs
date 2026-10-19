@@ -34,7 +34,7 @@ const Q_FLOOR = 50
 
 /* SPEC C21 role rendition sets. Every raster role writes a base `<name>.webp` at the role's
    max width — the path content references — plus the smaller renditions. Logo: base 320 +
-   p-160. Maker: base 800 + p-800 jpg (og card for /makers/:slug) + p-320 + p-160. Sizes
+   p-320 + p-160 (C21 names p-320 explicitly; the Nav and logo loops request it). Maker: base 800 + p-800 jpg (og card for /makers/:slug) + p-320 + p-160. Sizes
    bound the width, except `box` jobs, which bound the long edge: galleries show images at
    their natural aspect, and a 1600w portrait carries 2.25–2.8× a landscape's pixels (SPEC
    B26). Videos autoplay muted everywhere on the site (SPEC V24), so their audio is stripped. */
@@ -67,7 +67,10 @@ export const ROLES = Object.freeze({
   logo: {
     kind: 'raster',
     base: { width: 320, q: 80 },
-    renditions: [{ suffix: '-p-160', width: 160, format: 'webp', q: 75 }],
+    renditions: [
+      { suffix: '-p-320', width: 320, format: 'webp', q: 80 },
+      { suffix: '-p-160', width: 160, format: 'webp', q: 75 },
+    ],
   },
   // 1080p CRF23 only when the source is ≥1080 tall (videoRungs); the rest steps down to the cap
   hero: { kind: 'video', ladder: [[1080, 23], [720, 26], [720, 28], [540, 30]], audio: false },
@@ -416,6 +419,8 @@ export function formatReport(res, { estimate = false, seconds } = {}) {
 
 const MEDIA_REF = /(?:^|[^A-Za-z0-9_-])\/?media\/([A-Za-z0-9._-]+\.(?:webp|jpe?g|png|gif|avif|svg|mp4|webm))/g
 const TEXT_FILE = /\.(json|ts|tsx|js|jsx|mjs|css|html)$/
+// test fixtures never ship, so their media paths are not references
+const TEST_FILE = /\.test\.[cm]?[jt]sx?$/
 export const AUDIT_SCAN = ['content', 'src', 'index.html', 'scripts/generate-meta.mjs']
 
 function* walkText(path) {
@@ -428,7 +433,7 @@ function* walkText(path) {
     if (e.name.startsWith('.') || e.name === 'node_modules') continue
     const p = join(path, e.name)
     if (e.isDirectory()) yield* walkText(p)
-    else if (TEXT_FILE.test(e.name)) yield p
+    else if (TEXT_FILE.test(e.name) && !TEST_FILE.test(e.name)) yield p
   }
 }
 
