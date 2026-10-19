@@ -36,6 +36,8 @@ jobs:
         env:
           SITE_URL: https://studio204-web.web.app
           VITE_ORGANISM: off  # experiment gated until explicit go (user 2026-07-21)
+          VITE_FORM_ENDPOINT: https://europe-west1-studio204-web.cloudfunctions.net/brief
+          VITE_RECAPTCHA_SITE_KEY: 6LcYjl8tAAAAAKJYjGwaDw_-g7mKbDUzxqrFmsVR
 
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
@@ -68,6 +70,8 @@ jobs:
           VITE_BASE: /204.ai-web/
           SITE_URL: https://studio204-web.web.app
           VITE_ORGANISM: off  # experiment gated until explicit go (user 2026-07-21)
+          VITE_FORM_ENDPOINT: https://europe-west1-studio204-web.cloudfunctions.net/brief
+          VITE_RECAPTCHA_SITE_KEY: 6LcYjl8tAAAAAKJYjGwaDw_-g7mKbDUzxqrFmsVR
 
       - name: SPA fallback (404.html)
         run: cp dist/index.html dist/404.html

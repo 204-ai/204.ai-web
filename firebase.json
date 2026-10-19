@@ -6,6 +6,7 @@
     "rules": "firestore.rules"
   },
   "hosting": {
+    "site": "studio204-web",
     "public": "dist",
     "ignore": [
       "firebase.json",
@@ -93,5 +94,8 @@
         ]
       }
     ]
+  },
+  "extensions": {
+    "firestore-send-email": "firebase/firestore-send-email@0.2.10"
   }
 }

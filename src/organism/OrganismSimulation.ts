@@ -63,6 +63,11 @@ export class OrganismSimulation {
   private slowPY = 0
   private pointerInit = false
   private pointerRampStart = -1
+  /* emotes (user 2026-07-23): startle flinch + arrival perk */
+  private startleUntil = -10
+  private lastStartle = -10
+  private perkUntil = -10
+  private prevPointerD = Infinity
 
   /* intention / navigation */
   intentX = 1.02
@@ -81,6 +86,7 @@ export class OrganismSimulation {
   private walkStalled = false
   /* discrete locomotion decisions (user 2026-07-21: self-propelled, no
      rubber band) — the body commits to a local destination and walks it */
+  private lastSlideSgn = 0
   private localSet = false
   private localStaleAt = 0
   private decisionGoalX = 1e9
@@ -131,6 +137,10 @@ export class OrganismSimulation {
   private lastJumpEnd = -10
   private lastJumpFromX = 1e9
   private lastJumpFromY = 1e9
+  /* per-step position snapshot for the goo-speed governor */
+  private stepStartX: Float32Array
+  private stepStartY: Float32Array
+
   /* seekers: eased targets */
   private seekX: Float32Array
   private seekY: Float32Array
@@ -151,6 +161,9 @@ export class OrganismSimulation {
   dbgGoalDist = 0
   dbgTravel: [number, number] = [0, 0]
   dbgStride = ''
+  dbgJump = ''
+  dbgGoal: [number, number] = [0, 0]
+  dbgStarved = false
 
   constructor(
     private particles: ParticleBuffer,
@@ -159,6 +172,8 @@ export class OrganismSimulation {
   ) {
     const rnd = mulberry32(seed)
     const p = particles
+    this.stepStartX = new Float32Array(p.count)
+    this.stepStartY = new Float32Array(p.count)
     this.restLengths = new Float32Array(p.count)
     this.chainLen = new Float32Array(p.appendageCount)
     this.seekX = new Float32Array(p.appendageCount)
@@ -209,16 +224,47 @@ export class OrganismSimulation {
 
   /** Smooth a limb's IK target before solving — static targets converge
       exactly (planted feet stay glued), transitions glide instead of snap. */
-  private solveLimbSmoothed(a: number, rootX: number, rootY: number, tx: number, ty: number, bend: number, dt: number, wave = 0) {
+  private solveLimbSmoothed(a: number, rootX: number, rootY: number, tx: number, ty: number, bend: number, dt: number, wave = 0, tau = 0.09) {
     if (!this.limbTInit[a]) {
       this.limbTX[a] = tx
       this.limbTY[a] = ty
       this.limbTInit[a] = true
     }
-    const lk = 1 - Math.exp((-dt / 0.09) * Math.LN2)
+    const lk = 1 - Math.exp((-dt / tau) * Math.LN2)
     this.limbTX[a] += (tx - this.limbTX[a]) * lk
     this.limbTY[a] += (ty - this.limbTY[a]) * lk
     this.solveLimb(a, rootX, rootY, this.limbTX[a], this.limbTY[a], bend, wave)
+  }
+
+  /** Everything the brain overlay needs, as plain data (lab tooling). */
+  debugSnapshot() {
+    const p = this.particles
+    return {
+      state: this.state,
+      inState: this.time - this.stateSince,
+      core: [p.posX[0], p.posY[0]] as [number, number],
+      pointer: this.pointerActive ? ([this.pointerX, this.pointerY] as [number, number]) : null,
+      slowPointer: this.pointerActive ? ([this.slowPX, this.slowPY] as [number, number]) : null,
+      goal: this.dbgGoal,
+      intent: [this.intentX, this.intentY] as [number, number],
+      route: this.route ? this.route.points.map((q) => ({ x: q.x, y: q.y, jump: !!q.jump })) : [],
+      routeIdx: this.routeIdx,
+      goalUnreachable: this.route?.goalUnreachable ?? false,
+      travel: this.dbgTravel,
+      stance: [this.stanceX, this.stanceY] as [number, number],
+      plants: this.plants.map((pl, a) => ({ x: pl.x, y: pl.y, active: pl.active, isLeg: this.isLeg[a] })),
+      swings: this.swings.map((sw) => ({ active: sw.active, toX: sw.toX, toY: sw.toY, t: sw.t })),
+      goalDist: this.dbgGoalDist,
+      starved: this.dbgStarved,
+      walkStalled: this.walkStalled,
+      sniffing: this.sniffing,
+      stallAgo: this.time - this.lastProgressTime,
+      decisionAgo: this.time - this.lastDecisionAt,
+      hungerBest: this.hungerBest,
+      scale: this.creatureScale,
+      maxReach: this.maxReach,
+      jumpGates: this.dbgJump,
+    }
   }
 
   invalidateRoute() {
@@ -460,6 +506,8 @@ export class OrganismSimulation {
   step(dt: number) {
     const p = this.particles
     const cfg = this.config
+    this.stepStartX.set(p.posX)
+    this.stepStartY.set(p.posY)
     this.time += dt
     this.breathePhase += (dt * Math.PI * 2) / 6.4
     this.breathePhase2 += (dt * Math.PI * 2) / 9.7
@@ -485,6 +533,7 @@ export class OrganismSimulation {
         this.slowPY = this.pointerRawY
         this.pointerInit = true
         this.pointerRampStart = this.time
+        this.perkUntil = this.time + 0.9 // noticed you — brief alert lift
         p.posX[1] = this.pointerRawX
         p.posY[1] = this.pointerRawY
         p.prevX[1] = p.posX[1]
@@ -528,6 +577,14 @@ export class OrganismSimulation {
       const dx = this.slowPX - p.posX[0]
       const dy = this.slowPY - p.posY[0]
       const dist = Math.hypot(dx, dy)
+      if (dist <= 0.05) {
+        // TOUCHING the cursor: goal is HERE. Without this the block below
+        // is skipped and the goal silently fell back to the wander anchor —
+        // creature plotted a cross-page route on contact, cancelled it on
+        // separation, looped forever (user 2026-07-23)
+        ix = p.posX[0]
+        iy = p.posY[0]
+      }
       if (dist > 0.05) {
         pointerDirX = dx / dist
         pointerDirY = dy / dist
@@ -575,14 +632,25 @@ export class OrganismSimulation {
         this.hungerBest = dNow
         this.lastProgressTime = this.time
       }
+      // startle: cursor rushing AT the body → flinch (retract + crouch)
+      const approach = (this.prevPointerD - dNow) / Math.max(dt, 1e-4)
+      this.prevPointerD = dNow
+      if (dNow < 0.3 && approach > 0.55 && this.time - this.lastStartle > 4) {
+        this.startleUntil = this.time + 0.55
+        this.lastStartle = this.time
+      }
 
       starved = dNow > 0.25 * RS && this.time - this.lastProgressTime > 2
       // capture stall BEFORE the starved reroute resets the progress clock —
       // jumps are a last resort, allowed only once walking stopped helping
-      this.walkStalled = this.time - this.lastProgressTime > 3
+      this.walkStalled = this.time - this.lastProgressTime > 2.2
     } else {
       this.hungerBest = Infinity
     }
+
+    // record the TRUE strategic goal before waypoint-following overwrites
+    // ix/iy (the overlay was drawing the current waypoint as "goal")
+    this.dbgGoal = [ix, iy]
 
     /* routing (on demand, with route memory) */
     if (this.nav) {
@@ -622,6 +690,8 @@ export class OrganismSimulation {
         if (Math.hypot(end.x - p.posX[0], end.y - p.posY[0]) < 0.16 * RS) this.sniffing = true
       }
     }
+
+    this.dbgStarved = starved
 
     /* DISCRETE destination commitment — no continuous cursor servo.
        The body picks a local destination ~1 body-length ahead along the
@@ -664,7 +734,11 @@ export class OrganismSimulation {
         this.surfaceNormalInto(dest.x, dest.y, this.normal2)
         const tgX = -this.normal2.y
         const tgY = this.normal2.x
-        const sgn = tgX * (ix - dest.x) + tgY * (iy - dest.y) >= 0 ? 1 : -1
+        // side hysteresis: alternate slides created the back-and-forth
+        // bobbing loop — keep last side unless clearly wrong
+        const dot = tgX * (ix - dest.x) + tgY * (iy - dest.y)
+        const sgn = Math.abs(dot) < 0.03 && this.lastSlideSgn !== 0 ? this.lastSlideSgn : dot >= 0 ? 1 : -1
+        this.lastSlideSgn = sgn
         dest = this.projectToSurface(dest.x + tgX * sgn * 0.14 * RS, dest.y + tgY * sgn * 0.14 * RS, shellBand * 0.8)
       }
       this.intentX = dest.x
@@ -681,11 +755,13 @@ export class OrganismSimulation {
       const goalJumped = Math.hypot(ix - this.decisionGoalX, iy - this.decisionGoalY) > 0.35 && this.time - this.lastDecisionAt > 0.5
       if (!this.localSet || this.time > this.localStaleAt || goalJumped) decide()
       else if (reached) {
-        // contemplation beats only when AMBLING — during an active chase the
-        // stop-start read as stutter (user 2026-07-22)
+        // contemplation beats only when AMBLING; chase re-decides at a
+        // throttled cadence — immediate re-decide thrashed between two
+        // projected destinations (bobbing loop, user 2026-07-23)
         const chasing = this.pointerActive && Math.hypot(ix - p.posX[0], iy - p.posY[0]) > 0.3
-        if (chasing) decide()
-        else if (this.pauseUntil < 0) this.pauseUntil = this.time + 0.1 + this.rng() * 0.2
+        if (chasing) {
+          if (this.time - this.lastDecisionAt > 0.35) decide()
+        } else if (this.pauseUntil < 0) this.pauseUntil = this.time + 0.1 + this.rng() * 0.2
         else if (this.time > this.pauseUntil) decide()
       }
     } else if (this.state === 'rest' || this.state === 'settle' || this.state === 'sniff') {
@@ -752,21 +828,29 @@ export class OrganismSimulation {
       else if (this.state === 'sniff' && !this.sniffing && inState > 1) this.setState('pursue')
       if (JUMP_ENABLED && this.state === 'pursue' && this.route && this.routeIdx < this.route.points.length) {
         const wp = this.route.points[this.routeIdx]
-        // walk-first (user 2026-07-22): jumping needs BOTH a reason (off-
-        // shell waypoint / starved) AND stalled walking — close the
-        // distance on foot, hop only when feet stop making progress
-        if (this.walkStalled && (this.surfaceDist(wp.x, wp.y) > this.maxReach * 0.6 || starved)) {
+        // PLANNED hops (user 2026-07-23): the router emits jump-flagged
+        // waypoints as part of multi-leg plans — execute them deliberately
+        // once within launch range, no stall required. Reactive jumps
+        // (walk-first: stalled + off-shell/starved) remain the fallback.
+        const plannedHop = wp.jump === true && Math.hypot(wp.x - p.posX[0], wp.y - p.posY[0]) < 0.46 && this.time - this.lastJumpEnd > 1.4
+        if (plannedHop || (this.walkStalled && (this.surfaceDist(wp.x, wp.y) > this.maxReach * 0.6 || starved))) {
           let land: Vec2 | null = null
-          for (let k = this.routeIdx; k < this.route.points.length; k++) {
-            const c = this.route.points[k]
-            if (this.surfaceDist(c.x, c.y) <= this.maxReach * 0.45) {
-              land = c
-              break
+          if (plannedHop) {
+            // the jump waypoint IS the landing — snap it to its shell
+            land = this.projectToSurface(wp.x, wp.y, this.maxReach * 0.27)
+          } else {
+            for (let k = this.routeIdx; k < this.route.points.length; k++) {
+              const c = this.route.points[k]
+              // floored: reach*0.45 at small scales rejected every point
+              if (this.surfaceDist(c.x, c.y) <= Math.max(this.maxReach * 0.45, 0.05)) {
+                land = c
+                break
+              }
             }
-          }
-          if (!land) {
-            const g = this.route.points[this.route.points.length - 1]
-            land = this.projectToSurface(g.x, g.y, this.maxReach * 0.3)
+            if (!land) {
+              const g = this.route.points[this.route.points.length - 1]
+              land = this.projectToSurface(g.x, g.y, this.maxReach * 0.3)
+            }
           }
           const gap = Math.hypot(land.x - p.posX[0], land.y - p.posY[0])
           // a jump that doesn't close distance to the goal is never taken
@@ -787,9 +871,14 @@ export class OrganismSimulation {
               }
             }
           }
-          const cooled = this.time - this.lastJumpEnd > 4.5
-          const notReturn = Math.hypot(land.x - this.lastJumpFromX, land.y - this.lastJumpFromY) > 0.25
-          if (cooled && notReturn && arcClear && landSane && goalDist > 0.2 && gap > this.maxReach * 1.9 && gap < 0.34 * this.creatureScale) {
+          const cooled = this.time - this.lastJumpEnd > (plannedHop ? 1.4 : 4.5)
+          // scale-aware, and planned hops are exempt (the planner commits)
+          const notReturn = plannedHop || Math.hypot(land.x - this.lastJumpFromX, land.y - this.lastJumpFromY) > 0.25 * this.creatureScale
+          // windows floored for small bodies, capped for giants
+          const reactiveMax = Math.min(0.46, Math.max(0.34, 0.34 * this.creatureScale))
+          const gapOk = plannedHop ? gap > this.maxReach * 0.9 && gap < 0.46 : gap > this.maxReach * 1.6 && gap < reactiveMax
+          this.dbgJump = `cool=${cooled} ret=${notReturn} arc=${arcClear} sane=${landSane} prog=${progressJump} gd=${goalDist.toFixed(2)} gap=${gap.toFixed(2)} gapOk=${gapOk} planned=${plannedHop}`
+          if (cooled && notReturn && arcClear && landSane && goalDist > 0.2 * (plannedHop ? 0.5 : 1) && gapOk) {
             // gaps within ~1.45 reach are STRETCH territory — fluid climbing
             // over shortcut hops (user 2026-07-22)
             this.jumpSX = p.posX[0]
@@ -984,7 +1073,7 @@ export class OrganismSimulation {
         for (const pl of this.plants) if (pl.active) anyPlant = true
         const speedNorm = Math.min(1, Math.hypot(this.coreVelX, this.coreVelY) / 0.08)
         const dip = 0.02 * Math.exp(-(this.time - this.lastPlantTime) / 0.35)
-        const crouch = this.state === 'sniff' ? 0.09 : 0
+        const crouch = this.time < this.startleUntil ? 0.12 : this.state === 'sniff' ? 0.09 : 0
         const hover = this.maxReach * (0.3 - crouch + Math.sin(this.time * 0.11 * Math.PI * 2 + 0.7) * 0.02 - speedNorm * 0.08 - dip)
         const clampE = anyPlant ? 0.05 : 0.07
         const gainE = anyPlant ? 1.6 : 1.2
@@ -1252,7 +1341,8 @@ export class OrganismSimulation {
           ty = rootY + (c.y - rootY) * f
           bend = this.chainLen[a] * 0.08
         }
-        this.solveLimbSmoothed(a, rootX, rootY, tx, ty, bend, dt, sw.active ? 0.35 : 0)
+        // planted feet ease FAST (ground contact reads solid); transitions soft
+        this.solveLimbSmoothed(a, rootX, rootY, tx, ty, bend, dt, sw.active ? 0.35 : 0, pl.active ? 0.03 : 0.09)
       } else {
         let desX: number
         let desY: number
@@ -1296,7 +1386,8 @@ export class OrganismSimulation {
         const strain = this.sniffing || yearn ? 0.92 + 0.08 * Math.sin(this.time * 0.045 * Math.PI * 2 + a * 1.3) + poke : 0
         // peaks touch FULL extension (clamped by the solver), then relax —
         // able to fully stretch, never parked there (user 2026-07-21)
-        const ext = this.chainLen[a] * (touching ? 1 : gesturing ? 0.95 : this.sniffing || yearn ? Math.min(1, strain) : this.pointerActive ? 0.85 + 0.08 * Math.sin(this.time * 0.11 * Math.PI * 2 + a) : 0.72 + 0.2 * Math.sin(this.time * 0.07 * Math.PI * 2 + a * 1.9))
+        const emote = this.time < this.startleUntil ? 0.55 : this.time < this.perkUntil ? 1.12 : 1
+        const ext = emote * this.chainLen[a] * (touching ? 1 : gesturing ? 0.95 : this.sniffing || yearn ? Math.min(1, strain) : this.pointerActive ? 0.85 + 0.08 * Math.sin(this.time * 0.11 * Math.PI * 2 + a) : 0.72 + 0.2 * Math.sin(this.time * 0.07 * Math.PI * 2 + a * 1.9))
         const ddx = desX - rootX
         const ddy = desY - rootY
         const dl = Math.hypot(ddx, ddy) || 1
@@ -1314,7 +1405,8 @@ export class OrganismSimulation {
     }
 
     /* breathing + squash (visual radii only) */
-    const breathe = 1 + Math.sin(this.breathePhase) * 0.03 + Math.sin(this.breathePhase2) * 0.025
+    const emoteAmp = this.time < this.startleUntil ? 0.4 : this.time < this.perkUntil ? 1.6 : 1
+    const breathe = 1 + (Math.sin(this.breathePhase) * 0.03 + Math.sin(this.breathePhase2) * 0.025) * emoteAmp
     p.activation[0] = breathe
     for (let a = 0; a < p.appendageCount; a++) {
       const rootI = p.indexOf(a, 0)
@@ -1344,6 +1436,28 @@ export class OrganismSimulation {
         this.glowY += (this.pointerY - this.glowY) * gk
       }
       this.glowI += (gi - this.glowI) * gk
+    }
+
+    /* goo-speed governor (user 2026-07-23): HARD per-step cap on every
+       joint's motion relative to the core — a limb may never cross space
+       near-instantly, whatever upstream logic wanted. Kinematic clamp
+       (prev = pos) so it can never add jitter energy. */
+    {
+      const capR = cfg.behavior.maximumTipSpeed * dt * (this.state === 'jump' ? 1.6 : 1)
+      const cdx = p.posX[0] - this.stepStartX[0]
+      const cdy = p.posY[0] - this.stepStartY[0]
+      for (let i = 1; i < p.count; i++) {
+        const rx = p.posX[i] - this.stepStartX[i] - cdx
+        const ry = p.posY[i] - this.stepStartY[i] - cdy
+        const rl = Math.hypot(rx, ry)
+        if (rl > capR) {
+          const f = capR / rl
+          p.posX[i] = this.stepStartX[i] + cdx + rx * f
+          p.posY[i] = this.stepStartY[i] + cdy + ry * f
+          p.prevX[i] = p.posX[i]
+          p.prevY[i] = p.posY[i]
+        }
+      }
     }
 
     /* core velocity for motion stretch */
