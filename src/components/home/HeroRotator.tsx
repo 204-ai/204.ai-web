@@ -125,7 +125,7 @@ export function HeroRotator() {
               aria-current={n === i ? 'true' : undefined}
               onClick={() => {
                 setI(n)
-                trackChapterSelect(c.item.slug)
+                trackChapterSelect(c.item.title)
               }}
             />
           ))}

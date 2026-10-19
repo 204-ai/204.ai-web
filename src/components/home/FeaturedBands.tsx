@@ -11,6 +11,7 @@ import styles from './FeaturedBands.module.css'
 
 interface BandProps {
   to: string
+  onClick?: () => void
   title: string
   poster?: string
   clip?: string
@@ -19,13 +20,14 @@ interface BandProps {
 }
 
 /** Prototype featured band: greyscale strip that grows, colours and plays its clip on hover or focus. */
-function Band({ to, title, poster, clip, focus, meta }: BandProps) {
+function Band({ to, onClick, title, poster, clip, focus, meta }: BandProps) {
   const [hot, setHot] = useState(false)
   const reduced = usePrefersReducedMotion()
   const hidden = useDocumentHidden() // a tab switch may never send mouseleave (SPEC V24)
   return (
     <Link
       to={to}
+      onClick={onClick}
       className={hot ? `${styles.band} ${styles.hot}` : styles.band}
       onMouseEnter={() => setHot(true)}
       onMouseLeave={() => setHot(false)}
@@ -111,7 +113,15 @@ export function FeaturedBands() {
             ]}
           />
         ))}
-        <Band to="/work" title={allWork.title} poster={allWork.poster} clip={allWork.clip} focus={allWork.focus} />
+        {/* v1's home "explore work" CTA lives on as this band */}
+        <Band
+          to="/work"
+          onClick={() => trackCta('explore_work')}
+          title={allWork.title}
+          poster={allWork.poster}
+          clip={allWork.clip}
+          focus={allWork.focus}
+        />
       </div>
       <div className={styles.foot}>
         {/* the prototype's pill says "Start your project" but opened the portfolio; it goes to the brief */}

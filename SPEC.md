@@ -133,7 +133,7 @@ T58|x|Services v2 + ServiceDetail v2: pillar grids; detail = title/reel rotator 
 T59|x|About v2 + MakerDetail v2: colophon (lead, derived stats, practice rows), roster → /makers/:slug (prev/next, social icons, bio?), RnA card|V10
 T60|x|Contact v2: 2-col (lead, rows, map), intake → C15 fn (states/honeypot/lazy recaptcha kept), fine print w/ Google policy links, budget chips from studio.json|C15,I.brief,V4,V20
 T61|x|SEO/meta v2: generate-meta from v2 schema, alias stubs (0s meta-refresh + canonical), firebase.json `hosting.redirects` generated from aliases ∪ content/redirects.json (301), desc from copy, og from new stills, sitemap excl aliases; useHead parity; url-check.mjs|I.seo,V10,V21,V28
-T62|.|analytics v2: existing events → new surfaces (select_chapter = hero dots, filter_work multi, video_open = lightbox, cta_click = pills, social_click); + map_click; names stable|-
+T62|x|analytics v2: existing events → new surfaces (select_chapter = hero dots, filter_work multi, video_open = lightbox, cta_click = pills, social_click); + map_click; names stable|-
 T63|.|responsive + a11y pass: V6 widths ∀ routes (loops `overflow:clip`, bands stack, dial scale, 2-col → 1-col ≤768), focus rings, V24 gates, tab-hidden pause|V6,V7,V24,V25
 T64|.|verify sprint v2: build+lint, V1/V2/V4 greps, v6-check (+font assert), player-probe selectors (B7), url-check, media-audit, curl headers both hosts, screenshots vs prototype (V23), both deploys green (manual dispatch)|V1,V2,V4,V5,V6,V14,V15,V16,V21,V22,V23
 T65|.|retire v1: drop Night Shift-only components/css (CinematicStill ?), README + CLAUDE.md (tokens/fonts/recipes) + DESIGN.md history; merge `v2-cinematic` → main after V23|C16,V23

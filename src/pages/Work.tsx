@@ -25,7 +25,8 @@ export function Work() {
 
   const select = (next: string[], tracked: string) => {
     navigate({ search: workFilterSearch(next, services) }, { replace: true })
-    trackWorkFilter(tracked)
+    // same canonical order as the URL
+    trackWorkFilter(tracked, services.map((s) => s.id).filter((id) => next.includes(id)))
   }
   const toggle = (id: string) => select(sel.includes(id) ? sel.filter((x) => x !== id) : [...sel, id], id)
 

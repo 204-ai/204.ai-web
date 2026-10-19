@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { v2 } from '../../data/studio'
+import { trackSocialClick } from '../../lib/analytics'
 import { Rich } from './Rich'
 import styles from './Footer.module.css'
 
@@ -31,7 +32,9 @@ export function Footer() {
         <div className={styles.col}>
           <h6>Socials</h6>
           {studio.footer.socials.map((s) => (
-            <a key={s.label} href={s.url} target="_blank" rel="noreferrer">{s.label}</a>
+            <a key={s.label} href={s.url} target="_blank" rel="noreferrer" onClick={() => trackSocialClick(s.label.toLowerCase())}>
+              {s.label}
+            </a>
           ))}
         </div>
       </div>

@@ -5,7 +5,7 @@ import { SocialIcon, type Network } from '../components/ui/SocialIcon'
 import { describe, type Person } from '../data/content'
 import { v2 } from '../data/studio'
 import { useHead } from '../hooks/useHead'
-import { trackSocialClick } from '../lib/analytics'
+import { trackCta, trackSocialClick } from '../lib/analytics'
 import { imgDims } from '../lib/dims'
 import { rendition } from '../lib/media'
 import { NotFound } from './NotFound'
@@ -78,7 +78,9 @@ function MakerPage({ person: p, index: i }: { person: Person; index: number }) {
             )}
             {p.bio && <p className={styles.bio}>{p.bio}</p>}
             <div className={styles.cta}>
-              <Pill to="/contact">→ Work with us</Pill>
+              <Pill to="/contact" onClick={() => trackCta('maker_work_with_us', { maker: p.name })}>
+                → Work with us
+              </Pill>
             </div>
           </div>
         </div>

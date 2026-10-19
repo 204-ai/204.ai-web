@@ -1,10 +1,13 @@
+import { useLocation } from 'react-router-dom'
 import type { Closer } from '../../data/content'
+import { trackCta } from '../../lib/analytics'
 import { Pill } from './Pill'
 import { Rich } from './Rich'
 import styles from './ChatCloser.module.css'
 
 /** Prototype closing card: faint "Let's chat" wall behind a centred call to action. */
 export function ChatCloser({ copy, to = '/contact' }: { copy: Closer; to?: string }) {
+  const { pathname } = useLocation()
   return (
     <section className={styles.closer}>
       <div className={styles.bg} aria-hidden="true">
@@ -21,7 +24,7 @@ export function ChatCloser({ copy, to = '/contact' }: { copy: Closer; to?: strin
         <h2 className={styles.title}>
           <Rich text={copy.title} />
         </h2>
-        <Pill solid to={to}>
+        <Pill solid to={to} onClick={() => trackCta('closer', { page: pathname })}>
           {copy.cta}
         </Pill>
       </div>

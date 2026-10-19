@@ -5,7 +5,7 @@ import { SecLab } from '../components/ui/SecLab'
 import { describe } from '../data/content'
 import { v2 } from '../data/studio'
 import { useHead } from '../hooks/useHead'
-import { trackLead, trackMapLoad } from '../lib/analytics'
+import { trackLead, trackMapClick, trackMapLoad, trackSocialClick } from '../lib/analytics'
 import styles from './Contact.module.css'
 
 // Brief intake (SPEC C15, I.brief): POST JSON to the `brief` function when configured,
@@ -129,7 +129,16 @@ export function Contact() {
               <div key={k} className={styles.row}>
                 <span className={styles.k}>{k}</span>
                 {href ? (
-                  <a className={styles.v} href={href} target={href.startsWith('http') ? '_blank' : undefined} rel="noreferrer">
+                  <a
+                    className={styles.v}
+                    href={href}
+                    target={href.startsWith('http') ? '_blank' : undefined}
+                    rel="noreferrer"
+                    onClick={() => {
+                      if (k === 'instagram' || k === 'linkedin') trackSocialClick(k)
+                      else if (k === 'studio') trackMapClick('studio_row')
+                    }}
+                  >
                     {v}
                   </a>
                 ) : (
@@ -243,13 +252,13 @@ export function Contact() {
 function MapBox({ url, image }: { url?: string; image?: string }) {
   const [loaded, setLoaded] = useState(false)
   const label = url && (
-    <a className={styles.lbl} href={url} target="_blank" rel="noreferrer">
+    <a className={styles.lbl} href={url} target="_blank" rel="noreferrer" onClick={() => trackMapClick('map_label')}>
       open in google maps · lisboa
     </a>
   )
   if (image)
     return (
-      <a className={styles.map} href={url} target="_blank" rel="noreferrer">
+      <a className={styles.map} href={url} target="_blank" rel="noreferrer" onClick={() => trackMapClick('map_image')}>
         <img className={styles.mapimg} src={image} alt="RnA Studio on the map" loading="lazy" />
         <span className={styles.lbl}>open in google maps · lisboa</span>
       </a>

@@ -45,7 +45,7 @@ function CasePage({ work: w, index: i }: { work: Work; index: number }) {
   const body = Array.isArray(w.body) ? w.body : w.body ? [w.body] : [w.note]
   const open = (id: string) => {
     setReel(id)
-    trackVideoOpen(w.slug, id)
+    trackVideoOpen(w.title, id)
   }
   const next = [works[(i + 1) % works.length], works[(i + 2) % works.length]].filter((x) => x && x !== w)
 
