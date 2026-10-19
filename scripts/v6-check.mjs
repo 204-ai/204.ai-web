@@ -62,13 +62,33 @@ for (const w of WIDTHS) {
       const h = document.querySelector('h1')
       return { title: document.title, scrollW: de.scrollWidth, innerW: window.innerWidth, h1: h ? Math.round(parseFloat(getComputedStyle(h).fontSize)) : null, spill: spill.slice(0, 5), spills: spill.length }
     })
-    const bad = res.scrollW > res.innerW || res.spills > 0
+    let bad = res.scrollW > res.innerW || res.spills > 0
+    // SPEC V23 font assert (once per route): computed display/body/mono = Anton SC/Poppins/Cutive Mono,
+    // latin-ext faces loaded (Č)
+    if (w === 1280) {
+      const f = await page.evaluate(async () => {
+        await document.fonts.ready
+        const first = (el) => (el ? getComputedStyle(el).fontFamily.split(',')[0].replace(/["']/g, '').trim() : null)
+        const mono = [...document.querySelectorAll('body *')].find((el) => first(el) === 'Cutive Mono' && el.textContent.trim())
+        return {
+          display: first(document.querySelector('h1')),
+          body: first(document.body),
+          mono: Boolean(mono),
+          // latin-ext faces load on demand (unicode-range): ask for Č and expect a self-hosted face
+          loaded: (await Promise.all(['Anton SC', 'Poppins', 'Cutive Mono'].map(async (fam) => (await document.fonts.load(`16px "${fam}"`, 'AČ')).length > 0))).every(Boolean),
+        }
+      })
+      if (f.display !== 'Anton SC' || f.body !== 'Poppins' || !f.mono || !f.loaded) {
+        bad = true
+        console.log(`   fonts: ${JSON.stringify(f)}`)
+      }
+    }
     if (bad) fail++
     if (bad || routes.length <= 5) console.log(`${w}px ${r.padEnd(34)} scrollW=${res.scrollW}/${res.innerW} h1=${res.h1}px ${bad ? 'OVERFLOW' : 'ok'} | ${res.title.slice(0, 40)}`)
     if (res.spill.length) console.log('   spill:', res.spill.join(' | '))
   }
 }
 await browser.close()
-console.log(`v6-check: ${routes.length} routes × ${WIDTHS.length} widths`)
+console.log(`v6-check: ${routes.length} routes × ${WIDTHS.length} widths, font assert on each route`)
 console.log(fail ? `FAIL ${fail}` : 'V6_PASS')
 process.exit(fail ? 1 : 0)
