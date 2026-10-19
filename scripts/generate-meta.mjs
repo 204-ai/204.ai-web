@@ -35,7 +35,8 @@ if (isV2(docs.studio)) {
   }
   const c = buildContent(docs)
   WORKS = c.works
-  SERVICES_ALL = c.services.map((s) => ({ slug: s.slug, label: s.label, body: s.desc, still: s.still ?? s.img }))
+  // desc = the service lead, as ServiceDetail's useHead (src/pages/ServiceDetail.tsx)
+  SERVICES_ALL = c.services.map((s) => ({ slug: s.slug, label: s.label, body: s.lead, still: s.still ?? s.img, preloadSizes: '(max-width: 1040px) 100vw, 50vw' }))
   PEOPLE = c.people
   heroStill = c.heroClips[0]?.poster // home LCP = the first hero clip's poster
 } else {
@@ -113,6 +114,7 @@ const routes = [
     desc: s.body,
     image: ogImage(s.still),
     preload: s.still,
+    preloadSizes: s.preloadSizes,
   })),
   ...PEOPLE.map((p) => ({
     path: `/makers/${p.slug}`,
