@@ -2,7 +2,7 @@ import { Link, useParams } from 'react-router-dom'
 import { Pill } from '../components/ui/Pill'
 import { SecLab } from '../components/ui/SecLab'
 import { SocialIcon, type Network } from '../components/ui/SocialIcon'
-import type { Person } from '../data/content'
+import { describe, type Person } from '../data/content'
 import { v2 } from '../data/studio'
 import { useHead } from '../hooks/useHead'
 import { trackSocialClick } from '../lib/analytics'
@@ -25,7 +25,7 @@ const NETWORKS: Network[] = ['instagram', 'linkedin', 'email', 'web']
 /** v2 maker page (prototype MakerPage): portrait, reach-out links (only set ones render), prev/next. */
 function MakerPage({ person: p, index: i }: { person: Person; index: number }) {
   const { people } = v2()
-  useHead(`${p.name} · Maker`, `${p.name}, ${p.role} at 204 — creative technology studio, Lisbon.`, p.photo)
+  useHead(`${p.name} · Maker`, describe.maker(p), p.photo)
   const prev = people[(i - 1 + people.length) % people.length]
   const next = people[(i + 1) % people.length]
   const links = NETWORKS.flatMap((n) => {

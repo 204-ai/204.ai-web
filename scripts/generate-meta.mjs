@@ -13,7 +13,7 @@
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { aboutDescription, buildContent, isV2, slugify, validateContent } from '../src/data/content.ts'
+import { buildContent, describe, isV2, validateContent } from '../src/data/content.ts'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const content = (f) => JSON.parse(readFileSync(join(root, 'content', f), 'utf8'))
@@ -25,27 +25,17 @@ const docs = {
   studio: content('studio.json'),
   redirects: existsSync(join(root, 'content', 'redirects.json')) ? content('redirects.json') : {},
 }
-let WORKS, SERVICES_ALL, PEOPLE, heroStill
-if (isV2(docs.studio)) {
-  // SPEC V26/C20: broken content fails `npm run build` here (postbuild)
-  const problems = validateContent(docs)
-  if (problems.length) {
-    console.error(`generate-meta: FAIL content/*.json (SPEC V26/C20):\n  ${problems.join('\n  ')}`)
-    process.exit(1)
-  }
-  const c = buildContent(docs)
-  WORKS = c.works
-  // desc = the service lead, as ServiceDetail's useHead (src/pages/ServiceDetail.tsx)
-  SERVICES_ALL = c.services.map((s) => ({ slug: s.slug, label: s.label, body: s.lead, still: s.still ?? s.img, preloadSizes: '(max-width: 1040px) 100vw, 50vw' }))
-  PEOPLE = c.people
-  heroStill = c.heroClips[0]?.poster // home LCP = the first hero clip's poster
-} else {
-  // v1 content (before the v2 cutover): the derivations of src/data/compat.ts fromV1Json
-  WORKS = docs.works.map((w) => ({ ...w, slug: slugify(w.title) }))
-  SERVICES_ALL = [...docs.services.content, ...docs.services.interactive].map((s) => ({ ...s, slug: slugify(s.label) }))
-  PEOPLE = docs.people.map((p) => ({ ...p, slug: slugify(p.name) }))
-  heroStill = WORKS.find((w) => w.slug === docs.studio.heroChapters[0])?.media?.still // home LCP = first hero chapter's poster
+if (!isV2(docs.studio)) {
+  console.error('generate-meta: FAIL content/studio.json is not "schema": 2 (v1 content is retired on this branch)')
+  process.exit(1)
 }
+// SPEC V26/C20: broken content fails `npm run build` here (postbuild)
+const problems = validateContent(docs)
+if (problems.length) {
+  console.error(`generate-meta: FAIL content/*.json (SPEC V26/C20):\n  ${problems.join('\n  ')}`)
+  process.exit(1)
+}
+const c = buildContent(docs)
 const dist = join(root, 'dist')
 // e.g. https://204-ai.github.io/204.ai-web — no trailing slash
 const SITE_URL = (process.env.SITE_URL ?? '').replace(/\/$/, '')
@@ -71,57 +61,40 @@ function ogImage(u) {
   return u.replace(/\.(?:png|jpe?g|webp|avif)$/i, '-p-800.jpg')
 }
 
-/** @type {Array<{path: string, title: string, desc: string, image?: string}>} */
+// LCP preloads mirror each page's hero <img> srcset/sizes exactly, or the preload stops
+// matching the picked source and double-downloads (or 404s on a rendition the role lacks)
+const r800 = (u) => u.replace(/\.webp$/, '-p-800.webp')
+const stillPreload = (u, sizes) => u && { href: u, srcset: `${assetUrl(r800(u))} 800w, ${assetUrl(u)} 1920w`, sizes }
+const makerPreload = (u) => u && { href: u, srcset: `${assetUrl(u.replace(/\.webp$/, '-p-320.webp'))} 320w, ${assetUrl(u)} 800w`, sizes: '(max-width: 900px) 100vw, 420px' }
+
+/** @type {Array<{path: string, title: string, desc: string, image?: string, preload?: {href: string, srcset: string, sizes: string}}>} */
 const routes = [
-  {
-    path: '/',
-    title: t(''),
-    preload: heroStill,
-    preloadSizes: '100vw', // v2 hero stage is full-bleed (src/components/home/HeroRotator.tsx)
-    desc: '204 is a creative technology studio at the intersection of AI, motion, identity and live environments. Based at RnA Studio, Lisbon.',
-  },
-  {
-    path: '/work',
-    title: t('Work'),
-    desc: 'Selected work: interactive installations, immersive mapping, branded and artistic AI film by 204.',
-  },
-  {
-    path: '/services',
-    title: t('Services'),
-    desc: 'Two pillars: AI-powered content creation (branded work, mapping, film, archival) and interactive formats (Magic Mirror, AI Photo Booth, Live Visuals, Augmented Art).',
-  },
-  {
-    path: '/about',
-    title: t('About'),
-    desc: aboutDescription(PEOPLE.length), // same helper as src/pages/About.tsx
-  },
-  {
-    path: '/contact',
-    title: t('Contact'),
-    desc: 'Send a brief, not a form. Three lines: who you are, what you’re making, when you need it by.',
-  },
-  ...WORKS.map((w) => ({
+  // descriptions: one helper per route type, shared with the pages (describe, src/data/content.ts)
+  { path: '/', title: t(''), desc: describe.home(c), preload: stillPreload(c.heroClips[0]?.poster, '100vw') }, // HeroRotator
+  { path: '/work', title: t('Work'), desc: describe.work(c) },
+  { path: '/services', title: t('Services'), desc: describe.services(c) },
+  { path: '/about', title: t('About'), desc: describe.about(c) },
+  { path: '/contact', title: t('Contact'), desc: describe.contact(c) },
+  ...c.works.map((w) => ({
     path: `/work/${w.slug}`,
     title: t(`${w.title} · Work`),
-    desc: w.note,
+    desc: describe.case(w),
     image: ogImage(w.media?.still),
-    preload: w.media?.still,
-    preloadSizes: '100vw', // v2 case hero is full-bleed (src/pages/WorkDetail.tsx)
+    preload: stillPreload(w.media?.still, '100vw'), // WorkDetail hero
   })),
-  ...SERVICES_ALL.map((s) => ({
+  ...c.services.map((s) => ({
     path: `/services/${s.slug}`,
     title: t(`${s.label} · Service`),
-    desc: s.body,
-    image: ogImage(s.still),
-    preload: s.still,
-    preloadSizes: s.preloadSizes,
+    desc: describe.service(s),
+    image: ogImage(s.still ?? s.img),
+    preload: stillPreload(s.still ?? s.img, '(max-width: 1040px) 100vw, 50vw'), // ServiceReel poster
   })),
-  ...PEOPLE.map((p) => ({
+  ...c.people.map((p) => ({
     path: `/makers/${p.slug}`,
     title: t(`${p.name} · Maker`),
-    desc: `${p.name}, ${p.role} at 204 — creative technology studio, Lisbon.`,
+    desc: describe.maker(p),
     image: ogImage(p.photo),
-    preload: p.photo && !p.photo.startsWith('data:') ? p.photo : undefined,
+    preload: p.photo && !p.photo.startsWith('data:') ? makerPreload(p.photo) : undefined, // MakerDetail portrait
   })),
 ]
 
@@ -170,10 +143,8 @@ function metaFor(r) {
     `    <meta name="twitter:image" content="${esc(image)}" />` +
     // LCP: hero media downloads in parallel with the JS bundle instead of
     // being discovered after React mounts
-    // srcset/sizes mirror the MediaStill letterbox img — keep in sync or the
-    // preload stops matching the picked source and double-downloads
     (r.preload
-      ? `\n    <link rel="preload" as="image" href="${esc(assetUrl(r.preload))}" imagesrcset="${esc(`${assetUrl(r.preload).replace(/\.webp$/, '-p-800.webp')} 800w, ${assetUrl(r.preload)} 1920w`)}" imagesizes="${esc(r.preloadSizes ?? '(max-width: 900px) 100vw, 62vw')}" fetchpriority="high" />`
+      ? `\n    <link rel="preload" as="image" href="${esc(assetUrl(r.preload.href))}" imagesrcset="${esc(r.preload.srcset)}" imagesizes="${esc(r.preload.sizes)}" fetchpriority="high" />`
       : '')
   )
 }
@@ -199,6 +170,58 @@ for (const r of routes) {
 
 // 404 fallback keeps the home meta
 writeFileSync(join(dist, '404.html'), render(routes[0]))
+
+/* Retired URLs (SPEC C20, V28): every alias and content/redirects.json entry gets
+   - a static stub for GH Pages: instant meta refresh + canonical to the live page, noindex
+   - a 301 in firebase.json hosting.redirects (generated here, committed; Firebase applies
+     redirects before static files and rewrites)
+   Neither enters the sitemap. */
+const redirects = Object.entries(c.redirects).sort(([a], [b]) => a.localeCompare(b))
+// base-prefixed with a trailing slash: the real file on GH Pages, no extra 301 hop
+const livePath = (p) => (p === '/' ? BASE : `${BASE}${p.slice(1)}/`)
+for (const [from, to] of redirects) {
+  const target = join(dist, from.slice(1), 'index.html')
+  // validateContent already rejects this; checked against the route list so reruns over
+  // the same dist (stubs already written) stay idempotent
+  if (routes.some((r) => r.path === from)) {
+    console.error(`generate-meta: FAIL redirect ${from} would overwrite a live page (SPEC C20)`)
+    process.exit(1)
+  }
+  const href = livePath(to)
+  const canonical = SITE_URL ? `${SITE_URL}${to}` : href
+  mkdirSync(dirname(target), { recursive: true })
+  writeFileSync(
+    target,
+    `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Moved — ${esc(BRAND)}</title>
+<meta name="robots" content="noindex" />
+<link rel="canonical" href="${esc(canonical)}" />
+<meta http-equiv="refresh" content="0; url=${esc(href)}" />
+<script>location.replace(${JSON.stringify(href)} + location.search + location.hash)</script>
+</head>
+<body><p>This page moved to <a href="${esc(href)}">${esc(href)}</a>.</p></body>
+</html>
+`,
+  )
+}
+const fbPath = join(root, 'firebase.json')
+const fb = JSON.parse(readFileSync(fbPath, 'utf8'))
+const reEscape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+const wanted = redirects.map(([from, to]) => ({ regex: `^${reEscape(from)}/?$`, destination: to, type: 301 }))
+if (JSON.stringify(fb.hosting.redirects ?? []) !== JSON.stringify(wanted)) {
+  if (process.env.CI) {
+    console.error('generate-meta: FAIL firebase.json hosting.redirects is stale — run `npm run build` locally and commit firebase.json (SPEC V28)')
+    process.exit(1)
+  }
+  const { public: pub, ignore, redirects: _old, rewrites, ...rest } = fb.hosting
+  fb.hosting = { public: pub, ignore, redirects: wanted, rewrites, ...rest }
+  writeFileSync(fbPath, JSON.stringify(fb, null, 2) + '\n')
+  console.log(`generate-meta: updated firebase.json hosting.redirects (${wanted.length}) — commit it`)
+}
+console.log(`generate-meta: ${redirects.length} redirect stubs + firebase.json 301s (SPEC V28)`)
 
 if (SITE_URL) {
   const sitemap =

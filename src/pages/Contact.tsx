@@ -2,6 +2,7 @@ import { useRef, useState, type FormEvent } from 'react'
 import { Pill } from '../components/ui/Pill'
 import { Rich } from '../components/ui/Rich'
 import { SecLab } from '../components/ui/SecLab'
+import { describe } from '../data/content'
 import { v2 } from '../data/studio'
 import { useHead } from '../hooks/useHead'
 import { trackLead, trackMapLoad } from '../lib/analytics'
@@ -39,7 +40,7 @@ const FIELDS: Array<[FieldKey, string, string, string, boolean]> = [
 
 /** v2 contact (prototype Contact): lead, contact rows, map, brief intake wired to the brief function. */
 export function Contact() {
-  useHead('Contact', 'Send a brief, not a form. Three lines: who you are, what you’re making, when you need it by.')
+  useHead('Contact', describe.contact(v2()))
   const { studio } = v2()
   const c = studio.contact
   const mapUrl = c.map?.url

@@ -3,7 +3,7 @@ import { ServiceReel } from '../components/service/ServiceReel'
 import { Pill } from '../components/ui/Pill'
 import { Rich } from '../components/ui/Rich'
 import { SecLab } from '../components/ui/SecLab'
-import type { Service } from '../data/content'
+import { describe, type Service } from '../data/content'
 import { v2 } from '../data/studio'
 import { useHead } from '../hooks/useHead'
 import { trackCta } from '../lib/analytics'
@@ -22,7 +22,7 @@ export function ServiceDetail() {
 /** v2 service detail (prototype ServiceDetail) */
 function ServicePage({ service: s, index: i }: { service: Service; index: number }) {
   const { services } = v2()
-  useHead(`${s.label} · Service`, s.lead, s.still ?? s.img)
+  useHead(`${s.label} · Service`, describe.service(s), s.still ?? s.img)
   const next = services[(i + 1) % services.length]
   const nextTitle = next.title.replace(/\n/g, ' ')
 

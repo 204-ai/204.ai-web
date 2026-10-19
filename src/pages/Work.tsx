@@ -5,6 +5,7 @@ import { Marquee } from '../components/ui/Marquee'
 import { Pill } from '../components/ui/Pill'
 import { Rich } from '../components/ui/Rich'
 import { WorkCard } from '../components/work/WorkCard'
+import { describe } from '../data/content'
 import { v2 } from '../data/studio'
 import { useHead } from '../hooks/useHead'
 import { trackWorkFilter } from '../lib/analytics'
@@ -13,7 +14,7 @@ import styles from './Work.module.css'
 
 /** v2 portfolio (prototype Portfolio): multi-select practice filter in the URL, letterbox grid, closer. */
 export function Work() {
-  useHead('Work', 'Selected work: interactive installations, immersive mapping, branded and artistic AI film by 204.')
+  useHead('Work', describe.work(v2()))
   const { works, services, studio } = v2()
   const [params] = useSearchParams()
   const navigate = useNavigate()

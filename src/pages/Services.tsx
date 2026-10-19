@@ -1,6 +1,6 @@
 import { ChatCloser } from '../components/ui/ChatCloser'
 import { ServiceTile } from '../components/ui/ServiceTile'
-import type { Pillar } from '../data/content'
+import { describe, type Pillar } from '../data/content'
 import { v2 } from '../data/studio'
 import { useHead } from '../hooks/useHead'
 import styles from './Services.module.css'
@@ -13,10 +13,7 @@ const PILLAR_LINES: Array<[Pillar, string]> = [
 
 /** v2 services index (prototype ServicesPage): two pillar grids of service tiles. */
 export function Services() {
-  useHead(
-    'Services',
-    'Two pillars: AI-powered content creation (branded work, mapping, film, archival) and interactive formats (Magic Mirror, AI Photo Booth, Live Visuals, Augmented Art).',
-  )
+  useHead('Services', describe.services(v2()))
   const { pillars, studio } = v2()
   return (
     <div className="v2">

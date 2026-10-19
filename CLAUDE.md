@@ -91,6 +91,8 @@ node scripts/media-audit.mjs     # V22/V15: no orphans, no missing, caps
 npm run preview -- --port 4573 &
 node scripts/v6-check.mjs        # overflow + per-route titles at 4 widths
 node scripts/player-probe.mjs    # hero player behavior (needs local Chrome)
+node scripts/meta-parity.mjs     # V10: static route meta = runtime useHead, all routes
+node scripts/url-check.mjs --base http://localhost:4573   # V21: every v1 URL resolves
 ```
 
 For layout/CSS work, screenshot-verify with puppeteer-core + system Chrome
@@ -134,7 +136,12 @@ screenshot). Keep the home fold: hero + strap + CTA above 1080p fold.
   (Webflow webm reports Infinity duration).
 - Titles: pages pass bare names; `useHead` + `scripts/generate-meta.mjs`
   apply the single brand rule (detail pages add `· Work/Service/Maker`).
-  Keep BOTH in sync. Slugs, codes and content validation are not mirrored:
+  Keep BOTH in sync. Descriptions come from the `describe` helpers in
+  `src/data/content.ts`, used by the pages and generate-meta alike;
+  `scripts/meta-parity.mjs` proves the two agree.
+- Retired URLs: aliases and `content/redirects.json` become GH Pages stub
+  pages and Firebase 301s. `npm run build` regenerates `firebase.json`
+  `hosting.redirects`; commit it (CI fails the build when it is stale). Slugs, codes and content validation are not mirrored:
   generate-meta imports `src/data/content.ts` (Node type stripping).
 - Analytics: GA4 `G-E2HCBBXBVP` (same property as the old Webflow site).
   Track via `src/lib/analytics.ts` only; keep event names stable.

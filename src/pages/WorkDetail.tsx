@@ -7,7 +7,7 @@ import { CineCard, CineGrid } from '../components/ui/CineCard'
 import { Pill } from '../components/ui/Pill'
 import { Rich } from '../components/ui/Rich'
 import { TitleCard } from '../components/ui/TitleCard'
-import type { Work } from '../data/content'
+import { describe, type Work } from '../data/content'
 import { v2 } from '../data/studio'
 import { useAmbientVideo, usePauseWhenHidden } from '../hooks/useAmbientVideo'
 import { useHead } from '../hooks/useHead'
@@ -32,7 +32,7 @@ export function WorkDetail() {
 /** v2 case page (prototype CasePage) */
 function CasePage({ work: w, index: i }: { work: Work; index: number }) {
   const { works, studio } = v2()
-  useHead(`${w.title} · Work`, w.note, w.media?.still)
+  useHead(`${w.title} · Work`, describe.case(w), w.media?.still)
   const [reel, setReel] = useState<string | null>(null)
   const closeReel = useCallback(() => setReel(null), [])
   const ambient = useAmbientVideo()

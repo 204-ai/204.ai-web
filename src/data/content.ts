@@ -235,6 +235,33 @@ const COUNT_WORDS = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven'
 export const aboutDescription = (makers: number): string =>
   `204 is a creative technology studio led by ${COUNT_WORDS[makers] ?? makers} makers in Lisbon, working at the intersection of AI, motion, identity and live environments.`
 
+/** paragraph copy (`**bold**`, line breaks) as one plain line */
+export const plainText = (s: string): string => s.replace(/\*\*(.+?)\*\*/g, '$1').replace(/\s+/g, ' ').trim()
+
+/** plain text cut at a word boundary to fit a meta description */
+export function excerpt(text: string, max = 158): string {
+  const t = plainText(text)
+  if (t.length <= max) return t
+  const cut = t.slice(0, max - 1)
+  return `${cut.slice(0, cut.lastIndexOf(' ')).replace(/[\s,;:—–-]+$/, '')}…`
+}
+
+/**
+ * Per-route share text, one source for the pages (useHead) and the static route HTML
+ * (generate-meta), so the two never drift (SPEC V10, I.seo: descriptions from copy).
+ */
+export const describe = {
+  home: (c: Content) => excerpt(c.studio.copy.home.who),
+  work: (c: Content) => excerpt(c.studio.copy.portfolio.lead),
+  services: (c: Content) =>
+    `Two pillars, one room: ${c.pillars.content.map((s) => s.label).join(' · ')} — ${c.pillars.interactive.map((s) => s.label).join(' · ')}.`,
+  about: (c: Content) => aboutDescription(c.people.length),
+  contact: (c: Content) => excerpt(c.studio.copy.contact.lead),
+  case: (w: Work) => excerpt((Array.isArray(w.body) ? w.body[0] : w.body) || w.note),
+  service: (s: Service) => excerpt(s.lead),
+  maker: (p: Person) => `${p.name}, ${p.role} at 204 — creative technology studio, Lisbon.`,
+}
+
 /** schema switch: v2 content declares "schema": 2 in studio.json */
 export const isV2 = (studio: unknown): boolean => (studio as { schema?: unknown } | null)?.schema === 2
 
