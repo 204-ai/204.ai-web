@@ -15,11 +15,12 @@ interface PillProps {
   type?: 'button' | 'submit'
   /** toggle buttons (filters): rendered as aria-pressed (SPEC V25) */
   pressed?: boolean
+  disabled?: boolean
   className?: string
 }
 
 /** Prototype .btn-pill: mono uppercase pill; outline by default, `solid` inverts. */
-export function Pill({ children, solid, wide, sm, to, href, onClick, type = 'button', pressed, className }: PillProps) {
+export function Pill({ children, solid, wide, sm, to, href, onClick, type = 'button', pressed, disabled, className }: PillProps) {
   const cls = [styles.pill, solid && styles.solid, wide && styles.wide, sm && styles.sm, className].filter(Boolean).join(' ')
   if (to) return <Link className={cls} to={to} onClick={onClick}>{children}</Link>
   if (href) {
@@ -27,7 +28,7 @@ export function Pill({ children, solid, wide, sm, to, href, onClick, type = 'but
     return <a className={cls} href={href} onClick={onClick} target={external ? '_blank' : undefined} rel={external ? 'noreferrer' : undefined}>{children}</a>
   }
   return (
-    <button className={cls} type={type} onClick={onClick} aria-pressed={pressed}>
+    <button className={cls} type={type} onClick={onClick} aria-pressed={pressed} disabled={disabled}>
       {children}
     </button>
   )

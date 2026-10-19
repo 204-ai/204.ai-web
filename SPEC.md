@@ -131,7 +131,7 @@ T56|x|Work v2: multi-select practice filter (`?p=`, pillar presets, aria-pressed
 T57|x|WorkDetail v2: hero (still + clip, yt → lightbox iframe on click, Esc), meta grid (client+logo/format/direction/products/date/place), body paras, credits, collab, masonry gallery (LPT pack from manifest dims, lazy, width/height attrs), up-next 2, closer; unknown → 404|V4,V10,V11,V30
 T58|x|Services v2 + ServiceDetail v2: pillar grids; detail = title/reel rotator w/ bars/lead/cta + modes/included/selected work (derived)/next pager|I.routes,V24,V26
 T59|x|About v2 + MakerDetail v2: colophon (lead, derived stats, practice rows), roster → /makers/:slug (prev/next, social icons, bio?), RnA card|V10
-T60|.|Contact v2: 2-col (lead, rows, map), intake → C15 fn (states/honeypot/lazy recaptcha kept), fine print w/ Google policy links, budget chips from studio.json|C15,I.brief,V4,V20
+T60|x|Contact v2: 2-col (lead, rows, map), intake → C15 fn (states/honeypot/lazy recaptcha kept), fine print w/ Google policy links, budget chips from studio.json|C15,I.brief,V4,V20
 T61|.|SEO/meta v2: generate-meta from v2 schema, alias stubs (0s meta-refresh + canonical), firebase.json `hosting.redirects` generated from aliases ∪ content/redirects.json (301), desc from copy, og from new stills, sitemap excl aliases; useHead parity; url-check.mjs|I.seo,V10,V21,V28
 T62|.|analytics v2: existing events → new surfaces (select_chapter = hero dots, filter_work multi, video_open = lightbox, cta_click = pills, social_click); + map_click; names stable|-
 T63|.|responsive + a11y pass: V6 widths ∀ routes (loops `overflow:clip`, bands stack, dial scale, 2-col → 1-col ≤768), focus rings, V24 gates, tab-hidden pause|V6,V7,V24,V25

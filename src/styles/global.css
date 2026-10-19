@@ -33,6 +33,9 @@
   --line-row: rgba(255, 255, 255, 0.12); /* service modes / work rows */
   --line-bar: rgba(255, 255, 255, 0.22); /* service reel bars */
   --signal-faint: rgba(90, 166, 255, 0.05); /* RnA card wash */
+  --line-field: rgba(255, 255, 255, 0.16); /* intake card + map frame */
+  --line-input: rgba(255, 255, 255, 0.28); /* form inputs */
+  --line-chip: rgba(255, 255, 255, 0.3); /* budget chips */
   --live: #33ff77; /* lightbox "playing" dot */
   --band-key: #c4c4c4; /* featured band meta keys */
   --track: rgba(255, 255, 255, 0.14); /* hero progress track */
