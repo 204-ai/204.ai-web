@@ -1,0 +1,152 @@
+// SPEC T48 verification contract: v2 content model (I.content), closed taxonomy (V26),
+// URL stability (C20), derived pillars/related work (C19), and the v1 transition view.
+import { describe, expect, it } from 'vitest'
+import { fromV1Json, toV1, type V1Raw } from './compat'
+import { buildContent, isV2, slugify, validateContent, type RawContent, type RawService } from './content'
+
+const svc = (id: string, label: string): RawService => ({
+  id, label, title: label, desc: `${label} desc`, img: `/media/${id}.webp`, lead: `${label} lead`,
+  modes: [{ n: '01', label: 'Mode', body: 'Body' }], included: 'Included', cta: 'Start',
+})
+const fixture = (): RawContent => ({
+  works: [
+    { title: 'Motel X', client: 'MOTELX', practices: ['booth'], year: '2026', note: 'Photo booth', media: { still: '/media/mx.webp' } },
+    { title: 'Delulu', client: 'Sofie Heyman', practices: ['booth', 'mirror', 'visuals'], year: '2026', note: 'Collab', body: ['p1', 'p2'] },
+    { title: 'M. K. Čiurlionis — Trail of Angels', slug: 'ciurlionis', aliases: ['trail-of-angels'], client: 'Estate', practices: ['artistic'], year: '2026', note: 'Film', format: 'Animation' },
+  ],
+  services: {
+    content: [svc('branded', 'Branded Campaigns'), svc('artistic', 'Animation & Film')],
+    interactive: [svc('mirror', 'Magic Mirror'), svc('booth', 'Magic Photo Booth'), svc('visuals', 'Live Visuals')],
+  },
+  people: [{ name: 'Cecilia Hübinette', role: 'Art Director' }],
+  studio: {
+    schema: 2, name: '204', suffix: 'NO-CONTENT', tag: 'Studio', logoUrl: '/media/logo.webp',
+    contact: { email: 'hello@204.ai', studio: 'RnA Studio', instagram: '@x', instagramUrl: 'https://instagram.com/x', linkedin: 'x', linkedinUrl: 'https://linkedin.com/x' },
+    heroClips: [{ work: 'motel-x', clip: '/media/mx.mp4', poster: '/media/mx.webp', kind: 'Magic Photo Booth' }],
+    featured: ['ciurlionis', 'motel-x'],
+    process: [{ n: '01', label: 'Discover', body: 'Goals' }],
+    practice: [{ n: '01', label: 'Experience design', body: 'Audience' }],
+    copy: {
+      home: { who: 'Who', marquee: 'A · B' }, closer: { label: 'Chat', title: 'Story', cta: 'Start' },
+      footer: { blurb: 'Blurb' }, about: { lead: 'Lead' }, contact: { lead: 'Lead' }, portfolio: { lead: 'Lead' },
+    },
+    footer: { address: 'Lisboa', socials: [{ label: 'Instagram', url: 'https://instagram.com/x' }] },
+    budgetRanges: ['< 25k'], rnaStudioUrl: 'https://rna.example', trustedBy: [], partners: [],
+  },
+  redirects: { '/work/bioxyz-coin-launch': '/work/delulu' },
+})
+
+describe('buildContent (I.content, C19, C20)', () => {
+  const c = buildContent(fixture())
+  it('derives ids, codes (newest = highest), slugs with override, and the format default', () => {
+    expect(c.works.map((w) => [w.id, w.code, w.slug])).toEqual([
+      ['w01', 'NC·003', 'motel-x'], ['w02', 'NC·002', 'delulu'], ['w03', 'NC·001', 'ciurlionis'],
+    ])
+    expect(c.works.map((w) => w.format)).toEqual(['Magic Photo Booth', 'Magic Photo Booth', 'Animation'])
+  })
+  it('numbers services per pillar in JSON order and derives related work from practices', () => {
+    expect(c.services.map((s) => `${s.pillar}:${s.n}:${s.slug}`)).toEqual([
+      'content:01:branded-campaigns', 'content:02:animation-film',
+      'interactive:01:magic-mirror', 'interactive:02:magic-photo-booth', 'interactive:03:live-visuals',
+    ])
+    const related = (id: string) => c.services.find((s) => s.id === id)!.works.map((w) => w.slug)
+    expect(related('booth')).toEqual(['motel-x', 'delulu'])
+    expect(related('branded')).toEqual([])
+    expect(c.pillars.interactive.map((s) => s.id)).toEqual(['mirror', 'booth', 'visuals'])
+  })
+  it('resolves hero clips and featured work, folds aliases into redirects, derives stats', () => {
+    expect(c.heroClips.map((h) => h.item.slug)).toEqual(['motel-x'])
+    expect(c.featured.map((w) => w.slug)).toEqual(['ciurlionis', 'motel-x'])
+    expect(c.redirects).toEqual({ '/work/trail-of-angels': '/work/ciurlionis', '/work/bioxyz-coin-launch': '/work/delulu' })
+    expect(c.stats).toEqual({ makers: 1, pillars: 2, projects: 3 })
+  })
+  it('slugify keeps the v1 URL rule', () => {
+    expect(slugify('M. K. Čiurlionis — Trail of Angels')).toBe('m-k-ciurlionis-trail-of-angels')
+    expect(slugify('1N: EEG Mirror')).toBe('1n-eeg-mirror')
+    expect(slugify('Zuzalu × Grimes')).toBe('zuzalu-grimes')
+  })
+})
+
+describe('validateContent (V26, C20)', () => {
+  const broken = (edit: (r: RawContent) => void) => {
+    const r = fixture()
+    edit(r)
+    return validateContent(r).join('\n')
+  }
+  it('passes the clean fixture', () => expect(validateContent(fixture())).toEqual([]))
+  it('rejects a practice that is not a service id', () => {
+    expect(broken((r) => { r.works[0].practices = ['boooth'] })).toMatch(/"boooth" is not a service id/)
+  })
+  it('rejects hero clips and featured entries that do not resolve to a work', () => {
+    const msg = broken((r) => { r.studio.heroClips[0].work = 'nope'; r.studio.featured.push('ghost') })
+    expect(msg).toMatch(/heroClips\[0\].*"nope"/)
+    expect(msg).toMatch(/featured\[2\].*"ghost"/)
+  })
+  it('rejects duplicate slugs, aliases that shadow live routes, and dangling redirects', () => {
+    expect(broken((r) => { r.works[1].title = 'Motel X' })).toMatch(/duplicate work slug "motel-x"/)
+    expect(broken((r) => { r.works[2].aliases = ['delulu'] })).toMatch(/\/work\/delulu shadows a live route/)
+    expect(broken((r) => { r.redirects = { '/work/old': '/work/missing' } })).toMatch(/\/work\/old → \/work\/missing: target is not a live route/)
+    expect(broken((r) => { r.works[0].slug = 'Bad Slug' })).toMatch(/slug "Bad Slug"/)
+  })
+  it('rejects missing required fields and a wrong schema marker', () => {
+    const msg = broken((r) => {
+      r.works[0].practices = []
+      ;(r.services.content[0] as Partial<RawService>).desc = undefined
+      ;(r.studio as { schema: number }).schema = 1
+    })
+    expect(msg).toMatch(/works\[0\].*practices/)
+    expect(msg).toMatch(/services\.content\[0\].*desc/)
+    expect(msg).toMatch(/schema must be 2/)
+  })
+})
+
+describe('v1 transition view (compat)', () => {
+  it('projects v2 content onto the v1 page shape', () => {
+    const v = toV1(buildContent(fixture()))
+    expect(v.works.map((w) => [w.code, w.slug, w.cat, w.runtime, w.practice])).toEqual([
+      ['NC·003', 'motel-x', 'interactive', '—', 'magic-photo-booth'],
+      ['NC·002', 'delulu', 'interactive', '—', 'magic-photo-booth'],
+      ['NC·001', 'ciurlionis', 'artistic', '—', 'animation-film'],
+    ])
+    expect(v.works[1].body).toBe('p1\n\np2')
+    expect(v.servicesAll.map((s) => [s.n, s.relatedCat])).toEqual([
+      ['01', 'branded'], ['02', 'artistic'], ['03', 'interactive'], ['04', 'interactive'], ['05', 'interactive'],
+    ])
+    expect(v.heroChapters).toMatchObject([{ slug: 'motel-x', media: { still: '/media/mx.webp', video: { mp4: '/media/mx.mp4' } } }])
+    expect(v.categories).toEqual(['all', 'interactive', 'artistic'])
+    expect(v.stats).toEqual([['Makers in the room', '01'], ['Main pillars', '02'], ['Projects shipped', '3']])
+  })
+  it('reads empty v2 lists as absent, the way v1 pages hide empty sections', () => {
+    const raw = fixture()
+    raw.services.content[0].modes = []
+    raw.works[0].gallery = []
+    const v = toV1(buildContent(raw))
+    expect([v.servicesAll[0].modes, v.works[0].gallery]).toEqual([undefined, undefined])
+  })
+})
+
+/* live + staged content, loaded the way the app loads it (Vite JSON imports) */
+type Docs = Record<'works' | 'services' | 'people' | 'studio' | 'redirects', unknown>
+const docsOf = (files: Record<string, unknown>, dir: string): Docs => {
+  const get = (f: string) => files[`../../${dir}/${f}`]
+  return { works: get('works.json'), services: get('services.json'), people: get('people.json'), studio: get('studio.json'), redirects: get('redirects.json') ?? {} }
+}
+const live = docsOf(import.meta.glob('../../content/*.json', { eager: true, import: 'default' }), 'content')
+const stagedFiles = import.meta.glob('../../content/v2/*.json', { eager: true, import: 'default' })
+const staged = Object.keys(stagedFiles).length > 0 ? docsOf(stagedFiles, 'content/v2') : null
+const liveWorks = live.works as unknown[]
+
+describe('live content', () => {
+  it.skipIf(!isV2(live.studio))('v2: passes validateContent (V26, C20)', () => {
+    expect(validateContent(live as unknown as RawContent)).toEqual([])
+  })
+  it.skipIf(isV2(live.studio))('v1: the legacy loader still derives every route', () => {
+    const v = fromV1Json(live as unknown as V1Raw)
+    expect(v.works).toHaveLength(liveWorks.length)
+    expect(v.works[0].code).toBe(`NC·${String(liveWorks.length).padStart(3, '0')}`)
+    expect(new Set(v.works.map((w) => w.slug)).size).toBe(liveWorks.length)
+  })
+  it.skipIf(!staged)('staged content/v2 passes validateContent', () => {
+    expect(validateContent(staged as unknown as RawContent)).toEqual([])
+  })
+})

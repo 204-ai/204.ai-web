@@ -6,32 +6,45 @@
 //
 // Reads content/*.json directly (same source the app loads through
 // src/data/studio.ts) — content edits automatically flow into the sitemap
-// and per-route share meta on the next build.
+// and per-route share meta on the next build. Derivations come from
+// src/data/content.ts, which Node imports as TypeScript (type stripping,
+// Node ≥22.18), so slugs and validation match the app exactly.
 
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
+import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { buildContent, isV2, slugify, validateContent } from '../src/data/content.ts'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const content = (f) => JSON.parse(readFileSync(join(root, 'content', f), 'utf8'))
 
-/* derivation mirror of src/data/studio.ts — keep in sync */
-const slugify = (t) =>
-  t
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-
-const rawWorks = content('works.json')
-const WORKS = rawWorks.map((w) => ({ ...w, slug: slugify(w.title) }))
-const servicesJson = content('services.json')
-const SERVICES_ALL = [...servicesJson.content, ...servicesJson.interactive].map((s) => ({ ...s, slug: slugify(s.label) }))
-const PEOPLE = content('people.json').map((p) => ({ ...p, slug: slugify(p.name) }))
-const studioJson = content('studio.json')
-// home LCP = the first hero chapter's poster
-const heroWork = WORKS.find((w) => w.slug === studioJson.heroChapters[0])
+const docs = {
+  works: content('works.json'),
+  services: content('services.json'),
+  people: content('people.json'),
+  studio: content('studio.json'),
+  redirects: existsSync(join(root, 'content', 'redirects.json')) ? content('redirects.json') : {},
+}
+let WORKS, SERVICES_ALL, PEOPLE, heroStill
+if (isV2(docs.studio)) {
+  // SPEC V26/C20: broken content fails `npm run build` here (postbuild)
+  const problems = validateContent(docs)
+  if (problems.length) {
+    console.error(`generate-meta: FAIL content/*.json (SPEC V26/C20):\n  ${problems.join('\n  ')}`)
+    process.exit(1)
+  }
+  const c = buildContent(docs)
+  WORKS = c.works
+  SERVICES_ALL = c.services.map((s) => ({ slug: s.slug, label: s.label, body: s.desc, still: s.still ?? s.img }))
+  PEOPLE = c.people
+  heroStill = c.heroClips[0]?.poster // home LCP = the first hero clip's poster
+} else {
+  // v1 content (before the v2 cutover): the derivations of src/data/compat.ts fromV1Json
+  WORKS = docs.works.map((w) => ({ ...w, slug: slugify(w.title) }))
+  SERVICES_ALL = [...docs.services.content, ...docs.services.interactive].map((s) => ({ ...s, slug: slugify(s.label) }))
+  PEOPLE = docs.people.map((p) => ({ ...p, slug: slugify(p.name) }))
+  heroStill = WORKS.find((w) => w.slug === docs.studio.heroChapters[0])?.media?.still // home LCP = first hero chapter's poster
+}
 const dist = join(root, 'dist')
 // e.g. https://204-ai.github.io/204.ai-web — no trailing slash
 const SITE_URL = (process.env.SITE_URL ?? '').replace(/\/$/, '')
@@ -62,7 +75,7 @@ const routes = [
   {
     path: '/',
     title: t(''),
-    preload: heroWork?.media?.still,
+    preload: heroStill,
     desc: '204 is a creative technology studio at the intersection of AI, motion, identity and live environments. Based at RnA Studio, Lisbon.',
   },
   {

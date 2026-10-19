@@ -39,6 +39,42 @@ Recipes:
 - Facts only: content comes from the studio's real material. Never invent
   clients, dates or claims. Unknown = "—".
 
+### v2 content schema (branch `v2-cinematic`, SPEC I.content)
+
+`"schema": 2` in `content/studio.json` switches the loader: `src/data/content.ts`
+builds the v2 model (exported as `CONTENT`), and the Night Shift pages keep
+reading the old exports through `src/data/compat.ts` until T53–T60 replace
+them. Until the cutover, author v2 content in `content/v2/` with the same file
+names: `npm test` validates it, and T52 moves it into `content/` together with
+the media run.
+
+- `works.json`: title, client, practices (service ids, first = primary), year,
+  note, media {still, video{mp4}, focus}; optional slug, aliases, place, date,
+  products, body (string or paragraph list), collab {label, name}, credits
+  [{name, role, handle}], youtube, gallery, logo, wide, format.
+- `services.json`: `content` and `interactive` pillars; per service id, label,
+  title ("\n" = line break), desc, img, lead, modes [{n, label, body}],
+  included, cta; optional slug, aliases, reels, still.
+- `people.json`: unchanged.
+- `studio.json`: the v1 settings minus heroChapters, workCategories and
+  pillarsCount, plus schema 2, heroClips [{work, clip, poster, kind, place}],
+  featured (work slugs), process (home dial), copy, footer, contact.map.
+- `redirects.json` (optional): `{"/old/path": "/live/path"}` for removed pages.
+
+Derived, never hand-written: ids, NC codes, slugs (title, or `slug`), service
+numbers per pillar, format (label of the first practice), related work per
+service, stats, redirects (aliases plus redirects.json). The build fails with
+a precise message when a practice is not a service id, a hero clip or featured
+slug does not resolve, a slug repeats, or an alias or redirect shadows a live
+page or points nowhere (SPEC V26, C20).
+
+v2 recipes:
+- New project → prepend it with `practices`; it appears under each listed
+  service automatically.
+- Retitle a live project → add its old slug to `aliases`, so the old URL
+  keeps working.
+- Remove a project → add `"/work/<old-slug>": "/work"` to `redirects.json`.
+
 ## Verify before pushing
 
 ```bash
@@ -76,7 +112,8 @@ screenshot). Keep the home fold: hero + strap + CTA above 1080p fold.
   (Webflow webm reports Infinity duration).
 - Titles: pages pass bare names; `useHead` + `scripts/generate-meta.mjs`
   apply the single brand rule (detail pages add `· Work/Service/Maker`).
-  Keep BOTH in sync — same for the slugify/code mirror in generate-meta.
+  Keep BOTH in sync. Slugs, codes and content validation are not mirrored:
+  generate-meta imports `src/data/content.ts` (Node type stripping).
 - Analytics: GA4 `G-E2HCBBXBVP` (same property as the old Webflow site).
   Track via `src/lib/analytics.ts` only; keep event names stable.
 - GH Pages: deep links are real files (generate-meta) → 301 to trailing
