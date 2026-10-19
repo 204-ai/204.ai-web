@@ -1,15 +1,21 @@
 import { Outlet, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
-import { Nav } from './Nav'
-import { CursorProvider } from './Cursor'
 import { trackPageView } from '../lib/analytics'
+import { Cursor } from './Cursor'
+import { Nav } from './Nav'
+import { Footer } from './ui/Footer'
+
+// Pages rebuilt in the v2 design (T55–T60 add theirs): they own their top spacing
+// under the fixed nav and fade in like the prototype. Every other route is still a
+// Night Shift page: padded below the nav, with its own entrance. T65 removes this.
+const V2_PAGES: RegExp[] = []
 
 export function Layout() {
   const { pathname, state } = useLocation()
-  // pager links pass { pager: 'prev' | 'next' } — those get a fast
-  // directional slide instead of the full entrance choreography
+  const v2Page = V2_PAGES.some((r) => r.test(pathname))
+  // pager links pass { pager: 'prev' | 'next' } — those get a fast directional slide
   const pager = (state as { pager?: 'prev' | 'next' } | null)?.pager
-  const enterClass = pager === 'prev' ? 'page-pager-prev' : pager === 'next' ? 'page-pager-next' : 'page-enter'
+  const enterClass = v2Page ? 'page-fade' : pager === 'prev' ? 'page-pager-prev' : pager === 'next' ? 'page-pager-next' : 'page-enter'
 
   // Route change: reset scroll (SPA keeps scroll position by default).
   useEffect(() => {
@@ -19,19 +25,26 @@ export function Layout() {
     return () => cancelAnimationFrame(raf)
   }, [pathname])
 
+  // The prototype cuts to black and fades the next page in; here the new page
+  // mounts at once and fades in (no blocking overlay, SPEC B12).
   return (
-    <CursorProvider>
-      <div className="grain">
-        {/* organism disabled on the site until the lab version is approved
-            (user 2026-07-21) — iterate in organism-lab.html */}
+    <>
+      {/* organism disabled on the site until the lab version is approved
+          (user 2026-07-21) — iterate in organism-lab.html */}
+      <div className="v2">
         <Nav />
-        {/* content sits above the organism canvas (SPEC V17) */}
-        <main style={{ paddingTop: 'var(--nav-h)', overflow: 'clip', position: 'relative', zIndex: 1 }}>
-          <div className={`shell ${enterClass}`} key={pathname}>
-            <Outlet />
-          </div>
-        </main>
       </div>
-    </CursorProvider>
+      {/* content sits above the organism canvas (SPEC V17) */}
+      <main style={{ paddingTop: v2Page ? 0 : 'var(--chrome-h)', overflow: 'clip', position: 'relative', zIndex: 1 }}>
+        <div className={v2Page ? enterClass : `shell ${enterClass}`} key={pathname}>
+          <Outlet />
+        </div>
+      </main>
+      <div className="v2">
+        <Footer />
+      </div>
+      <Cursor />
+      <div className="grain-overlay" aria-hidden="true" />
+    </>
   )
 }

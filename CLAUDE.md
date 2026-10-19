@@ -109,6 +109,11 @@ screenshot). Keep the home fold: hero + strap + CTA above 1080p fold.
   ChatCloser, Footer, SecLab, Rich); `npm run dev` → `/ds.html` renders them
   for fidelity checks against the prototype. The organism lab/game keep their
   own Archivo Black + JetBrains Mono.
+- Shell (T54): `src/components/Layout.tsx` renders the v2 Nav, Footer, cursor
+  and grain around every page. When a page is rebuilt in v2, add its route to
+  `V2_PAGES` there: that drops the Night Shift top padding (v2 heroes sit under
+  the fixed nav) and swaps the entrance for the prototype's page fade. Wrap v2
+  page roots in `className="v2"` for the prototype reset.
 - `design/` = imported claude.ai/design prototype + Webflow scrape snapshot
   (`design/scrape/extracted.json`). Read-only reference; never imported by
   app code (SPEC V9).

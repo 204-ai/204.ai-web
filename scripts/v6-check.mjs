@@ -21,6 +21,8 @@ for (const w of WIDTHS) {
         const rect = el.getBoundingClientRect()
         if (rect.right > window.innerWidth + 1 && rect.width > 4) {
           const cs = getComputedStyle(el)
+          // fixed layers (grain overlay, nav) sit on the viewport: they cannot create scroll
+          if (el.closest('*') && (() => { for (let a = el; a; a = a.parentElement) if (getComputedStyle(a).position === 'fixed') return true; return false })()) continue
           // ignore elements inside horizontal scroll containers
           let p = el.parentElement, scrollable = false
           while (p) {

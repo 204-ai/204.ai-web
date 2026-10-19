@@ -24,6 +24,9 @@
   --line-soft: rgba(255, 255, 255, 0.06);
   --line-card: rgba(255, 255, 255, 0.05);
   --line-faint: rgba(255, 255, 255, 0.04);
+  --line-strong: rgba(255, 255, 255, 0.1); /* nav hairline */
+  --drop-odd: #1c1c1c; /* nav dropdown rows */
+  --drop-even: #252525;
 
   /* SPEC C18 */
   --font-display: 'Anton SC', 'Anton', Impact, sans-serif;
@@ -191,18 +194,17 @@ a {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.8'/%3E%3C/svg%3E");
 }
 
-/* ─── custom cursor: hide native everywhere on precise pointers (V8) —
-   the dot reacts (ring/label) instead; text fields keep the caret ─── */
-@media (pointer: fine) {
-  body.custom-cursor,
-  body.custom-cursor * {
-    cursor: none !important;
-  }
+/* ─── custom cursor (prototype CursorDot): native cursor hidden only while the
+   dot is active — precise pointers, motion allowed (V8, V24); text fields keep
+   their caret ─── */
+body.cursor-none,
+body.cursor-none * {
+  cursor: none !important;
+}
 
-  body.custom-cursor input,
-  body.custom-cursor textarea {
-    cursor: text !important;
-  }
+body.cursor-none input,
+body.cursor-none textarea {
+  cursor: text !important;
 }
 
 /* ─── focus visibility ─── */

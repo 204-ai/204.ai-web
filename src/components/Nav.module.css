@@ -1,175 +1,207 @@
-.root {
+/* prototype .nav (design/cinematic/styles.css); inner row capped at the shell (V13) */
+.nav {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: var(--nav-h);
-  z-index: 20;
-  border-bottom: 1px solid var(--hairline);
-  background: rgba(10, 10, 10, 0.72);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  z-index: 200;
+  height: var(--chrome-h);
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0));
+  border-bottom: 1px solid var(--line-strong);
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: calc(11 * var(--px));
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transition: background 0.4s ease;
+}
+
+.nav.solid {
+  background: var(--ink-95);
+  border-bottom: 1px solid var(--line-soft);
 }
 
 .inner {
-  max-width: var(--shell-max);
-  margin-inline: auto;
-  height: 100%;
   display: flex;
   align-items: center;
-  padding: 0 28px;
+  justify-content: space-between;
+  height: 100%;
+  max-width: calc(var(--shell-max) + 2 * var(--side-pad));
+  margin: 0 auto;
+  padding: 14px var(--side-pad);
+}
+
+.left,
+.right {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.right {
+  gap: calc(32 * var(--px));
 }
 
 .logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-shrink: 0;
-}
-
-.logoImg {
-  height: clamp(26px, 2.1vw, 38px);
-  width: auto;
   display: block;
-}
-
-.logoSuffix {
-  font-family: var(--font-mono);
-  font-size: 9px;
-  color: var(--dim);
-  letter-spacing: 2px;
-  line-height: 1;
-}
-
-.nav {
-  display: flex;
-  margin-left: 24px;
+  height: 32px;
+  width: auto;
 }
 
 .link {
-  font-family: var(--font-mono);
-  font-size: clamp(11px, 0.85vw, 14px);
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  padding: 8px 14px;
+  opacity: 0.72;
+  transition: opacity 0.2s, color 0.2s;
+}
+
+.link:hover,
+.link:focus-visible {
+  opacity: 1;
+}
+
+.link.active {
+  opacity: 1;
+  color: var(--signal);
+}
+
+.hasDrop {
   position: relative;
-}
-
-.linkLabel {
-  color: var(--dim);
-  transition: color 0.15s;
-}
-
-.link:hover .linkLabel {
-  color: var(--fg);
-}
-
-.linkActive {
-  color: var(--fg);
-}
-
-.linkIsActive {
-  /* marker class for hover-underline exclusion */
-}
-
-.underline {
-  position: absolute;
-  left: 14px;
-  right: 14px;
-  bottom: 2px;
-  height: 2px;
-  background: var(--accent);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  /* hover: hairline slides in from the left; active accent bar wipes in */
-  .link::after {
-    content: '';
-    position: absolute;
-    left: 14px;
-    right: 14px;
-    bottom: 2px;
-    height: 1px;
-    background: var(--dim);
-    transform: scaleX(0);
-    transform-origin: 0 50%;
-    transition: transform 0.3s cubic-bezier(0.2, 0.7, 0.3, 1);
-  }
-
-  /* active item keeps its red bar — no white hover line on top of it */
-  .link:not(.linkIsActive):hover::after {
-    transform: scaleX(1);
-  }
-
-  .underline {
-    transform-origin: 0 50%;
-    animation: ncBarIn 0.38s cubic-bezier(0.2, 0.7, 0.3, 1);
-  }
-
-  @keyframes ncBarIn {
-    from {
-      transform: scaleX(0);
-    }
-  }
-}
-
-.status {
-  margin-left: auto;
-  padding-left: 22px;
-  border-left: 1px solid var(--hairline);
-  font-family: var(--font-mono);
-  font-size: clamp(10px, 0.78vw, 13px);
-  color: var(--dim);
-  letter-spacing: 0.5px;
-  line-height: 1.3;
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  justify-content: center;
-  /* divider spans the full bar so it connects to the bottom border */
-  align-self: stretch;
-  gap: 2px;
-  /* trailing letter-spacing after the last glyph — pull back so both
-     lines sit optically flush right */
-  margin-right: -0.5px;
+  align-items: center;
+  gap: 6px;
 }
 
-.statusBooking {
-  color: var(--accent-text);
+.toggle {
+  opacity: 0.72;
+  line-height: 1;
+  transition: opacity 0.2s;
 }
 
-.statusCta {
-  color: var(--fg);
+.toggle:hover,
+.toggle:focus-visible,
+.open .toggle {
+  opacity: 1;
 }
 
-/* ─── responsive (SPEC C7/V6) ─── */
-@media (max-width: 768px) {
-  .root {
-    height: auto;
-    min-height: 58px;
-  }
+.dropdown {
+  position: absolute;
+  top: calc(100% + 14px);
+  left: -12px;
+  min-width: calc(240 * var(--px));
+  z-index: 300;
+  background: var(--ink-95);
+  border: 1px solid var(--line);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: opacity 0.2s, transform 0.2s, visibility 0.2s;
+}
 
-  .inner {
-    flex-wrap: wrap;
-    padding: 10px 16px;
-    gap: 4px;
-    height: auto;
+/* hover only where hover is real, so touch never gets a sticky menu (V25) */
+@media (hover: hover) and (pointer: fine) {
+  .hasDrop:hover .dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
   }
+}
 
-  .nav {
-    order: 3;
-    width: 100%;
-    margin-left: -14px;
-    overflow-x: auto;
-    scrollbar-width: none;
+.hasDrop:focus-within .dropdown,
+.open .dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: calc(14 * var(--px)) calc(20 * var(--px));
+  font-size: calc(11 * var(--px));
+  letter-spacing: 0.14em;
+}
+
+.item:nth-child(odd) {
+  background: var(--drop-odd);
+}
+
+.item:nth-child(even) {
+  background: var(--drop-even);
+}
+
+.item:hover,
+.item:focus-visible {
+  background: var(--signal-dim);
+  color: var(--signal);
+}
+
+.ar {
+  opacity: 0.4;
+  font-family: var(--font-mono);
+}
+
+/* phones: a Menu panel replaces the row (the prototype has no mobile nav; SPEC V6) */
+.menuToggle {
+  display: none;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 10px 0 10px 16px;
+}
+
+.panel {
+  display: none;
+}
+
+@media (max-width: 1080px) {
+  .right {
+    gap: 18px;
+    font-size: 10px;
   }
+}
 
-  .nav::-webkit-scrollbar {
+@media (max-width: 720px) {
+  .right {
     display: none;
   }
 
-  .status {
-    border-left: none;
-    padding-left: 0;
+  .menuToggle {
+    display: block;
+  }
+
+  .panelOpen {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: calc(100dvh - var(--chrome-h));
+    overflow-y: auto;
+    padding: 12px var(--side-pad) 28px;
+    background: var(--ink-95);
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .panelGroup {
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .panelGroup > .link {
+    padding: 16px 0;
+    font-size: 14px;
+  }
+
+  .panelSub {
+    padding: 0 0 14px 16px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: none;
+    opacity: 0.72;
   }
 }
