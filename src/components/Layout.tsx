@@ -8,7 +8,7 @@ import { Footer } from './ui/Footer'
 // Pages rebuilt in the v2 design (T55–T60 add theirs): they own their top spacing
 // under the fixed nav and fade in like the prototype. Every other route is still a
 // Night Shift page: padded below the nav, with its own entrance. T65 removes this.
-const V2_PAGES: RegExp[] = [/^\/$/]
+const V2_PAGES: RegExp[] = [/^\/$/, /^\/work\/?$/]
 
 export function Layout() {
   const { pathname, state } = useLocation()

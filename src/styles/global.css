@@ -28,6 +28,7 @@
   --drop-odd: #1c1c1c; /* nav dropdown rows */
   --drop-even: #252525;
   --ink-93: #111; /* service tiles */
+  --line-pill: rgba(255, 255, 255, 0.4); /* unselected filter pills */
   --band-key: #c4c4c4; /* featured band meta keys */
   --track: rgba(255, 255, 255, 0.14); /* hero progress track */
 

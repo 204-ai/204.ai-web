@@ -120,6 +120,9 @@ screenshot). Keep the home fold: hero + strap + CTA above 1080p fold.
 - Media is SELF-HOSTED in `public/media/` (SPEC V4; migrated via
   `scripts/media-pipeline.mjs` — rerun-safe if new Webflow URLs appear in
   content). Non-hero stills use `-p-800` renditions with onError fallback.
+  v2 images carry intrinsic `width`/`height` (SPEC V30): `imgDims(url)` from
+  `src/lib/dims.ts` reads `virtual:media-dims`, which `vite.config.ts` derives
+  from `scripts/media-manifest.json` at build time (nothing to regenerate).
 - Animations: transform/opacity only, gated behind
   `prefers-reduced-motion: no-preference`. Entrance choreography: h1 is the
   only riser; media fades w/ scale-settle; secondary fades late; pagers wipe
