@@ -22,13 +22,15 @@ const fixture = (): RawContent => ({
   studio: {
     schema: 2, name: '204', suffix: 'NO-CONTENT', tag: 'Studio', logoUrl: '/media/logo.webp',
     contact: { email: 'hello@204.ai', studio: 'RnA Studio', instagram: '@x', instagramUrl: 'https://instagram.com/x', linkedin: 'x', linkedinUrl: 'https://linkedin.com/x' },
-    heroClips: [{ work: 'motel-x', clip: '/media/mx.mp4', poster: '/media/mx.webp', kind: 'Magic Photo Booth' }],
-    featured: ['ciurlionis', 'motel-x'],
+    heroClips: [{ work: 'motel-x', clip: '/media/mx.mp4', poster: '/media/mx.webp', title: 'Motel X — Vinte Anos', kind: 'Magic Photo Booth' }],
+    featured: [{ work: 'ciurlionis', title: 'Čiurlionis\nTrail of Angels', label: 'Animation\n& Film', poster: '/media/feat.webp' }, { work: 'motel-x' }],
+    allWork: { title: 'Other\nProjects', label: 'Selected\nwork', client: 'Various', year: '2024–26', poster: '/media/all.webp', clip: '/media/all.mp4' },
     process: [{ n: '01', label: 'Discover', body: 'Goals' }],
     practice: [{ n: '01', label: 'Experience design', body: 'Audience' }],
     copy: {
       home: { who: 'Who', marquee: 'A · B' }, closer: { label: 'Chat', title: 'Story', cta: 'Start' },
-      footer: { blurb: 'Blurb' }, about: { lead: 'Lead' }, contact: { lead: 'Lead' }, portfolio: { lead: 'Lead' },
+      footer: { blurb: 'Blurb' }, about: { lead: 'Lead' }, contact: { lead: 'Lead' },
+      portfolio: { lead: 'Lead', closer: { label: 'Card', title: 'Mind?', cta: 'Start' } },
     },
     footer: { address: 'Lisboa', socials: [{ label: 'Instagram', url: 'https://instagram.com/x' }] },
     budgetRanges: ['< 25k'], rnaStudioUrl: 'https://rna.example', trustedBy: [], partners: [],
@@ -56,7 +58,8 @@ describe('buildContent (I.content, C19, C20)', () => {
   })
   it('resolves hero clips and featured work, folds aliases into redirects, derives stats', () => {
     expect(c.heroClips.map((h) => h.item.slug)).toEqual(['motel-x'])
-    expect(c.featured.map((w) => w.slug)).toEqual(['ciurlionis', 'motel-x'])
+    expect(c.featured.map((f) => [f.item.slug, f.title ?? null])).toEqual([['ciurlionis', 'Čiurlionis\nTrail of Angels'], ['motel-x', null]])
+    expect(c.heroClips[0].title).toBe('Motel X — Vinte Anos')
     expect(c.redirects).toEqual({ '/work/trail-of-angels': '/work/ciurlionis', '/work/bioxyz-coin-launch': '/work/delulu' })
     expect(c.stats).toEqual({ makers: 1, pillars: 2, projects: 3 })
   })
@@ -78,7 +81,7 @@ describe('validateContent (V26, C20)', () => {
     expect(broken((r) => { r.works[0].practices = ['boooth'] })).toMatch(/"boooth" is not a service id/)
   })
   it('rejects hero clips and featured entries that do not resolve to a work', () => {
-    const msg = broken((r) => { r.studio.heroClips[0].work = 'nope'; r.studio.featured.push('ghost') })
+    const msg = broken((r) => { r.studio.heroClips[0].work = 'nope'; r.studio.featured.push({ work: 'ghost' }) })
     expect(msg).toMatch(/heroClips\[0\].*"nope"/)
     expect(msg).toMatch(/featured\[2\].*"ghost"/)
   })
@@ -87,6 +90,10 @@ describe('validateContent (V26, C20)', () => {
     expect(broken((r) => { r.works[2].aliases = ['delulu'] })).toMatch(/\/work\/delulu shadows a live route/)
     expect(broken((r) => { r.redirects = { '/work/old': '/work/missing' } })).toMatch(/\/work\/old → \/work\/missing: target is not a live route/)
     expect(broken((r) => { r.works[0].slug = 'Bad Slug' })).toMatch(/slug "Bad Slug"/)
+  })
+  it('requires the all-work band with its strings (I.content, T51)', () => {
+    expect(broken((r) => { (r.studio as { allWork?: unknown }).allWork = undefined })).toMatch(/allWork must be an object/)
+    expect(broken((r) => { r.studio.allWork.poster = '' })).toMatch(/allWork: poster must be a non-empty string/)
   })
   it('rejects missing required fields and a wrong schema marker', () => {
     const msg = broken((r) => {

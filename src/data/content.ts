@@ -98,8 +98,34 @@ export interface HeroClip {
   work: string
   clip: string
   poster: string
+  /** caption override, e.g. "Motel X — Vinte Anos"; defaults to the work title */
+  title?: string
   kind?: string
   place?: string
+}
+
+/** a home "featured work" band; every field but `work` overrides what the work provides */
+export interface FeaturedBand {
+  /** work slug */
+  work: string
+  /** two-line band title ("\n" = line break); defaults to the work title */
+  title?: string
+  /** category line; defaults to the primary service title */
+  label?: string
+  poster?: string
+  clip?: string
+  focus?: string
+}
+
+/** the band after the featured ones that opens /work */
+export interface AllWorkBand {
+  title: string
+  label: string
+  client: string
+  year: string
+  poster: string
+  clip?: string
+  focus?: string
 }
 
 export interface Contact {
@@ -112,13 +138,20 @@ export interface Contact {
   map?: { image?: string; url: string }
 }
 
+export interface Closer {
+  label: string
+  title: string
+  cta: string
+}
+
+/** paragraph copy; `**…**` marks bold. Headlines and UI labels stay in page code, as in v1. */
 export interface Copy {
   home: { who: string; marquee: string }
-  closer: { label: string; title: string; cta: string }
+  closer: Closer
   footer: { blurb: string }
   about: { lead: string }
   contact: { lead: string }
-  portfolio: { lead: string }
+  portfolio: { lead: string; closer: Closer }
 }
 
 export interface Footer {
@@ -134,8 +167,8 @@ export interface RawStudio {
   logoUrl: string
   contact: Contact
   heroClips: HeroClip[]
-  /** work slugs; the home page appends the "all work" band */
-  featured: string[]
+  featured: FeaturedBand[]
+  allWork: AllWorkBand
   /** home process dial */
   process: Row[]
   /** about page rows */
@@ -190,7 +223,7 @@ export interface Content {
   people: Person[]
   studio: RawStudio
   heroClips: Array<HeroClip & { item: Work }>
-  featured: Work[]
+  featured: Array<FeaturedBand & { item: Work }>
   /** aliases ∪ redirects.json, old path → live path */
   redirects: Record<string, string>
   stats: { makers: number; pillars: number; projects: number }
@@ -271,7 +304,10 @@ export function buildContent(raw: RawContent): Content {
       const item = bySlug.get(h.work)
       return item ? [{ ...h, item }] : []
     }),
-    featured: raw.studio.featured.flatMap((slug) => bySlug.get(slug) ?? []),
+    featured: raw.studio.featured.flatMap((f) => {
+      const item = bySlug.get(f.work)
+      return item ? [{ ...f, item }] : []
+    }),
     redirects: Object.fromEntries(redirectList(raw).map((r) => [r.from, r.to])),
     stats: { makers: people.length, pillars: PILLARS.filter((p) => raw.services[p].length > 0).length, projects: works.length },
   }
@@ -309,7 +345,8 @@ export function validateContent(raw: RawContent, { partial = false }: { partial?
   if (want('studio')) {
     if (st.schema !== 2) at('studio.json', 'schema must be 2')
     need(st, 'studio.json', ['name', 'suffix', 'tag', 'logoUrl', 'rnaStudioUrl'], ['heroClips', 'featured', 'process', 'practice', 'budgetRanges', 'trustedBy', 'partners'])
-    for (const k of ['contact', 'copy', 'footer']) if (!st[k] || typeof st[k] !== 'object') at('studio.json', `${k} must be an object`)
+    for (const k of ['contact', 'copy', 'footer', 'allWork']) if (!st[k] || typeof st[k] !== 'object') at('studio.json', `${k} must be an object`)
+    if (st.allWork && typeof st.allWork === 'object') need(st.allWork, 'studio.allWork', ['title', 'label', 'client', 'year', 'poster'])
   }
 
   const ids = new Set<string>()
@@ -365,8 +402,8 @@ export function validateContent(raw: RawContent, { partial = false }: { partial?
       if (!workSlugs.has(h?.work)) at(`studio.heroClips[${i}]`, `work "${h?.work}" is not a work slug (SPEC V26)`)
       need(h, `studio.heroClips[${i}]`, ['clip', 'poster'])
     }
-    for (const [i, slug] of (Array.isArray(st.featured) ? (st.featured as string[]) : []).entries()) {
-      if (!workSlugs.has(slug)) at(`studio.featured[${i}]`, `"${slug}" is not a work slug (SPEC V26)`)
+    for (const [i, f] of (Array.isArray(st.featured) ? (st.featured as FeaturedBand[]) : []).entries()) {
+      if (!workSlugs.has(f?.work)) at(`studio.featured[${i}]`, `"${f?.work}" is not a work slug (SPEC V26)`)
     }
   }
 

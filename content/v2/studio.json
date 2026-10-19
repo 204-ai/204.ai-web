@@ -1,0 +1,314 @@
+{
+  "schema": 2,
+  "name": "204",
+  "suffix": "NO-CONTENT",
+  "tag": "Creative technology studio for image, motion & interaction",
+  "logoUrl": "assets/204_white.png",
+  "contact": {
+    "email": "hello@204.ai",
+    "studio": "RnA Studio — R. Ferreira Lapa 12A, 1150-157 Lisboa, Portugal",
+    "instagram": "@204nocontent.ai",
+    "instagramUrl": "https://www.instagram.com/204nocontent.ai/",
+    "linkedin": "204-no-content",
+    "linkedinUrl": "https://www.linkedin.com/company/204-no-content/",
+    "map": {
+      "url": "https://maps.app.goo.gl/j5V4zL4ehRgYzgnL9"
+    }
+  },
+  "heroClips": [
+    {
+      "work": "alan-watts",
+      "clip": "assets/feat-alanwatts.mp4",
+      "poster": "assets/feat-alanwatts.png",
+      "kind": "Archival Restoration",
+      "place": "Alan Watts Foundation"
+    },
+    {
+      "work": "motel-x",
+      "clip": "assets/feat-motelx.mp4",
+      "poster": "assets/feat-motelx.jpg",
+      "title": "Motel X — Vinte Anos",
+      "kind": "Magic Photo Booth",
+      "place": "Lisbon"
+    },
+    {
+      "work": "stand-virtual",
+      "clip": "assets/hero-standv.mp4",
+      "poster": "assets/w-standv.png",
+      "title": "Stand Virtual — Back to the Future",
+      "kind": "Branded Campaign",
+      "place": "Lisbon"
+    },
+    {
+      "work": "delulu",
+      "clip": "assets/reel-delulu.mp4",
+      "poster": "assets/w-delulu.jpg",
+      "title": "Delulu — Sofie Heyman",
+      "kind": "Artist Collaboration",
+      "place": "Lisbon"
+    },
+    {
+      "work": "m-k-ciurlionis-trail-of-angels",
+      "clip": "assets/feat-ciurlionis.mp4",
+      "poster": "assets/feat-ciurlionis.png",
+      "kind": "Animation & Film",
+      "place": "Lithuania"
+    },
+    {
+      "work": "yard-episode",
+      "clip": "assets/sd-vfx-2.mp4",
+      "poster": "assets/yrd-thumb.jpg",
+      "kind": "Mapping & Live Visuals",
+      "place": "Lisbon"
+    }
+  ],
+  "featured": [
+    {
+      "work": "m-k-ciurlionis-trail-of-angels",
+      "title": "M. K. Čiurlionis\nTrail of Angels",
+      "label": "Animation\n& Film",
+      "poster": "assets/feat-ciurlionis.png",
+      "clip": "assets/feat-ciurlionis.mp4",
+      "focus": "50% 30%"
+    },
+    {
+      "work": "motel-x",
+      "title": "Motel X\nVinte Anos",
+      "label": "Magic Photo\nBooth",
+      "poster": "assets/feat-motelx.jpg",
+      "clip": "assets/feat-motelx.mp4"
+    },
+    {
+      "work": "alan-watts",
+      "title": "Alan\nWatts",
+      "label": "Archival\nRestoration",
+      "poster": "assets/feat-alanwatts.png",
+      "clip": "assets/feat-alanwatts.mp4",
+      "focus": "50% 30%"
+    }
+  ],
+  "allWork": {
+    "title": "Other\nProjects",
+    "label": "Selected\nwork",
+    "client": "Various",
+    "year": "2024–26",
+    "poster": "assets/yrd-thumb.jpg",
+    "clip": "assets/feat-other.mp4"
+  },
+  "process": [
+    {
+      "n": "01",
+      "label": "Discover",
+      "body": "We learn your goals, tone, and audience."
+    },
+    {
+      "n": "02",
+      "label": "Direct",
+      "body": "Human vision leads; AI assists wherever it helps."
+    },
+    {
+      "n": "03",
+      "label": "Build",
+      "body": "We shoot, generate, or construct — on screen or in the room."
+    },
+    {
+      "n": "04",
+      "label": "Deliver",
+      "body": "Shipped, installed, and refined as your story keeps evolving."
+    }
+  ],
+  "practice": [
+    {
+      "n": "01.",
+      "label": "Experience design",
+      "body": "We understand your audience, objectives, and environment."
+    },
+    {
+      "n": "02.",
+      "label": "System development",
+      "body": "We define the experience mode, visual identity, and technical setup."
+    },
+    {
+      "n": "03.",
+      "label": "Technical production",
+      "body": "We develop the AI models, interaction logic, and visual worlds."
+    },
+    {
+      "n": "04.",
+      "label": "Strategic consulting",
+      "body": "We deploy, calibrate, and ensure seamless on-site performance."
+    }
+  ],
+  "copy": {
+    "home": {
+      "who": "204 is a Lisbon-based creative studio. Every world starts with **human direction** — then becomes a film, a campaign, or something you interact with.",
+      "marquee": "Digital Content · Archival Animation · Magic Mirror · Virtual Outfitting"
+    },
+    "closer": {
+      "label": "// let's chat",
+      "title": "Let's bring your\nstory to life",
+      "cta": "Start your project"
+    },
+    "footer": {
+      "blurb": "A creative studio fusing human intention with AI-driven expression. Cinematic content & immersive worlds, built in Lisbon."
+    },
+    "about": {
+      "lead": "Named after HTTP 204 — a response that returns nothing. A joke about studios that deliver exactly that, and a promise that we won't. 204 is a creative technology studio working at the intersection of AI, motion, identity and live environments — translating **human ideas** into responsive worlds."
+    },
+    "contact": {
+      "lead": "The fastest way to start a conversation is a three-line email: who you are, what you're making, and when you need it by. **We read everything** and reply within two working days."
+    },
+    "portfolio": {
+      "lead": "Reels, campaigns, films, mapping and installations\nshot, generated and shaped in Lisbon.",
+      "closer": {
+        "label": "// closing card",
+        "title": "Got something\nin mind?",
+        "cta": "Start a project"
+      }
+    }
+  },
+  "footer": {
+    "address": "R. Ferreira Lapa 12A\n1150-157 Lisboa\nPortugal",
+    "socials": [
+      {
+        "label": "Instagram",
+        "url": "https://www.instagram.com/204nocontent.ai/"
+      },
+      {
+        "label": "LinkedIn",
+        "url": "https://www.linkedin.com/company/204-no-content/"
+      }
+    ]
+  },
+  "budgetRanges": [
+    "< 25k",
+    "25–75k",
+    "75–200k",
+    "200k+",
+    "trade"
+  ],
+  "rnaStudioUrl": "https://www.rna-studio.com/",
+  "trustedBy": [
+    {
+      "name": "Lisbon Insiders",
+      "logo": "assets/logo-lisbon.png",
+      "url": "/work/lisbon-insiders"
+    },
+    {
+      "name": "NFC",
+      "logo": "assets/logo-nfc.png",
+      "url": "/work/nfc"
+    },
+    {
+      "name": "Wines From Another World",
+      "logo": "assets/logo-wines.png",
+      "url": "/work/wines-from-another-world"
+    },
+    {
+      "name": "YARD",
+      "logo": "assets/logo-yard.png",
+      "url": "/work/yard-episode"
+    },
+    {
+      "name": "Alan Watts",
+      "logo": "assets/logo-alanwatts.png",
+      "url": "/work/alan-watts"
+    },
+    {
+      "name": "Hulaween",
+      "logo": "assets/logo-hulaween.png",
+      "url": "/work/hulaween"
+    },
+    {
+      "name": "Vagabond",
+      "logo": "assets/logo-vagabond.png",
+      "url": "/work/vagabond"
+    },
+    {
+      "name": "Rare Effect",
+      "logo": "assets/logo-rareeffect.png",
+      "url": "/work/rare-effect"
+    },
+    {
+      "name": "Portugal Tech Week",
+      "logo": "assets/logo-techweek.png",
+      "url": "/work/portugal-tech-week"
+    },
+    {
+      "name": "Studio 54b",
+      "logo": "assets/logo-studio54b.png",
+      "url": "/work/studio-54b"
+    },
+    {
+      "name": "BioXYZ",
+      "logo": "assets/logo-bioxyz.png",
+      "url": "/work/bioxyz"
+    },
+    {
+      "name": "Quincy Jones",
+      "logo": "assets/logo-quincy.png"
+    },
+    {
+      "name": "Obscura",
+      "logo": "assets/logo-obscura.png",
+      "url": "/work/mazarine"
+    },
+    {
+      "name": "Barbara Veiga",
+      "logo": "assets/logo-barbara.png",
+      "url": "/work/surrender-to-nature"
+    },
+    {
+      "name": "MOTELX",
+      "logo": "assets/logo-motelx.png",
+      "url": "/work/motel-x"
+    },
+    {
+      "name": "Oddsgate",
+      "logo": "assets/logo-oddsgate.png",
+      "url": "/work/oddsgate"
+    },
+    {
+      "name": "Standvirtual",
+      "logo": "assets/logo-standv-w.png",
+      "url": "/work/stand-virtual"
+    },
+    {
+      "name": "Synesthesia",
+      "logo": "assets/logo-synesthesia.png",
+      "url": "/work/synesthesia"
+    },
+    {
+      "name": "Tkeshii",
+      "logo": "assets/logo-tkeshii.png",
+      "url": "/work/tkeshii"
+    },
+    {
+      "name": "Texas Eclipse",
+      "logo": "assets/logo-eclipse.avif",
+      "url": "/work/texas-eclipse"
+    },
+    {
+      "name": "KBC",
+      "logo": "/media/kbc-400-9e95b84803.webp",
+      "url": "/work/kbc"
+    }
+  ],
+  "partners": [
+    {
+      "name": "Screenix",
+      "logo": "assets/logo-screenix.png",
+      "url": "https://screenix.io/"
+    },
+    {
+      "name": "Taste Labs",
+      "logo": "assets/logo-taste.png",
+      "url": "https://tastelabs.ai/"
+    },
+    {
+      "name": "Institute for Tomorrow",
+      "logo": "assets/logo-tmrw.png",
+      "url": "https://iftomorrow.institute/"
+    }
+  ]
+}

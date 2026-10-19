@@ -57,8 +57,11 @@ the media run.
   included, cta; optional slug, aliases, reels, still.
 - `people.json`: unchanged.
 - `studio.json`: the v1 settings minus heroChapters, workCategories and
-  pillarsCount, plus schema 2, heroClips [{work, clip, poster, kind, place}],
-  featured (work slugs), process (home dial), copy, footer, contact.map.
+  pillarsCount, plus schema 2, heroClips [{work, clip, poster, title, kind,
+  place}], featured bands [{work, title, label, poster, clip, focus}] (all but
+  `work` optional, defaulting to the work), the allWork band, process (home
+  dial), copy (paragraphs only, `**…**` = bold; headlines and UI labels stay in
+  page code), footer {address, socials}, contact.map {url, image}.
 - `redirects.json` (optional): `{"/old/path": "/live/path"}` for removed pages.
 
 Derived, never hand-written: ids, NC codes, slugs (title, or `slug`), service
