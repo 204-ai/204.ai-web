@@ -13,7 +13,7 @@
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { buildContent, isV2, slugify, validateContent } from '../src/data/content.ts'
+import { aboutDescription, buildContent, isV2, slugify, validateContent } from '../src/data/content.ts'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const content = (f) => JSON.parse(readFileSync(join(root, 'content', f), 'utf8'))
@@ -93,7 +93,7 @@ const routes = [
   {
     path: '/about',
     title: t('About'),
-    desc: '204 is a creative technology studio led by six makers in Lisbon, working at the intersection of AI, motion, identity and live environments.',
+    desc: aboutDescription(PEOPLE.length), // same helper as src/pages/About.tsx
   },
   {
     path: '/contact',

@@ -1,74 +1,99 @@
 import { Link, useParams } from 'react-router-dom'
-import { SocialLinks } from '../components/SocialLinks'
+import { Pill } from '../components/ui/Pill'
+import { SecLab } from '../components/ui/SecLab'
+import { SocialIcon, type Network } from '../components/ui/SocialIcon'
+import type { Person } from '../data/content'
+import { v2 } from '../data/studio'
 import { useHead } from '../hooks/useHead'
-import { PEOPLE } from '../data/studio'
+import { trackSocialClick } from '../lib/analytics'
+import { imgDims } from '../lib/dims'
+import { rendition } from '../lib/media'
 import { NotFound } from './NotFound'
 import styles from './MakerDetail.module.css'
 
+/** /makers/:slug — unknown slugs fall through to redirects, then 404. */
 export function MakerDetail() {
   const { slug } = useParams()
-  const idx = PEOPLE.findIndex((p) => p.slug === slug)
-  const p = PEOPLE[idx]
+  const { people } = v2()
+  const i = people.findIndex((p) => p.slug === slug)
+  if (i < 0) return <NotFound />
+  return <MakerPage key={people[i].slug} person={people[i]} index={i} />
+}
 
-  useHead(
-    p ? `${p.name} · Maker` : '404',
-    p ? `${p.name}, ${p.role} at 204 — creative technology studio, Lisbon.` : 'Maker not found.',
-    p?.photo,
-  )
+const NETWORKS: Network[] = ['instagram', 'linkedin', 'email', 'web']
 
-  if (!p) return <NotFound />
-
-  const prev = PEOPLE[(idx - 1 + PEOPLE.length) % PEOPLE.length]
-  const next = PEOPLE[(idx + 1) % PEOPLE.length]
+/** v2 maker page (prototype MakerPage): portrait, reach-out links (only set ones render), prev/next. */
+function MakerPage({ person: p, index: i }: { person: Person; index: number }) {
+  const { people } = v2()
+  useHead(`${p.name} · Maker`, `${p.name}, ${p.role} at 204 — creative technology studio, Lisbon.`, p.photo)
+  const prev = people[(i - 1 + people.length) % people.length]
+  const next = people[(i + 1) % people.length]
+  const links = NETWORKS.flatMap((n) => {
+    const v = p.socials?.[n]
+    return v ? [{ n, href: n === 'email' ? `mailto:${v}` : v }] : []
+  })
 
   return (
-    <div className={styles.root}>
-      <Link to="/about" className={`t-mono ${styles.back}`}>
-        ← ABOUT
-      </Link>
+    <div className="v2">
+      <section className={styles.page}>
+        <Link className={styles.back} to="/about">
+          ← about
+        </Link>
+        <SecLab>/ the makers — {String(i + 1).padStart(2, '0')}</SecLab>
+        <h1 className={styles.name}>{p.name}</h1>
+        <div className={styles.role}>{p.role}</div>
 
-      <div className="t-label" style={{ margin: '18px 0 8px' }}>
-        / THE MAKERS — {String(idx + 1).padStart(2, '0')}
-      </div>
-      <h1 className={`t-display ${styles.name}`}>{p.name}</h1>
-      <div className={`t-serif ${styles.role}`}>{p.role}</div>
-
-      <div className={styles.columns}>
-        <div className={`${styles.photoWrap} anim-media`}>
-          {p.photo ? (
-            <img src={p.photo} alt={p.name} className={styles.photo} />
-          ) : (
-            <div className={styles.photoFallback}>
-              <span className={`t-display ${styles.initials}`}>
-                {p.name
-                  .split(' ')
-                  .map((n) => n[0])
-                  .join('')}
-              </span>
+        <div className={styles.body}>
+          <div className={styles.shot}>
+            {p.photo && (
+              <img
+                src={p.photo}
+                srcSet={`${rendition(p.photo, 320)} 320w, ${p.photo} 800w`}
+                sizes="(max-width: 900px) 100vw, 420px"
+                {...imgDims(p.photo)}
+                alt={p.name}
+                fetchPriority="high"
+              />
+            )}
+          </div>
+          <div className={styles.side}>
+            <SecLab className={styles.sideLab}>/ reach out</SecLab>
+            {links.length > 0 && (
+              <div className={styles.links}>
+                {links.map((l) => (
+                  <a
+                    key={l.n}
+                    href={l.href}
+                    target={l.n === 'email' ? undefined : '_blank'}
+                    rel={l.n === 'email' ? undefined : 'noreferrer'}
+                    onClick={() => trackSocialClick(l.n, p.name)}
+                  >
+                    <span className={styles.ic}>
+                      <SocialIcon network={l.n} />
+                    </span>
+                    {l.n}
+                  </a>
+                ))}
+              </div>
+            )}
+            {p.bio && <p className={styles.bio}>{p.bio}</p>}
+            <div className={styles.cta}>
+              <Pill to="/contact">→ Work with us</Pill>
             </div>
-          )}
+          </div>
         </div>
 
-        <aside className={`${styles.side} anim-fade`}>
-          {p.bio && <p className={`t-serif ${styles.bio}`}>{p.bio}</p>}
-          <div className="t-label" style={{ marginBottom: 8 }}>/ REACH OUT</div>
-          <SocialLinks socials={p.socials} person={p.name} />
-          <Link to="/contact" className={`t-mono ${styles.cta}`}>
-            → WORK WITH US
+        <nav className={styles.nav} aria-label="More makers">
+          <Link className={styles.navSide} to={`/makers/${prev.slug}`}>
+            <div className={styles.navLab}>← prev</div>
+            <div className={styles.nm}>{prev.name}</div>
           </Link>
-        </aside>
-      </div>
-
-      <nav className={styles.pager} aria-label="More makers">
-        <Link to={`/makers/${prev.slug}`} state={{ pager: 'prev' }} className={`${styles.pagerLink} anim-wipe-l`}>
-          <span className={`t-mono ${styles.pagerLabel}`}>← PREV</span>
-          <span className={`t-display ${styles.pagerTitle}`}>{prev.name}</span>
-        </Link>
-        <Link to={`/makers/${next.slug}`} state={{ pager: 'next' }} className={`${styles.pagerLink} ${styles.pagerRight} anim-wipe-r`}>
-          <span className={`t-mono ${styles.pagerLabel}`}>NEXT →</span>
-          <span className={`t-display ${styles.pagerTitle}`}>{next.name}</span>
-        </Link>
-      </nav>
+          <Link className={`${styles.navSide} ${styles.r}`} to={`/makers/${next.slug}`}>
+            <div className={styles.navLab}>next →</div>
+            <div className={styles.nm}>{next.name}</div>
+          </Link>
+        </nav>
+      </section>
     </div>
   )
 }

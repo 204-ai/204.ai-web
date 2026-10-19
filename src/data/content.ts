@@ -229,6 +229,12 @@ export interface Content {
   stats: { makers: number; pillars: number; projects: number }
 }
 
+const COUNT_WORDS = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve']
+
+/** /about share text with the maker count derived from people.json (useHead and generate-meta, SPEC V10) */
+export const aboutDescription = (makers: number): string =>
+  `204 is a creative technology studio led by ${COUNT_WORDS[makers] ?? makers} makers in Lisbon, working at the intersection of AI, motion, identity and live environments.`
+
 /** schema switch: v2 content declares "schema": 2 in studio.json */
 export const isV2 = (studio: unknown): boolean => (studio as { schema?: unknown } | null)?.schema === 2
 

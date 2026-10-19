@@ -32,6 +32,7 @@
   --line-rule: rgba(255, 255, 255, 0.14); /* case credits / collab rules */
   --line-row: rgba(255, 255, 255, 0.12); /* service modes / work rows */
   --line-bar: rgba(255, 255, 255, 0.22); /* service reel bars */
+  --signal-faint: rgba(90, 166, 255, 0.05); /* RnA card wash */
   --live: #33ff77; /* lightbox "playing" dot */
   --band-key: #c4c4c4; /* featured band meta keys */
   --track: rgba(255, 255, 255, 0.14); /* hero progress track */
