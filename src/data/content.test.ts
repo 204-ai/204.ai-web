@@ -184,4 +184,17 @@ describe('live content', () => {
     const lost = (live.works as Array<{ title: string }>).map((w) => slugify(w.title)).filter((s) => !reachable.has(s))
     expect(lost).toEqual([])
   })
+  it.skipIf(!staged?.services || isV2(live.studio))('every live v1 service URL resolves in the staged services (SPEC V21, C20)', () => {
+    type Svc = { label: string; slug?: string; aliases?: string[] }
+    const s = staged!.services as Record<'content' | 'interactive', Svc[]>
+    const all = [...s.content, ...s.interactive]
+    const redirects = (staged!.redirects ?? {}) as Record<string, string>
+    const reachable = new Set([
+      ...all.map((x) => x.slug ?? slugify(x.label)), ...all.flatMap((x) => x.aliases ?? []),
+      ...Object.keys(redirects).filter((k) => k.startsWith('/services/')).map((k) => k.slice('/services/'.length)),
+    ])
+    const v1 = live.services as Record<'content' | 'interactive', Array<{ label: string }>>
+    const lost = [...v1.content, ...v1.interactive].map((x) => slugify(x.label)).filter((x) => !reachable.has(x))
+    expect(lost).toEqual([])
+  })
 })
