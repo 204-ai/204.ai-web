@@ -105,6 +105,7 @@ const routes = [
     desc: w.note,
     image: ogImage(w.media?.still),
     preload: w.media?.still,
+    preloadSizes: '100vw', // v2 case hero is full-bleed (src/pages/WorkDetail.tsx)
   })),
   ...SERVICES_ALL.map((s) => ({
     path: `/services/${s.slug}`,

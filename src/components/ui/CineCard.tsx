@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
+import { imgDims } from '../../lib/dims'
+import { rendition } from '../../lib/media'
 import styles from './CineCard.module.css'
 
 interface CineCardProps {
@@ -16,7 +18,20 @@ interface CineCardProps {
 export function CineCard({ title, to, img, metaTl, metaTr, sub, poppins }: CineCardProps) {
   return (
     <Link className={styles.card} to={to}>
-      <div className={styles.img} style={img ? { backgroundImage: `url(${img})` } : undefined} />
+      {img ? (
+        <img
+          className={styles.img}
+          src={rendition(img, 800)}
+          srcSet={`${rendition(img, 500)} 500w, ${rendition(img, 800)} 800w, ${img} 1920w`}
+          sizes="(max-width: 1080px) 100vw, 50vw"
+          {...imgDims(img)}
+          alt=""
+          loading="lazy"
+          decoding="async"
+        />
+      ) : (
+        <div className={styles.img} />
+      )}
       <div className={styles.scrim} />
       {metaTl && <div className={styles.metaTl}>{metaTl}</div>}
       {metaTr && <div className={styles.metaTr}>{metaTr}</div>}

@@ -18,9 +18,11 @@
 .img {
   position: absolute;
   inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   background: var(--ink-90);
-  background-size: cover;
-  background-position: center;
   transition: transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 

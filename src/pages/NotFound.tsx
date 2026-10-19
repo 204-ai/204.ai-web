@@ -1,33 +1,28 @@
-import { Link } from 'react-router-dom'
+import { Navigate, useLocation } from 'react-router-dom'
+import { Pill } from '../components/ui/Pill'
+import { v2 } from '../data/studio'
 import { useHead } from '../hooks/useHead'
+import styles from './NotFound.module.css'
 
+/**
+ * Unknown routes: a retired slug or removed page redirects to its live path first
+ * (aliases ∪ redirects.json, SPEC C20/V3), everything else is a v2 404.
+ */
 export function NotFound() {
-  useHead('404', 'Page not found. Which is on-brand, but not on purpose this time.')
-
+  const { pathname } = useLocation()
+  const target = v2().redirects[pathname.replace(/\/+$/, '') || '/']
+  useHead(target ? '' : '404', 'Page not found. Which is on-brand, but not on purpose this time.')
+  if (target) return <Navigate to={target} replace />
   return (
-    <div style={{ padding: '96px 28px', maxWidth: 720 }}>
-      <div className="t-label" style={{ marginBottom: 8 }}>§ ∅ / NOT FOUND</div>
-      <h1 className="t-display" style={{ fontSize: 'clamp(56px, 10vw, 100px)', margin: 0 }}>
-        404<span style={{ color: 'var(--dim)' }}>—</span>
-        <span style={{ color: 'var(--accent)' }}>NO</span> PAGE
+    <div className={`v2 ${styles.root}`}>
+      <div className={styles.lab}>{'// 404 — not found'}</div>
+      <h1 className={styles.title}>
+        Nothing
+        <br />
+        <em>here.</em>
       </h1>
-      <p className="t-serif" style={{ fontSize: 16, lineHeight: 1.6, color: 'var(--fg)', maxWidth: 440 }}>
-        We're named after a response that returns nothing, but this one is a genuine miss.
-      </p>
-      <Link
-        to="/"
-        className="t-mono"
-        style={{
-          display: 'inline-block',
-          border: '1px solid var(--fg)',
-          padding: '14px 22px',
-          fontSize: 11,
-          letterSpacing: 2,
-          textTransform: 'uppercase',
-        }}
-      >
-        → Back to Index
-      </Link>
+      <p className={styles.text}>We're named after a response that returns nothing, but this one is a genuine miss.</p>
+      <Pill to="/">Back to home</Pill>
     </div>
   )
 }

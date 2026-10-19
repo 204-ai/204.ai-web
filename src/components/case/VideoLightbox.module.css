@@ -1,0 +1,123 @@
+/* prototype .lightbox (youtube variant) */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(48 * var(--px));
+  background: rgba(0, 0, 0, 0.92);
+}
+
+.frame {
+  position: relative;
+  width: 100%;
+  max-width: calc(1400 * var(--px));
+  aspect-ratio: 16 / 9;
+  background: var(--ink-95);
+  border: 1px solid var(--line);
+}
+
+.media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: var(--black);
+}
+
+.metaTl,
+.metaTr {
+  position: absolute;
+  top: calc(24 * var(--px));
+  font-family: var(--font-mono);
+  font-size: calc(12 * var(--px));
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--paper);
+  pointer-events: none;
+}
+
+.metaTl {
+  left: calc(24 * var(--px));
+  display: flex;
+  align-items: center;
+  gap: calc(10 * var(--px));
+  opacity: 0.85;
+}
+
+.metaTr {
+  right: calc(24 * var(--px));
+  opacity: 0.75;
+}
+
+.ndot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--live);
+  box-shadow: 0 0 8px var(--live);
+}
+
+.close {
+  position: absolute;
+  top: calc(-48 * var(--px));
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: calc(10 * var(--px));
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: var(--font-mono);
+  font-size: calc(11 * var(--px));
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--paper);
+  opacity: 0.7;
+  cursor: pointer;
+}
+
+.close:hover,
+.close:focus-visible {
+  opacity: 1;
+}
+
+.x {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(28 * var(--px));
+  height: calc(28 * var(--px));
+  border-radius: 50%;
+  border: 1px solid var(--paper);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .lightbox {
+    animation: fadeIn 0.25s ease both;
+  }
+
+  .ndot {
+    animation: livePulse 1.4s ease-in-out infinite;
+  }
+}
+
+@keyframes livePulse {
+  50% {
+    opacity: 0.4;
+  }
+}
+
+@media (max-width: 1080px) {
+  .lightbox {
+    padding: 16px;
+  }
+
+  .close {
+    top: -36px;
+  }
+}

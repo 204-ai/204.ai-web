@@ -29,6 +29,8 @@
   --drop-even: #252525;
   --ink-93: #111; /* service tiles */
   --line-pill: rgba(255, 255, 255, 0.4); /* unselected filter pills */
+  --line-rule: rgba(255, 255, 255, 0.14); /* case credits / collab rules */
+  --live: #33ff77; /* lightbox "playing" dot */
   --band-key: #c4c4c4; /* featured band meta keys */
   --track: rgba(255, 255, 255, 0.14); /* hero progress track */
 

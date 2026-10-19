@@ -27,7 +27,17 @@ const BASE = import.meta.env.BASE_URL
 const rebase = <T,>(json: T): T =>
   BASE === '/' ? json : (JSON.parse(JSON.stringify(json).replaceAll('"/media/', `"${BASE}media/`)) as T)
 
-const raw = { works: rebase(worksRaw), services: rebase(servicesRaw), people: rebase(peopleRaw), studio: rebase(studioRaw) }
+// optional content/redirects.json: removed pages → live paths (SPEC C20); route paths, not media
+const redirectsRaw =
+  Object.values(import.meta.glob<Record<string, string>>('../../content/redirects.json', { eager: true, import: 'default' }))[0] ?? {}
+
+const raw = {
+  works: rebase(worksRaw),
+  services: rebase(servicesRaw),
+  people: rebase(peopleRaw),
+  studio: rebase(studioRaw),
+  redirects: redirectsRaw,
+}
 const schemaV2 = isV2(raw.studio)
 
 // broken v2 content fails loudly in dev; production builds fail in generate-meta (SPEC V26)
