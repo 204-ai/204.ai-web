@@ -99,10 +99,16 @@ screenshot). Keep the home fold: hero + strap + CTA above 1080p fold.
 
 ## Conventions & landmines
 
-- Design system: Night Shift (cinematic noir). Tokens once in
-  `src/styles/global.css` `:root` — never re-hardcode hex (SPEC V2).
-  Type: Archivo Black display / Space Grotesk body / JetBrains Mono labels /
-  Instrument Serif accents. Display tracking is `-0.02px`, NOT em (§B3).
+- Design system (branch `v2-cinematic`): Cinematic tokens (SPEC C17) once in
+  `src/styles/global.css` `:root`, never re-hardcode hex (SPEC V2); the old
+  Night Shift token names are aliases there until T65. Type (C18): Anton SC
+  display (letter-spacing 0), Poppins body, Cutive Mono labels, latin +
+  latin-ext faces in `src/styles/fonts.css`. Sizes use `calc(N * var(--px))`:
+  exact up to the 1440px comparison width, capped at 1.5×. v2 primitives live
+  in `src/components/ui/` (Pill, Marquee, TitleCard, CineCard, LogoLoop,
+  ChatCloser, Footer, SecLab, Rich); `npm run dev` → `/ds.html` renders them
+  for fidelity checks against the prototype. The organism lab/game keep their
+  own Archivo Black + JetBrains Mono.
 - `design/` = imported claude.ai/design prototype + Webflow scrape snapshot
   (`design/scrape/extracted.json`). Read-only reference; never imported by
   app code (SPEC V9).

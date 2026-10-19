@@ -140,7 +140,7 @@ if (cssLink) {
   const fonts = readdirSync(join(dist, 'assets')).filter(
     (f) =>
       f.endsWith('.woff2') &&
-      /^(archivo-black-latin-400-normal|space-grotesk-latin-400-normal|jetbrains-mono-latin-400-normal)/.test(f),
+      /^(anton-sc-latin-400-normal|poppins-latin-300-normal|cutive-mono-latin-400-normal)/.test(f), // SPEC C18 primary faces
   )
   const preloads = fonts
     .map((f) => `    <link rel="preload" as="font" type="font/woff2" crossorigin href="${assetBase}${f}" />`)

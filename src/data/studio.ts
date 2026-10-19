@@ -28,16 +28,22 @@ const rebase = <T,>(json: T): T =>
   BASE === '/' ? json : (JSON.parse(JSON.stringify(json).replaceAll('"/media/', `"${BASE}media/`)) as T)
 
 const raw = { works: rebase(worksRaw), services: rebase(servicesRaw), people: rebase(peopleRaw), studio: rebase(studioRaw) }
-const v2 = isV2(raw.studio)
+const schemaV2 = isV2(raw.studio)
 
 // broken v2 content fails loudly in dev; production builds fail in generate-meta (SPEC V26)
-if (v2 && import.meta.env.DEV) {
+if (schemaV2 && import.meta.env.DEV) {
   const problems = validateContent(raw as unknown as RawContent)
   if (problems.length) throw new Error(`content/*.json breaks SPEC V26/C20:\n  ${problems.join('\n  ')}`)
 }
 
 /** v2 model for the v2 pages — null until the v2 content cutover ("schema": 2) */
-export const CONTENT: Content | null = v2 ? buildContent(raw as unknown as RawContent) : null
+export const CONTENT: Content | null = schemaV2 ? buildContent(raw as unknown as RawContent) : null
+
+/** the v2 model, for v2 components (they only render once content is v2) */
+export function v2(): Content {
+  if (!CONTENT) throw new Error('v2 components need v2 content: content/studio.json "schema": 2')
+  return CONTENT
+}
 
 const view: V1View = CONTENT ? toV1(CONTENT) : fromV1Json(raw as unknown as V1Raw)
 

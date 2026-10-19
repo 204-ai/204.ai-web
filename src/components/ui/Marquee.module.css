@@ -1,0 +1,52 @@
+/* prototype .marquee */
+.marquee {
+  position: relative;
+  padding: calc(22 * var(--px)) 0;
+  overflow: hidden;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.track {
+  display: flex;
+  gap: calc(48 * var(--px));
+  width: max-content;
+}
+
+.word {
+  font-family: var(--font-display);
+  font-size: calc(42 * var(--px));
+  line-height: 1;
+  text-transform: uppercase;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--paper);
+  letter-spacing: 0;
+}
+
+.word.fill {
+  color: var(--paper);
+  -webkit-text-stroke: 0;
+}
+
+.dot {
+  font-family: var(--font-display);
+  font-size: calc(42 * var(--px));
+  line-height: 1;
+  color: var(--paper);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .track {
+    animation: marqueeRoll 90s linear infinite;
+  }
+}
+
+@keyframes marqueeRoll {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}

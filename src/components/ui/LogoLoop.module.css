@@ -1,0 +1,79 @@
+/* prototype .logo-loop (final values: 64s drift, mono-label heading) */
+.lab {
+  padding: 0 var(--side-pad);
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-size: calc(22 * var(--px));
+  color: var(--mono-label);
+  margin-bottom: calc(26 * var(--px));
+}
+
+.wrap {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, var(--black) 6%, var(--black) 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, var(--black) 6%, var(--black) 94%, transparent);
+}
+
+.track {
+  display: flex;
+  align-items: center;
+  gap: calc(80 * var(--px));
+  width: max-content;
+}
+
+.slot {
+  flex: 0 0 auto;
+  height: calc(64 * var(--px));
+  display: grid;
+  place-items: center;
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: calc(20 * var(--px));
+  color: var(--paper);
+  opacity: 0.55;
+  transition: opacity 0.3s;
+  text-align: center;
+}
+
+.slot:hover,
+.slot:focus-within {
+  opacity: 1;
+}
+
+.slot img {
+  max-height: calc(52 * var(--px));
+  max-width: calc(180 * var(--px));
+  width: auto;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
+
+.wrap.fixed {
+  overflow: visible;
+}
+
+.wrap.fixed .track {
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  row-gap: calc(28 * var(--px));
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .wrap:not(.fixed) .track {
+    animation: logoRoll 64s linear infinite;
+  }
+
+  .wrap:hover .track,
+  .wrap:focus-within .track {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes logoRoll {
+  to {
+    transform: translateX(-50%);
+  }
+}
