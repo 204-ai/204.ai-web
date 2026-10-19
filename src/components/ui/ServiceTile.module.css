@@ -96,3 +96,8 @@
   color: var(--ink-10);
   opacity: 0.85;
 }
+
+/* the loop frame clips and masks: ring inside the tile */
+.tile:focus-visible {
+  outline-offset: -4px;
+}

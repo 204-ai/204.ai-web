@@ -3,7 +3,7 @@
   position: relative;
   padding: calc(150 * var(--px)) var(--side-pad);
   background: var(--ink-96);
-  overflow: hidden;
+  overflow: clip;
   border-top: 1px solid var(--line-soft);
 }
 

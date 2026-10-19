@@ -9,7 +9,7 @@
 }
 
 .wrap {
-  overflow: hidden;
+  overflow: clip;
   -webkit-mask-image: linear-gradient(90deg, transparent, var(--black) 6%, var(--black) 94%, transparent);
   mask-image: linear-gradient(90deg, transparent, var(--black) 6%, var(--black) 94%, transparent);
 }
@@ -66,8 +66,7 @@
     animation: logoRoll 64s linear infinite;
   }
 
-  .wrap:hover .track,
-  .wrap:focus-within .track {
+  .wrap:hover .track {
     animation-play-state: paused;
   }
 }
@@ -76,4 +75,14 @@
   to {
     transform: translateX(-50%);
   }
+}
+
+/* keyboard: the drift stops and the row scrolls, so a focused logo is never clipped out of view */
+.wrap:not(.fixed):focus-within {
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.wrap:not(.fixed):focus-within .track {
+  animation: none;
 }

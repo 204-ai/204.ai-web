@@ -124,12 +124,19 @@
   stroke-width: 1.5;
 }
 
-@media (max-width: 760px) {
+/* prototype: .cinegrid stacks at 1080 */
+@media (max-width: 1080px) {
   .grid {
     grid-template-columns: 1fr;
   }
+}
 
+@media (max-width: 760px) {
   .title {
     font-size: 36px;
   }
+}
+
+.card:focus-visible {
+  outline-offset: -4px;
 }

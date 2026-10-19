@@ -229,8 +229,10 @@ a.lbl:focus-visible {
   transition: border-color 0.2s;
 }
 
+/* the prototype's focus cue (signal border), thickened to 2px so it reads as a focus ring (V25) */
 .fld input:focus {
   border-bottom-color: var(--signal);
+  box-shadow: 0 1px 0 var(--signal);
 }
 
 .fld textarea {
@@ -251,6 +253,7 @@ a.lbl:focus-visible {
 
 .fld textarea:focus {
   border-color: var(--signal);
+  box-shadow: 0 0 0 1px var(--signal);
 }
 
 .fld textarea::placeholder {

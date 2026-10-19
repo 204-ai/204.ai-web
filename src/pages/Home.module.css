@@ -39,7 +39,7 @@
   flex-direction: column;
   gap: calc(64 * var(--px));
   padding: calc(96 * var(--px)) 0;
-  overflow: hidden;
+  overflow: clip;
   background: var(--ink);
   border-top: 1px solid var(--line-soft);
 }

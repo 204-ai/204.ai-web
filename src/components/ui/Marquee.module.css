@@ -2,7 +2,7 @@
 .marquee {
   position: relative;
   padding: calc(22 * var(--px)) 0;
-  overflow: hidden;
+  overflow: clip; /* clip, not hidden: never a scroll container (SPEC V6/T63) */
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
 }

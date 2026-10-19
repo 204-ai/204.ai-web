@@ -58,6 +58,11 @@
   transition: background 0.25s, color 0.25s;
 }
 
+/* the hero clips: the ring sits inside, and the circle inverts as well */
+.play:focus-visible {
+  outline-offset: -6px;
+}
+
 .play:hover .circ,
 .play:focus-visible .circ {
   background: var(--paper);

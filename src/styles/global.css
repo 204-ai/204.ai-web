@@ -219,10 +219,11 @@ body.cursor-none textarea {
   cursor: text !important;
 }
 
-/* ─── focus visibility ─── */
+/* ─── focus visibility (SPEC V25): signal ring; controls inside clipped or masked
+   frames (tiles, bands, cards, the case hero) draw it inset in their modules ─── */
 :focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
+  outline: 2px solid var(--signal);
+  outline-offset: 3px;
 }
 
 /* Ken-Burns drift for hover-preview stills (photos have no motion of their

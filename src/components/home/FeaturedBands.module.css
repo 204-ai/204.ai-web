@@ -183,3 +183,7 @@
     align-items: flex-start;
   }
 }
+
+.band:focus-visible {
+  outline-offset: -4px;
+}

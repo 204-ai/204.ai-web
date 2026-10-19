@@ -139,3 +139,7 @@
     font-size: clamp(24px, 7vw, 54px);
   }
 }
+
+.card:focus-visible {
+  outline-offset: -4px;
+}

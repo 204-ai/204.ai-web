@@ -2,7 +2,7 @@
 .loop {
   padding: calc(110 * var(--px)) 0 calc(96 * var(--px));
   background: var(--ink-95);
-  overflow: hidden;
+  overflow: clip;
 }
 
 .head {
@@ -30,7 +30,7 @@
 }
 
 .wrap {
-  overflow: hidden;
+  overflow: clip;
   padding: 0 var(--side-pad);
   -webkit-mask-image: linear-gradient(90deg, transparent, var(--black) 6%, var(--black) 94%, transparent);
   mask-image: linear-gradient(90deg, transparent, var(--black) 6%, var(--black) 94%, transparent);
@@ -49,10 +49,19 @@
     animation: svcRoll 110s linear infinite;
   }
 
-  .wrap:hover .track,
-  .wrap:focus-within .track {
+  .wrap:hover .track {
     animation-play-state: paused;
   }
+}
+
+/* keyboard: the row stops and scrolls, so a focused tile is never clipped out of view */
+.wrap:focus-within {
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.wrap:focus-within .track {
+  animation: none;
 }
 
 /* one full set of tiles per cycle; --n = number of services */

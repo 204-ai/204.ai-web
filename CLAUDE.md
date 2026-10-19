@@ -89,7 +89,8 @@ npm run build   # tsc + vite + generate-meta (50+ static routes, must exit 0)
 npm run lint
 node scripts/media-audit.mjs     # V22/V15: no orphans, no missing, caps
 npm run preview -- --port 4573 &
-node scripts/v6-check.mjs        # overflow + per-route titles at 4 widths
+node scripts/v6-check.mjs        # V6: every route at 4 widths, no overflow or spill (--quick: 5 pages)
+node scripts/a11y-check.mjs      # V24/V25: reduced motion, hidden-tab video, keyboard focus
 node scripts/player-probe.mjs    # hero player behavior (needs local Chrome)
 node scripts/meta-parity.mjs     # V10: static route meta = runtime useHead, all routes
 node scripts/url-check.mjs --base http://localhost:4573   # V21: every v1 URL resolves
