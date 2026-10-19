@@ -14,9 +14,9 @@ import { Marquee } from './components/ui/Marquee'
 import { Pill } from './components/ui/Pill'
 import { SecLab } from './components/ui/SecLab'
 import { TitleCard } from './components/ui/TitleCard'
-import { v2 } from './data/studio'
+import { CONTENT } from './data/studio'
 
-const c = v2()
+const c = CONTENT
 const cards = ['motel-x', 'stand-virtual', 'm-k-ciurlionis-trail-of-angels'].map((s) => c.works.find((w) => w.slug === s)!)
 
 export function Gallery() {

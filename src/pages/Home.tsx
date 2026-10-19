@@ -8,15 +8,15 @@ import { FeaturedBands } from '../components/home/FeaturedBands'
 import { HeroRotator } from '../components/home/HeroRotator'
 import { ServiceLoop } from '../components/home/ServiceLoop'
 import { describe } from '../data/content'
-import { v2 } from '../data/studio'
+import { CONTENT } from '../data/studio'
 import { useHead } from '../hooks/useHead'
 import { trackCta } from '../lib/analytics'
 import styles from './Home.module.css'
 
 /** v2 home (prototype ContentHome): hero, marquee, who, services, featured work, process, logos, closer. */
 export function Home() {
-  const { studio } = v2()
-  useHead('', describe.home(v2()))
+  const { studio } = CONTENT
+  useHead('', describe.home(CONTENT))
   return (
     <div className="v2">
       <HeroRotator />

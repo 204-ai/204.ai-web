@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { Rich } from '../components/ui/Rich'
 import { SecLab } from '../components/ui/SecLab'
 import { describe } from '../data/content'
-import { v2 } from '../data/studio'
+import { CONTENT } from '../data/studio'
 import { useHead } from '../hooks/useHead'
 import { imgDims } from '../lib/dims'
 import { rendition } from '../lib/media'
@@ -18,8 +18,8 @@ const initials = (name: string) =>
 
 /** v2 about (prototype About): colophon with derived stats and practice rows, makers roster, RnA card. */
 export function About() {
-  const { people, stats, studio } = v2()
-  useHead('About', describe.about(v2()))
+  const { people, stats, studio } = CONTENT
+  useHead('About', describe.about(CONTENT))
   // stats are derived, never typed (SPEC C22)
   const figures: Array<[number, string]> = [
     [stats.makers, 'makers in the room'],

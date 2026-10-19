@@ -243,7 +243,8 @@ export function excerpt(text: string, max = 158): string {
   const t = plainText(text)
   if (t.length <= max) return t
   const cut = t.slice(0, max - 1)
-  return `${cut.slice(0, cut.lastIndexOf(' ')).replace(/[\s,;:—–-]+$/, '')}…`
+  const space = cut.lastIndexOf(' ')
+  return `${(space > 0 ? cut.slice(0, space) : cut).replace(/[\s,;:—–-]+$/, '')}…`
 }
 
 /**

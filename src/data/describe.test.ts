@@ -1,6 +1,6 @@
 import { describe as suite, expect, it } from 'vitest'
 import { describe, excerpt, plainText } from './content'
-import { v2 } from './studio'
+import { CONTENT } from './studio'
 
 suite('share text helpers (SPEC V10, I.seo)', () => {
   it('plainText drops **bold** markers and folds line breaks', () => {
@@ -13,9 +13,12 @@ suite('share text helpers (SPEC V10, I.seo)', () => {
     expect(cut.length).toBeLessThanOrEqual(40)
     expect(cut.endsWith('word…')).toBe(true)
     expect(excerpt('alpha beta, gamma delta epsilon', 18)).toBe('alpha beta…')
+    // one unbroken token longer than the limit is cut hard, never to an empty or longer string
+    const token = 'x'.repeat(200)
+    expect(excerpt(token, 40)).toBe(`${'x'.repeat(39)}…`)
   })
   it('every route type yields a non-empty description from content', () => {
-    const c = v2()
+    const c = CONTENT
     for (const d of [describe.home(c), describe.work(c), describe.services(c), describe.about(c), describe.contact(c)]) expect(d.length).toBeGreaterThan(40)
     for (const w of c.works) expect(describe.case(w).length).toBeGreaterThan(0)
     for (const s of c.services) expect(describe.service(s)).toBe(excerpt(s.lead))
@@ -23,7 +26,7 @@ suite('share text helpers (SPEC V10, I.seo)', () => {
     expect(describe.about(c)).toContain('six makers')
   })
   it('case text prefers the first body paragraph over the one-line note', () => {
-    const w = { ...v2().works[0], body: ['First paragraph here.', 'Second.'], note: 'Note' }
+    const w = { ...CONTENT.works[0], body: ['First paragraph here.', 'Second.'], note: 'Note' }
     expect(describe.case(w)).toBe('First paragraph here.')
     expect(describe.case({ ...w, body: undefined })).toBe('Note')
   })

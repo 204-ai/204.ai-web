@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom'
 import type { Service } from '../../data/content'
-import { imgDims } from '../../lib/dims'
 import { rendition } from '../../lib/media'
 import { Rich } from './Rich'
 import styles from './ServiceTile.module.css'
@@ -24,7 +23,9 @@ export function ServiceTile({ service: s, side, className, decorative }: Service
       aria-hidden={decorative || undefined}
       tabIndex={decorative ? -1 : undefined}
     >
-      <img className={styles.img} src={rendition(s.img, 800)} {...imgDims(s.img)} alt="" loading="lazy" decoding="async" />
+      {/* no width/height: the tile is a fixed CSS box (cover), so they add no layout
+          information, and the dims map would land in the entry chunk with the home page */}
+      <img className={styles.img} src={rendition(s.img, 800)} alt="" loading="lazy" decoding="async" />
       <div className={styles.scrim} />
       {side && <div className={styles.side}>.{s.pillar}</div>}
       <div className={styles.body}>

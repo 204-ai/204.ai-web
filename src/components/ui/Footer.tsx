@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom'
-import { v2 } from '../../data/studio'
+import { CONTENT } from '../../data/studio'
 import { trackSocialClick } from '../../lib/analytics'
 import { Rich } from './Rich'
 import styles from './Footer.module.css'
 
 /** Prototype footer: brand + blurb, studio links, RnA address, socials, legal line. */
 export function Footer() {
-  const { studio } = v2()
+  const { studio } = CONTENT
   return (
     <footer className={styles.footer}>
       <div className={styles.top}>

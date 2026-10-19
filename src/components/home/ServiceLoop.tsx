@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react'
-import { v2 } from '../../data/studio'
+import { CONTENT } from '../../data/studio'
 import { trackCta } from '../../lib/analytics'
 import { Pill } from '../ui/Pill'
 import { ServiceTile } from '../ui/ServiceTile'
@@ -7,7 +7,7 @@ import styles from './ServiceLoop.module.css'
 
 /** Prototype service loop: every service as a tile in one endless row (paused on hover/focus). */
 export function ServiceLoop() {
-  const { services } = v2()
+  const { services } = CONTENT
   const row = [...services, ...services]
   return (
     <section className={styles.loop} id="services">

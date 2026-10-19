@@ -1,6 +1,6 @@
 import { Navigate, useLocation } from 'react-router-dom'
 import { Pill } from '../components/ui/Pill'
-import { v2 } from '../data/studio'
+import { CONTENT } from '../data/studio'
 import { useHead } from '../hooks/useHead'
 import styles from './NotFound.module.css'
 
@@ -10,7 +10,7 @@ import styles from './NotFound.module.css'
  */
 export function NotFound() {
   const { pathname } = useLocation()
-  const target = v2().redirects[pathname.replace(/\/+$/, '') || '/']
+  const target = CONTENT.redirects[pathname.replace(/\/+$/, '') || '/']
   useHead(target ? '' : '404', 'Page not found. Which is on-brand, but not on purpose this time.')
   if (target) return <Navigate to={target} replace />
   return (

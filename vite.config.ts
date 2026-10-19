@@ -4,12 +4,17 @@ import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 
 // SPEC V30: intrinsic image sizes for <img width height>, derived at build time from the
-// tracked media manifest: no generated file to drift, no runtime ratio probe.
+// tracked media manifest: no generated file to drift, no runtime ratio probe. Keys carry the
+// deploy base, exactly as src/data/studio.ts rebases content paths (GH Pages: /204.ai-web/).
 function mediaDims(): Plugin {
   const id = 'virtual:media-dims'
   const manifest = resolve(__dirname, 'scripts/media-manifest.json')
+  let base = '/'
   return {
     name: 'media-dims',
+    configResolved(config) {
+      base = config.base
+    },
     resolveId: (source) => (source === id ? `\0${id}` : undefined),
     load(target) {
       if (target !== `\0${id}`) return
@@ -18,7 +23,8 @@ function mediaDims(): Plugin {
         local: Record<string, { path: string; w?: number; h?: number }>
       }
       const dims: Record<string, [number, number]> = {}
-      for (const e of Object.values(local)) if (e.w && e.h && /\.(webp|jpe?g|png)$/.test(e.path)) dims[e.path] = [e.w, e.h]
+      for (const e of Object.values(local))
+        if (e.w && e.h && /\.(webp|jpe?g|png)$/.test(e.path)) dims[base + e.path.replace(/^\//, '')] = [e.w, e.h]
       return `export default ${JSON.stringify(dims)}`
     },
   }

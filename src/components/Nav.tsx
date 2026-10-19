@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
-import { v2 } from '../data/studio'
+import { CONTENT } from '../data/studio'
 import styles from './Nav.module.css'
 
 const LINKS = [
@@ -25,7 +25,7 @@ const linkClass = ({ isActive }: { isActive: boolean }) => (isActive ? `${styles
  * keyboard (SPEC V25); Escape closes it. Phones get a Menu panel instead of the row.
  */
 export function Nav() {
-  const { studio } = v2()
+  const { studio } = CONTENT
   const { pathname, search } = useLocation()
   const [solid, setSolid] = useState(false)
   const [workOpen, setWorkOpen] = useState(false)

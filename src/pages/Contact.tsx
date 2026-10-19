@@ -3,7 +3,7 @@ import { Pill } from '../components/ui/Pill'
 import { Rich } from '../components/ui/Rich'
 import { SecLab } from '../components/ui/SecLab'
 import { describe } from '../data/content'
-import { v2 } from '../data/studio'
+import { CONTENT } from '../data/studio'
 import { useHead } from '../hooks/useHead'
 import { trackLead, trackMapClick, trackMapLoad, trackSocialClick } from '../lib/analytics'
 import styles from './Contact.module.css'
@@ -15,6 +15,12 @@ const FORM_ENDPOINT = import.meta.env.VITE_FORM_ENDPOINT as string | undefined
 // reCAPTCHA Enterprise (invisible, score-based): the script loads on the first focus inside
 // the form, never on page load (SPEC V4). Unset = no captcha.
 const RECAPTCHA_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY as string | undefined
+
+const CAPTCHA_WAIT_MS = 8000
+
+/** `p`, or `fallback` once `ms` pass first */
+const within = <T,>(p: Promise<T>, ms: number, fallback: T): Promise<T> =>
+  Promise.race([p, new Promise<T>((resolve) => setTimeout(() => resolve(fallback), ms))])
 
 // click-to-load map (SPEC V4): no tiles until asked
 const OSM_EMBED =
@@ -40,29 +46,38 @@ const FIELDS: Array<[FieldKey, string, string, string, boolean]> = [
 
 /** v2 contact (prototype Contact): lead, contact rows, map, brief intake wired to the brief function. */
 export function Contact() {
-  useHead('Contact', describe.contact(v2()))
-  const { studio } = v2()
+  useHead('Contact', describe.contact(CONTENT))
+  const { studio } = CONTENT
   const c = studio.contact
   const mapUrl = c.map?.url
   const [brief, setBrief] = useState({ name: '', org: '', email: '', budget: '', scope: '' })
   const [trap, setTrap] = useState('') // honeypot: humans never see the field
   const [state, setState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
-  const captchaRequested = useRef(false)
+  // settles once the injected script has loaded or failed; null until the first focus
+  const captchaLoaded = useRef<Promise<void> | null>(null)
 
   const loadCaptcha = () => {
-    if (!RECAPTCHA_KEY || captchaRequested.current) return
-    captchaRequested.current = true
-    const s = document.createElement('script')
-    s.src = `https://www.google.com/recaptcha/enterprise.js?render=${RECAPTCHA_KEY}`
-    s.async = true
-    document.head.appendChild(s)
+    if (!RECAPTCHA_KEY || captchaLoaded.current) return
+    captchaLoaded.current = new Promise<void>((resolve) => {
+      const s = document.createElement('script')
+      s.src = `https://www.google.com/recaptcha/enterprise.js?render=${RECAPTCHA_KEY}`
+      s.async = true
+      s.onload = () => resolve()
+      s.onerror = () => resolve()
+      document.head.appendChild(s)
+    })
   }
 
+  // a submit right after the first focus waits for the script instead of sending no token
+  // (the function fails closed without one); a script that never answers counts as blocked
   const captchaToken = async (): Promise<string> => {
+    if (!RECAPTCHA_KEY) return ''
+    loadCaptcha()
+    await within(captchaLoaded.current ?? Promise.resolve(), CAPTCHA_WAIT_MS, undefined)
     const g = window.grecaptcha?.enterprise
-    if (!RECAPTCHA_KEY || !g) return '' // key unset or script blocked: the server decides
-    await new Promise<void>((r) => g.ready(r))
-    return g.execute(RECAPTCHA_KEY, { action: 'brief' })
+    if (!g) return '' // script blocked or unreachable: the server decides
+    const ready = await within(new Promise<boolean>((r) => g.ready(() => r(true))), CAPTCHA_WAIT_MS, false)
+    return ready ? g.execute(RECAPTCHA_KEY, { action: 'brief' }) : ''
   }
 
   const briefMailto = () => {

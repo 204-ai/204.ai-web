@@ -13,12 +13,16 @@ interface VideoLightboxProps {
 /**
  * Prototype case lightbox: the YouTube player mounts only after the click that opens it
  * (SPEC V4), privacy-enhanced domain as in v1. Esc, the backdrop and "close" dismiss it;
- * focus moves into the dialog and returns to the opener.
+ * focus moves into the dialog, the page behind is inert, and focus returns to the opener.
  */
 export function VideoLightbox({ youtubeId, title, meta, onClose }: VideoLightboxProps) {
   const close = useRef<HTMLButtonElement>(null)
   useEffect(() => {
     const opener = document.activeElement as HTMLElement | null
+    // a real modal: the app behind (the dialog is portalled outside #root) takes no focus
+    // and leaves the accessibility tree until the dialog closes
+    const app = document.getElementById('root')
+    app?.setAttribute('inert', '')
     close.current?.focus()
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
@@ -26,6 +30,7 @@ export function VideoLightbox({ youtubeId, title, meta, onClose }: VideoLightbox
     window.addEventListener('keydown', onKey)
     return () => {
       window.removeEventListener('keydown', onKey)
+      app?.removeAttribute('inert')
       opener?.focus()
     }
   }, [onClose])

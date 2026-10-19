@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { v2 } from '../../data/studio'
+import { CONTENT } from '../../data/studio'
 import { useDocumentHidden } from '../../hooks/useDocumentHidden'
 import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion'
 import { trackCta } from '../../lib/analytics'
@@ -15,7 +15,7 @@ const R = 42
  * the tab is hidden (SPEC V7, V24); nodes are buttons.
  */
 export function CreativeProcess() {
-  const steps = v2().studio.process
+  const steps = CONTENT.studio.process
   const reduced = usePrefersReducedMotion()
   const hidden = useDocumentHidden()
   const [act, setAct] = useState(0)

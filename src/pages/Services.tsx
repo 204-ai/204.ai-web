@@ -1,7 +1,7 @@
 import { ChatCloser } from '../components/ui/ChatCloser'
 import { ServiceTile } from '../components/ui/ServiceTile'
 import { describe, type Pillar } from '../data/content'
-import { v2 } from '../data/studio'
+import { CONTENT } from '../data/studio'
 import { useHead } from '../hooks/useHead'
 import styles from './Services.module.css'
 
@@ -13,8 +13,8 @@ const PILLAR_LINES: Array<[Pillar, string]> = [
 
 /** v2 services index (prototype ServicesPage): two pillar grids of service tiles. */
 export function Services() {
-  useHead('Services', describe.services(v2()))
-  const { pillars, studio } = v2()
+  useHead('Services', describe.services(CONTENT))
+  const { pillars, studio } = CONTENT
   return (
     <div className="v2">
       <section className={styles.page}>

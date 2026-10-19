@@ -4,7 +4,7 @@ import { Pill } from '../components/ui/Pill'
 import { Rich } from '../components/ui/Rich'
 import { SecLab } from '../components/ui/SecLab'
 import { describe, type Service } from '../data/content'
-import { v2 } from '../data/studio'
+import { CONTENT } from '../data/studio'
 import { useHead } from '../hooks/useHead'
 import { trackCta } from '../lib/analytics'
 import { NotFound } from './NotFound'
@@ -13,7 +13,7 @@ import styles from './ServiceDetail.module.css'
 /** /services/:slug — unknown slugs fall through to redirects, then 404. */
 export function ServiceDetail() {
   const { slug } = useParams()
-  const { services } = v2()
+  const { services } = CONTENT
   const i = services.findIndex((s) => s.slug === slug)
   if (i < 0) return <NotFound />
   return <ServicePage key={services[i].slug} service={services[i]} index={i} />
@@ -21,7 +21,7 @@ export function ServiceDetail() {
 
 /** v2 service detail (prototype ServiceDetail) */
 function ServicePage({ service: s, index: i }: { service: Service; index: number }) {
-  const { services } = v2()
+  const { services } = CONTENT
   useHead(`${s.label} · Service`, describe.service(s), s.still ?? s.img)
   const next = services[(i + 1) % services.length]
   const nextTitle = next.title.replace(/\n/g, ' ')

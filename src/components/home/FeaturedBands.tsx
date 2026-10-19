@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { v2 } from '../../data/studio'
+import { CONTENT } from '../../data/studio'
 import { useDocumentHidden } from '../../hooks/useDocumentHidden'
 import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion'
 import { trackCta } from '../../lib/analytics'
@@ -84,7 +84,7 @@ function Band({ to, onClick, title, poster, clip, focus, meta }: BandProps) {
 
 /** Prototype "Featured work": three case bands and the band into /work. */
 export function FeaturedBands() {
-  const { featured, services, studio } = v2()
+  const { featured, services, studio } = CONTENT
   const { allWork } = studio
   const serviceTitle = (id: string) => services.find((s) => s.id === id)?.title ?? ''
   return (

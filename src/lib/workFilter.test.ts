@@ -1,8 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { v2 } from '../data/studio'
+import { CONTENT } from '../data/studio'
 import { matchesFilter, parseWorkFilter, workFilterSearch } from './workFilter'
 
-const CONTENT = v2()
 const services = CONTENT.services
 const q = (s: string) => new URLSearchParams(s)
 

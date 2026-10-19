@@ -6,7 +6,7 @@ import { Pill } from '../components/ui/Pill'
 import { Rich } from '../components/ui/Rich'
 import { WorkCard } from '../components/work/WorkCard'
 import { describe } from '../data/content'
-import { v2 } from '../data/studio'
+import { CONTENT } from '../data/studio'
 import { useHead } from '../hooks/useHead'
 import { trackWorkFilter } from '../lib/analytics'
 import { matchesFilter, parseWorkFilter, workFilterSearch } from '../lib/workFilter'
@@ -14,8 +14,8 @@ import styles from './Work.module.css'
 
 /** v2 portfolio (prototype Portfolio): multi-select practice filter in the URL, letterbox grid, closer. */
 export function Work() {
-  useHead('Work', describe.work(v2()))
-  const { works, services, studio } = v2()
+  useHead('Work', describe.work(CONTENT))
+  const { works, services, studio } = CONTENT
   const [params] = useSearchParams()
   const navigate = useNavigate()
   const sel = useMemo(() => parseWorkFilter(params, services), [params, services])

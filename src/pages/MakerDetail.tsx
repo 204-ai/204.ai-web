@@ -3,7 +3,7 @@ import { Pill } from '../components/ui/Pill'
 import { SecLab } from '../components/ui/SecLab'
 import { SocialIcon, type Network } from '../components/ui/SocialIcon'
 import { describe, type Person } from '../data/content'
-import { v2 } from '../data/studio'
+import { CONTENT } from '../data/studio'
 import { useHead } from '../hooks/useHead'
 import { trackCta, trackSocialClick } from '../lib/analytics'
 import { imgDims } from '../lib/dims'
@@ -14,7 +14,7 @@ import styles from './MakerDetail.module.css'
 /** /makers/:slug — unknown slugs fall through to redirects, then 404. */
 export function MakerDetail() {
   const { slug } = useParams()
-  const { people } = v2()
+  const { people } = CONTENT
   const i = people.findIndex((p) => p.slug === slug)
   if (i < 0) return <NotFound />
   return <MakerPage key={people[i].slug} person={people[i]} index={i} />
@@ -24,7 +24,7 @@ const NETWORKS: Network[] = ['instagram', 'linkedin', 'email', 'web']
 
 /** v2 maker page (prototype MakerPage): portrait, reach-out links (only set ones render), prev/next. */
 function MakerPage({ person: p, index: i }: { person: Person; index: number }) {
-  const { people } = v2()
+  const { people } = CONTENT
   useHead(`${p.name} · Maker`, describe.maker(p), p.photo)
   const prev = people[(i - 1 + people.length) % people.length]
   const next = people[(i + 1) % people.length]

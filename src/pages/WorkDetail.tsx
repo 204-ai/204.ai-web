@@ -8,7 +8,7 @@ import { Pill } from '../components/ui/Pill'
 import { Rich } from '../components/ui/Rich'
 import { TitleCard } from '../components/ui/TitleCard'
 import { describe, type Work } from '../data/content'
-import { v2 } from '../data/studio'
+import { CONTENT } from '../data/studio'
 import { useAmbientVideo, usePauseWhenHidden } from '../hooks/useAmbientVideo'
 import { useHead } from '../hooks/useHead'
 import { trackVideoOpen } from '../lib/analytics'
@@ -22,7 +22,7 @@ const DOT = ' \u00a0·\u00a0 ' // prototype: `{year} &nbsp;·&nbsp; {kind}`
 /** /work/:slug — unknown slugs fall through to redirects, then 404 (NotFound owns the head then). */
 export function WorkDetail() {
   const { slug } = useParams()
-  const { works } = v2()
+  const { works } = CONTENT
   const i = works.findIndex((w) => w.slug === slug)
   if (i < 0) return <NotFound />
   // keyed: a new case starts with a closed lightbox and a fresh clip
@@ -31,7 +31,7 @@ export function WorkDetail() {
 
 /** v2 case page (prototype CasePage) */
 function CasePage({ work: w, index: i }: { work: Work; index: number }) {
-  const { works, studio } = v2()
+  const { works, studio } = CONTENT
   useHead(`${w.title} · Work`, describe.case(w), w.media?.still)
   const [reel, setReel] = useState<string | null>(null)
   const closeReel = useCallback(() => setReel(null), [])

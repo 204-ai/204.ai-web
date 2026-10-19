@@ -36,10 +36,5 @@ if (import.meta.env.DEV) {
   if (problems.length) throw new Error(`content/*.json breaks SPEC V26/C20:\n  ${problems.join('\n  ')}`)
 }
 
-/** the content model (SPEC I.content) */
+/** the content model (SPEC I.content), read by every component */
 export const CONTENT: Content = buildContent(raw as unknown as RawContent)
-
-/** the content model, for components */
-export function v2(): Content {
-  return CONTENT
-}

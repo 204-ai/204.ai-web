@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { v2 } from '../../data/studio'
+import { CONTENT } from '../../data/studio'
+import { useAmbientVideo, usePauseWhenHidden } from '../../hooks/useAmbientVideo'
 import { useDocumentHidden } from '../../hooks/useDocumentHidden'
-import { useMediaQuery } from '../../hooks/useMediaQuery'
 import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion'
 import { trackChapterSelect } from '../../lib/analytics'
 import { rendition } from '../../lib/media'
@@ -16,17 +16,17 @@ const STILL_MS = 6000 // prototype offline mode: 25 ticks × 240ms per poster
  * the tab is hidden (V24). The <video> is keyed by its source (B5).
  */
 export function HeroRotator() {
-  const { heroClips, studio } = v2()
-  const small = useMediaQuery('(max-width: 900px)')
+  const { heroClips, studio } = CONTENT
+  // phones, reduced motion and Save-Data get posters: the shared ambient-video policy
+  const ambient = useAmbientVideo()
   const reduced = usePrefersReducedMotion()
   const hidden = useDocumentHidden()
-  const saveData = Boolean((navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData)
   const [i, setI] = useState(0)
   const [pct, setPct] = useState(0)
   // consecutive clip failures; once every clip has failed (offline, blocked media) the
   // rotator falls back to posters instead of cycling through failing requests forever
   const [failed, setFailed] = useState(0)
-  const stills = small || reduced || saveData || failed >= heroClips.length
+  const stills = !ambient || failed >= heroClips.length
   const video = useRef<HTMLVideoElement>(null)
   const clip = heroClips[i]
   const elapsed = useRef(0)
@@ -52,13 +52,8 @@ export function HeroRotator() {
     return () => window.clearInterval(id)
   }, [stills, reduced, hidden, i, next])
 
-  useEffect(() => {
-    const v = video.current
-    if (!v || stills) return
-    v.muted = true
-    if (hidden) v.pause()
-    else v.play().catch(() => {})
-  }, [hidden, stills, i])
+  // hidden tab pauses the clip, visible again resumes it (each new keyed clip autoplays)
+  usePauseWhenHidden(video, !stills)
 
   const poster = clip.poster
   return (
