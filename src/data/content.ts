@@ -221,11 +221,11 @@ interface Redirect {
 
 function redirectList(raw: RawContent): Redirect[] {
   const out: Redirect[] = []
-  raw.works.forEach((w, i) => {
+  ;(raw.works ?? []).forEach((w, i) => {
     for (const a of w.aliases ?? []) out.push({ from: `/work/${a}`, to: `/work/${workSlug(w)}`, origin: `works[${i}] alias "${a}"` })
   })
   for (const pillar of PILLARS) {
-    raw.services[pillar].forEach((s, i) => {
+    ;(raw.services?.[pillar] ?? []).forEach((s, i) => {
       for (const a of s.aliases ?? []) out.push({ from: `/services/${a}`, to: `/services/${serviceSlug(s)}`, origin: `services.${pillar}[${i}] alias "${a}"` })
     })
   }
@@ -237,9 +237,9 @@ function redirectList(raw: RawContent): Redirect[] {
 export function liveRoutes(raw: RawContent): Set<string> {
   return new Set([
     '/', '/work', '/services', '/about', '/contact',
-    ...raw.works.map((w) => `/work/${workSlug(w)}`),
-    ...PILLARS.flatMap((p) => raw.services[p].map((s) => `/services/${serviceSlug(s)}`)),
-    ...raw.people.map((p) => `/makers/${slugify(p.name)}`),
+    ...(raw.works ?? []).map((w) => `/work/${workSlug(w)}`),
+    ...PILLARS.flatMap((p) => (raw.services?.[p] ?? []).map((s) => `/services/${serviceSlug(s)}`)),
+    ...(raw.people ?? []).map((p) => `/makers/${slugify(p.name)}`),
   ])
 }
 
@@ -279,8 +279,17 @@ export function buildContent(raw: RawContent): Content {
 
 const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 
-/** Every rule the raw documents break (SPEC V26 closed taxonomy, C20 URL stability). */
-export function validateContent(raw: RawContent): string[] {
+type Doc = 'works' | 'services' | 'people' | 'studio'
+const SECTIONS: Array<[string, Doc]> = [['/work/', 'works'], ['/services/', 'services'], ['/makers/', 'people']]
+const sectionOf = (path: string) => SECTIONS.find(([prefix]) => path.startsWith(prefix))?.[1]
+
+/**
+ * Every rule the raw documents break (SPEC V26 closed taxonomy, C20 URL stability).
+ * `partial` (staged content/v2 while T49–T51 port it): documents that are absent are
+ * skipped, and so is every check that needs one of them; present documents are checked
+ * in full.
+ */
+export function validateContent(raw: RawContent, { partial = false }: { partial?: boolean } = {}): string[] {
   const out: string[] = []
   const at = (where: string, msg: string) => out.push(`${where}: ${msg}`)
   const isStr = (v: unknown) => typeof v === 'string' && v.trim() !== ''
@@ -290,71 +299,87 @@ export function validateContent(raw: RawContent): string[] {
     for (const k of strings) if (!isStr(o[k])) at(where, `${k} must be a non-empty string`)
     for (const k of arrays) if (!Array.isArray(o[k])) at(where, `${k} must be an array`)
   }
+  const present: Record<Doc, boolean> = {
+    works: raw.works !== undefined, services: raw.services !== undefined,
+    people: raw.people !== undefined, studio: raw.studio !== undefined,
+  }
+  const want = (doc: Doc) => !partial || present[doc]
 
   const st = (raw.studio ?? {}) as unknown as Record<string, unknown>
-  if (st.schema !== 2) at('studio.json', 'schema must be 2')
-  need(st, 'studio.json', ['name', 'suffix', 'tag', 'logoUrl', 'rnaStudioUrl'], ['heroClips', 'featured', 'process', 'practice', 'budgetRanges', 'trustedBy', 'partners'])
-  for (const k of ['contact', 'copy', 'footer']) if (!st[k] || typeof st[k] !== 'object') at('studio.json', `${k} must be an object`)
+  if (want('studio')) {
+    if (st.schema !== 2) at('studio.json', 'schema must be 2')
+    need(st, 'studio.json', ['name', 'suffix', 'tag', 'logoUrl', 'rnaStudioUrl'], ['heroClips', 'featured', 'process', 'practice', 'budgetRanges', 'trustedBy', 'partners'])
+    for (const k of ['contact', 'copy', 'footer']) if (!st[k] || typeof st[k] !== 'object') at('studio.json', `${k} must be an object`)
+  }
 
   const ids = new Set<string>()
   const serviceSlugs = new Set<string>()
-  for (const pillar of PILLARS) {
-    const list = raw.services?.[pillar]
-    if (!Array.isArray(list)) {
-      at('services.json', `${pillar} must be an array`)
-      continue
+  if (want('services')) {
+    for (const pillar of PILLARS) {
+      const list = raw.services?.[pillar]
+      if (!Array.isArray(list)) {
+        at('services.json', `${pillar} must be an array`)
+        continue
+      }
+      list.forEach((s, i) => {
+        const where = `services.${pillar}[${i}]${named(s?.label)}`
+        need(s, where, ['id', 'label', 'title', 'desc', 'img', 'lead', 'included', 'cta'], ['modes'])
+        if (isStr(s.id)) {
+          if (ids.has(s.id)) at(where, `duplicate service id "${s.id}"`)
+          ids.add(s.id)
+        }
+        if (s.slug !== undefined && !SLUG.test(s.slug)) at(where, `slug "${s.slug}" must be lowercase-kebab`)
+        else if (isStr(s.label)) {
+          const slug = serviceSlug(s)
+          if (serviceSlugs.has(slug)) at(where, `duplicate service slug "${slug}"`)
+          serviceSlugs.add(slug)
+        }
+      })
     }
-    list.forEach((s, i) => {
-      const where = `services.${pillar}[${i}]${named(s?.label)}`
-      need(s, where, ['id', 'label', 'title', 'desc', 'img', 'lead', 'included', 'cta'], ['modes'])
-      if (isStr(s.id)) {
-        if (ids.has(s.id)) at(where, `duplicate service id "${s.id}"`)
-        ids.add(s.id)
-      }
-      if (s.slug !== undefined && !SLUG.test(s.slug)) at(where, `slug "${s.slug}" must be lowercase-kebab`)
-      else if (isStr(s.label)) {
-        const slug = serviceSlug(s)
-        if (serviceSlugs.has(slug)) at(where, `duplicate service slug "${slug}"`)
-        serviceSlugs.add(slug)
-      }
-    })
   }
 
   const workSlugs = new Set<string>()
-  if (!Array.isArray(raw.works)) at('works.json', 'must be an array')
-  for (const [i, w] of (Array.isArray(raw.works) ? raw.works : []).entries()) {
-    const where = `works[${i}]${named(w?.title)}`
-    need(w, where, ['title', 'client', 'year', 'note'])
-    if (!Array.isArray(w.practices) || w.practices.length === 0) at(where, 'practices must be a non-empty array of service ids')
-    else for (const p of w.practices) if (!ids.has(p)) at(where, `practice "${p}" is not a service id (SPEC V26)`)
-    if (w.slug !== undefined && !SLUG.test(w.slug)) at(where, `slug "${w.slug}" must be lowercase-kebab`)
-    else if (isStr(w.title)) {
-      const slug = workSlug(w)
-      if (workSlugs.has(slug)) at(where, `duplicate work slug "${slug}"`)
-      workSlugs.add(slug)
+  if (want('works')) {
+    if (!Array.isArray(raw.works)) at('works.json', 'must be an array')
+    for (const [i, w] of (Array.isArray(raw.works) ? raw.works : []).entries()) {
+      const where = `works[${i}]${named(w?.title)}`
+      need(w, where, ['title', 'client', 'year', 'note'])
+      if (!Array.isArray(w.practices) || w.practices.length === 0) at(where, 'practices must be a non-empty array of service ids')
+      else if (want('services')) for (const p of w.practices) if (!ids.has(p)) at(where, `practice "${p}" is not a service id (SPEC V26)`)
+      if (w.slug !== undefined && !SLUG.test(w.slug)) at(where, `slug "${w.slug}" must be lowercase-kebab`)
+      else if (isStr(w.title)) {
+        const slug = workSlug(w)
+        if (workSlugs.has(slug)) at(where, `duplicate work slug "${slug}"`)
+        workSlugs.add(slug)
+      }
     }
   }
 
-  if (!Array.isArray(raw.people)) at('people.json', 'must be an array')
-  for (const [i, p] of (Array.isArray(raw.people) ? raw.people : []).entries()) need(p, `people[${i}]${named(p?.name)}`, ['name', 'role'])
-
-  for (const [i, h] of (Array.isArray(st.heroClips) ? (st.heroClips as HeroClip[]) : []).entries()) {
-    if (!workSlugs.has(h?.work)) at(`studio.heroClips[${i}]`, `work "${h?.work}" is not a work slug (SPEC V26)`)
-    need(h, `studio.heroClips[${i}]`, ['clip', 'poster'])
+  if (want('people')) {
+    if (!Array.isArray(raw.people)) at('people.json', 'must be an array')
+    for (const [i, p] of (Array.isArray(raw.people) ? raw.people : []).entries()) need(p, `people[${i}]${named(p?.name)}`, ['name', 'role'])
   }
-  for (const [i, slug] of (Array.isArray(st.featured) ? (st.featured as string[]) : []).entries()) {
-    if (!workSlugs.has(slug)) at(`studio.featured[${i}]`, `"${slug}" is not a work slug (SPEC V26)`)
+
+  if (want('studio') && want('works')) {
+    for (const [i, h] of (Array.isArray(st.heroClips) ? (st.heroClips as HeroClip[]) : []).entries()) {
+      if (!workSlugs.has(h?.work)) at(`studio.heroClips[${i}]`, `work "${h?.work}" is not a work slug (SPEC V26)`)
+      need(h, `studio.heroClips[${i}]`, ['clip', 'poster'])
+    }
+    for (const [i, slug] of (Array.isArray(st.featured) ? (st.featured as string[]) : []).entries()) {
+      if (!workSlugs.has(slug)) at(`studio.featured[${i}]`, `"${slug}" is not a work slug (SPEC V26)`)
+    }
   }
 
   // aliases and redirects never shadow a live route and always land on one (SPEC C20);
   // they need sound documents, so they run once everything above passes
   if (out.length) return out
   const live = liveRoutes(raw)
+  const known = (path: string) => !partial || !sectionOf(path) || present[sectionOf(path)!]
   const seen = new Map<string, string>()
   for (const r of redirectList(raw)) {
     if (!r.from.startsWith('/') || !r.to.startsWith('/')) at(r.origin, 'paths must start with "/"')
-    if (live.has(r.from)) at(r.origin, `${r.from} shadows a live route (SPEC C20)`)
-    if (!live.has(r.to)) at(r.origin, `${r.from} → ${r.to}: target is not a live route (SPEC C20)`)
+    if (known(r.from) && live.has(r.from)) at(r.origin, `${r.from} shadows a live route (SPEC C20)`)
+    if (known(r.to) && !live.has(r.to)) at(r.origin, `${r.from} → ${r.to}: target is not a live route (SPEC C20)`)
     if (seen.has(r.from)) at(r.origin, `${r.from} is already redirected by ${seen.get(r.from)}`)
     seen.set(r.from, r.origin)
   }

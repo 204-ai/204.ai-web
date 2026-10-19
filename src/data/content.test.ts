@@ -100,6 +100,24 @@ describe('validateContent (V26, C20)', () => {
   })
 })
 
+describe('validateContent partial mode (staged content/v2, T49–T51)', () => {
+  const only = (r: RawContent, keep: Array<keyof RawContent>) =>
+    Object.fromEntries(keep.map((k) => [k, r[k]])) as unknown as RawContent
+  it('checks the documents that exist and skips checks that need missing ones', () => {
+    const works = only(fixture(), ['works', 'redirects'])
+    expect(validateContent(works, { partial: true })).toEqual([])
+    expect(validateContent(works).join('\n')).toMatch(/services\.json|studio\.json/)
+  })
+  it('still catches broken documents that are present', () => {
+    const r = only(fixture(), ['works', 'redirects'])
+    r.works[1].title = 'Motel X'
+    expect(validateContent(r, { partial: true }).join('\n')).toMatch(/duplicate work slug "motel-x"/)
+    const r2 = only(fixture(), ['works'])
+    r2.redirects = { '/work/delulu': '/work' }
+    expect(validateContent(r2, { partial: true }).join('\n')).toMatch(/shadows a live route/)
+  })
+})
+
 describe('v1 transition view (compat)', () => {
   it('projects v2 content onto the v1 page shape', () => {
     const v = toV1(buildContent(fixture()))
@@ -135,6 +153,8 @@ const live = docsOf(import.meta.glob('../../content/*.json', { eager: true, impo
 const stagedFiles = import.meta.glob('../../content/v2/*.json', { eager: true, import: 'default' })
 const staged = Object.keys(stagedFiles).length > 0 ? docsOf(stagedFiles, 'content/v2') : null
 const liveWorks = live.works as unknown[]
+const stagedComplete = Boolean(staged?.works && staged.services && staged.people && staged.studio)
+const SPEC = Object.values(import.meta.glob('../../SPEC.md', { eager: true, query: '?raw', import: 'default' }))[0] as string
 
 describe('live content', () => {
   it.skipIf(!isV2(live.studio))('v2: passes validateContent (V26, C20)', () => {
@@ -146,7 +166,22 @@ describe('live content', () => {
     expect(v.works[0].code).toBe(`NC·${String(liveWorks.length).padStart(3, '0')}`)
     expect(new Set(v.works.map((w) => w.slug)).size).toBe(liveWorks.length)
   })
-  it.skipIf(!staged)('staged content/v2 passes validateContent', () => {
-    expect(validateContent(staged as unknown as RawContent)).toEqual([])
+  it.skipIf(!staged)('staged content/v2 passes validateContent (partial until all four files are staged)', () => {
+    expect(validateContent(staged as unknown as RawContent, { partial: !stagedComplete })).toEqual([])
+  })
+  it.skipIf(!staged?.works || Boolean(staged?.services))('staged works use only the SPEC C19 practice ids', () => {
+    const c19 = SPEC.split('\n').find((l) => l.startsWith('- C19:')) ?? ''
+    const m = c19.match(/content: ([a-z ]+) \| interactive: ([a-z ]+)\)/)
+    const ids = new Set(`${m?.[1]} ${m?.[2]}`.trim().split(/\s+/))
+    expect(ids.size).toBe(10)
+    const unknown = (staged!.works as Array<{ title: string; practices: string[] }>).flatMap((w) => w.practices.filter((p) => !ids.has(p)).map((p) => `${w.title}: ${p}`))
+    expect(unknown).toEqual([])
+  })
+  it.skipIf(!staged?.works || isV2(live.studio))('every live v1 work URL resolves in the staged works (SPEC V21, C20)', () => {
+    const works = staged!.works as Array<{ title: string; slug?: string; aliases?: string[] }>
+    const redirects = (staged!.redirects ?? {}) as Record<string, string>
+    const reachable = new Set([...works.map((w) => w.slug ?? slugify(w.title)), ...works.flatMap((w) => w.aliases ?? []), ...Object.keys(redirects).map((k) => k.replace(/^\/work\//, ''))])
+    const lost = (live.works as Array<{ title: string }>).map((w) => slugify(w.title)).filter((s) => !reachable.has(s))
+    expect(lost).toEqual([])
   })
 })
