@@ -35,7 +35,10 @@ node scripts/player-probe.mjs    # home hero rotator
 
 ## Deploy
 
-Every push to `main` runs `.github/workflows/deploy.yml`:
+`.github/workflows/deploy.yml` deploys both hosts. It runs manually from the
+Actions tab (workflow_dispatch) while the deploy hold of 2026-07-21 stands;
+restore its push trigger to deploy on every push to `main`. Pull requests get
+a Firebase preview channel from `firebase-hosting-pull-request.yml`.
 
 - **Firebase Hosting** (primary, canonical) — https://studio204-web.web.app.
   `firebase.json` carries the cache headers and the 301s for retired URLs;

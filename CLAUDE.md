@@ -1,10 +1,13 @@
 # 204 · NO-CONTENT — site guide for agents
 
 Production site for the 204 creative technology studio (Lisbon). React 19 +
-Vite + TS SPA in the "Cinematic" design (SPEC C16–C18). Every push to `main`
-deploys Firebase Hosting (primary, canonical: https://studio204-web.web.app)
-and GitHub Pages (secondary: https://204-ai.github.io/204.ai-web/) from
-`.github/workflows/deploy.yml`.
+Vite + TS SPA in the "Cinematic" design (SPEC C16–C18).
+`.github/workflows/deploy.yml` deploys Firebase Hosting (primary, canonical:
+https://studio204-web.web.app) and GitHub Pages (secondary:
+https://204-ai.github.io/204.ai-web/). Deploys are MANUAL (Actions tab,
+workflow_dispatch) while the user's hold of 2026-07-21 stands; restoring the
+push trigger resumes auto-deploy on push to `main`. Pull requests get a
+Firebase preview channel (`.github/workflows/firebase-hosting-pull-request.yml`).
 
 `SPEC.md` is the project spec — goals (§G), constraints (§C), invariants (§V),
 task ledger (§T), bug log (§B). Read it before structural changes; log new
