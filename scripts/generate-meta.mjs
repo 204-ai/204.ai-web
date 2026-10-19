@@ -216,8 +216,15 @@ if (JSON.stringify(fb.hosting.redirects ?? []) !== JSON.stringify(wanted)) {
     console.error('generate-meta: FAIL firebase.json hosting.redirects is stale — run `npm run build` locally and commit firebase.json (SPEC V28)')
     process.exit(1)
   }
-  const { public: pub, ignore, redirects: _old, rewrites, ...rest } = fb.hosting
-  fb.hosting = { public: pub, ignore, redirects: wanted, rewrites, ...rest }
+  // keep the file's own key order (site, public, …); redirects sit just before rewrites
+  const hosting = {}
+  for (const [k, v] of Object.entries(fb.hosting)) {
+    if (k === 'redirects') continue
+    if (k === 'rewrites') hosting.redirects = wanted
+    hosting[k] = v
+  }
+  if (!('redirects' in hosting)) hosting.redirects = wanted
+  fb.hosting = hosting
   writeFileSync(fbPath, JSON.stringify(fb, null, 2) + '\n')
   console.log(`generate-meta: updated firebase.json hosting.redirects (${wanted.length}) — commit it`)
 }
