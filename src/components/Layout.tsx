@@ -5,17 +5,8 @@ import { Cursor } from './Cursor'
 import { Nav } from './Nav'
 import { Footer } from './ui/Footer'
 
-// Pages rebuilt in the v2 design (T55–T60 add theirs): they own their top spacing
-// under the fixed nav and fade in like the prototype. Every other route is still a
-// Night Shift page: padded below the nav, with its own entrance. T65 removes this.
-const V2_PAGES: RegExp[] = [/^\/$/, /^\/work(\/[^/]+)?\/?$/, /^\/services(\/[^/]+)?\/?$/, /^\/about\/?$/, /^\/makers\/[^/]+\/?$/, /^\/contact\/?$/]
-
 export function Layout() {
-  const { pathname, state } = useLocation()
-  const v2Page = V2_PAGES.some((r) => r.test(pathname))
-  // pager links pass { pager: 'prev' | 'next' } — those get a fast directional slide
-  const pager = (state as { pager?: 'prev' | 'next' } | null)?.pager
-  const enterClass = v2Page ? 'page-fade' : pager === 'prev' ? 'page-pager-prev' : pager === 'next' ? 'page-pager-next' : 'page-enter'
+  const { pathname } = useLocation()
 
   // Route change: reset scroll (SPA keeps scroll position by default).
   useEffect(() => {
@@ -35,8 +26,10 @@ export function Layout() {
         <Nav />
       </div>
       {/* content sits above the organism canvas (SPEC V17) */}
-      <main style={{ paddingTop: v2Page ? 0 : 'var(--chrome-h)', overflow: 'clip', position: 'relative', zIndex: 1 }}>
-        <div className={v2Page ? enterClass : `shell ${enterClass}`} key={pathname}>
+      {/* pages own their top spacing under the fixed nav (heroes sit beneath it); <main> clips
+          the entrance transforms so they never grow the scroll area */}
+      <main style={{ overflow: 'clip', position: 'relative', zIndex: 1 }}>
+        <div className="page-fade" key={pathname}>
           <Outlet />
         </div>
       </main>

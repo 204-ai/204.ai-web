@@ -49,18 +49,7 @@
      width (V23), then growing with the viewport to a 1.5px cap */
   --px: clamp(1px, 100vw / 1440, 1.5px);
 
-  /* v1 aliases: the Night Shift pages keep rendering until T54–T60 replace
-     them; T65 deletes these */
-  --bg: var(--ink-95);
-  --fg: var(--paper);
-  --dim: var(--ink-50);
-  --hairline: var(--line);
-  --accent: var(--signal);
-  --accent-text: var(--signal);
-  --accent-soft: var(--signal-dim);
-  --accent-border: var(--signal-dim);
-  --font-serif: var(--font-body);
-  --nav-h: clamp(56px, 3.8vw, 68px);
+  /* wide-screen cap for the nav's inner row (V13) */
   --shell-max: 1720px;
 }
 
@@ -68,11 +57,6 @@
   :root {
     --side-pad: 24px;
   }
-}
-
-.shell {
-  max-width: var(--shell-max);
-  margin-inline: auto;
 }
 
 /* ─── reset ─── */
@@ -89,13 +73,13 @@ body {
 }
 
 html {
-  background: var(--bg);
+  background: var(--ink-95);
   color-scheme: dark;
   /* reserve the gutter so pages/animations that toggle overflow don't
      shift the layout when the scrollbar appears */
   scrollbar-gutter: stable;
   scrollbar-width: thin;
-  scrollbar-color: var(--ink-70) var(--bg);
+  scrollbar-color: var(--ink-70) var(--ink-95);
 }
 
 @supports not (scrollbar-gutter: stable) {
@@ -111,24 +95,24 @@ html {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg);
+  background: var(--ink-95);
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--ink-70);
-  border: 2px solid var(--bg);
+  border: 2px solid var(--ink-95);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--accent);
+  background: var(--signal);
 }
 
 ::-webkit-scrollbar-thumb:active {
-  background: var(--accent);
+  background: var(--signal);
 }
 
 ::-webkit-scrollbar-corner {
-  background: var(--bg);
+  background: var(--ink-95);
 }
 
 body {
@@ -168,44 +152,6 @@ a {
   text-decoration: none;
 }
 
-/* ─── type helpers ─── */
-.t-display {
-  font-family: var(--font-display);
-  /* prototype uses -0.02 (px), i.e. effectively no tracking — not -0.02em */
-  letter-spacing: -0.02px;
-  line-height: 0.88;
-  text-transform: uppercase;
-}
-
-.t-mono {
-  font-family: var(--font-mono);
-}
-
-.t-serif {
-  font-family: var(--font-serif);
-}
-
-/* mono section label: "§ 02 / SELECTED WORK" */
-.t-label {
-  font-family: var(--font-mono);
-  font-size: clamp(10px, 0.75vw, 13px);
-  color: var(--dim);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-}
-
-/* ─── film grain overlay (Direction A) ─── */
-.grain::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 90;
-  opacity: 0.06;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.8'/%3E%3C/svg%3E");
-}
-
 /* ─── custom cursor (prototype CursorDot): native cursor hidden only while the
    dot is active — precise pointers, motion allowed (V8, V24); text fields keep
    their caret ─── */
@@ -224,151 +170,6 @@ body.cursor-none textarea {
 :focus-visible {
   outline: 2px solid var(--signal);
   outline-offset: 3px;
-}
-
-/* Ken-Burns drift for hover-preview stills (photos have no motion of their
-   own — this keeps preview cards alive; videos play instead) */
-@keyframes ncKenBurns {
-  from {
-    transform: scale(1) translate(0, 0);
-  }
-
-  to {
-    transform: scale(1.1) translate(-1.6%, 1.2%);
-  }
-}
-
-.kenburns {
-  animation: ncKenBurns 14s ease-in-out infinite alternate;
-  will-change: transform;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .kenburns {
-    animation: none;
-  }
-}
-
-/* ─── microinteractions ─── */
-/* ─── entrance choreography ───
-   One movement per page: the hero text rises. Everything else settles in
-   place — media fades with a slow scale-settle, secondary blocks fade late,
-   pagers wipe in from their travel direction. */
-@media (prefers-reduced-motion: no-preference) {
-  .page-enter {
-    animation: ncFade 0.28s ease-out both;
-  }
-
-  .page-enter h1 {
-    animation: ncRiseIn 0.55s cubic-bezier(0.2, 0.7, 0.3, 1) 0.05s both;
-  }
-
-  .page-enter .anim-media {
-    animation: ncMediaIn 0.8s cubic-bezier(0.2, 0.7, 0.3, 1) 0.18s both;
-  }
-
-  .page-enter .anim-fade {
-    animation: ncFade 0.55s ease-out 0.3s both;
-  }
-
-  .page-enter .anim-wipe-l {
-    animation: ncWipeL 0.6s cubic-bezier(0.2, 0.7, 0.3, 1) 0.42s both;
-  }
-
-  .page-enter .anim-wipe-r {
-    animation: ncWipeR 0.6s cubic-bezier(0.2, 0.7, 0.3, 1) 0.42s both;
-  }
-
-  /* pager navigation: one quick directional slide, no inner staggering */
-  .page-pager-next {
-    animation: ncPagerNext 0.24s cubic-bezier(0.2, 0.7, 0.3, 1) both;
-  }
-
-  .page-pager-prev {
-    animation: ncPagerPrev 0.24s cubic-bezier(0.2, 0.7, 0.3, 1) both;
-  }
-
-  @keyframes ncPagerNext {
-    from {
-      opacity: 0;
-      transform: translateX(28px);
-    }
-
-    to {
-      opacity: 1;
-      transform: none;
-    }
-  }
-
-  @keyframes ncPagerPrev {
-    from {
-      opacity: 0;
-      transform: translateX(-28px);
-    }
-
-    to {
-      opacity: 1;
-      transform: none;
-    }
-  }
-
-  @keyframes ncRiseIn {
-    from {
-      opacity: 0;
-      transform: translateY(16px);
-    }
-
-    to {
-      opacity: 1;
-      transform: none;
-    }
-  }
-
-  @keyframes ncFade {
-    from {
-      opacity: 0;
-    }
-
-    to {
-      opacity: 1;
-    }
-  }
-
-  @keyframes ncMediaIn {
-    from {
-      opacity: 0;
-      transform: scale(1.015);
-    }
-
-    to {
-      opacity: 1;
-      transform: none;
-    }
-  }
-
-  @keyframes ncWipeL {
-    from {
-      clip-path: inset(0 100% 0 0);
-      opacity: 0.3;
-    }
-
-    to {
-      clip-path: inset(0 0 0 0);
-      opacity: 1;
-    }
-  }
-
-  @keyframes ncWipeR {
-    from {
-      clip-path: inset(0 0 0 100%);
-      opacity: 0.3;
-    }
-
-    to {
-      clip-path: inset(0 0 0 0);
-      opacity: 1;
-    }
-  }
 }
 
 /* ─── organism background layer (SPEC C14 / V17) ─── */

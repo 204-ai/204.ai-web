@@ -7,6 +7,11 @@ interactive HTML/React prototypes on a pannable design canvas.
 
 **v2 (2026-10-19):** `design/cinematic/` holds the "Cinematic" redesign that replaces
 Direction A for the v2 build. See the v2 section at the end; everything before it documents v1.
+
+**History:** Direction A "Night Shift" was the production design of v1 (SPEC T1–T45). The app
+dropped its components, type helpers, entrance choreography and token aliases in T65; its
+prototype files stay in this folder as history. The organism lab and game pages keep the
+Night Shift faces (Archivo Black, JetBrains Mono).
 Source: https://claude.ai/design/p/de92b4be-ded4-4e8e-8519-4d42e0325ace
 
 ## Running the prototype locally

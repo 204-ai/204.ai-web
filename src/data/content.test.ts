@@ -1,7 +1,6 @@
 // SPEC T48 verification contract: v2 content model (I.content), closed taxonomy (V26),
 // URL stability (C20), derived pillars/related work (C19), and the v1 transition view.
 import { describe, expect, it } from 'vitest'
-import { fromV1Json, toV1, type V1Raw } from './compat'
 import { buildContent, isV2, slugify, validateContent, type RawContent, type RawService } from './content'
 
 const svc = (id: string, label: string): RawService => ({
@@ -125,83 +124,13 @@ describe('validateContent partial mode (staged content/v2, T49–T51)', () => {
   })
 })
 
-describe('v1 transition view (compat)', () => {
-  it('projects v2 content onto the v1 page shape', () => {
-    const v = toV1(buildContent(fixture()))
-    expect(v.works.map((w) => [w.code, w.slug, w.cat, w.runtime, w.practice])).toEqual([
-      ['NC·003', 'motel-x', 'interactive', '—', 'magic-photo-booth'],
-      ['NC·002', 'delulu', 'interactive', '—', 'magic-photo-booth'],
-      ['NC·001', 'ciurlionis', 'artistic', '—', 'animation-film'],
-    ])
-    expect(v.works[1].body).toBe('p1\n\np2')
-    expect(v.servicesAll.map((s) => [s.n, s.relatedCat])).toEqual([
-      ['01', 'branded'], ['02', 'artistic'], ['03', 'interactive'], ['04', 'interactive'], ['05', 'interactive'],
-    ])
-    expect(v.heroChapters).toMatchObject([{ slug: 'motel-x', media: { still: '/media/mx.webp', video: { mp4: '/media/mx.mp4' } } }])
-    expect(v.categories).toEqual(['all', 'interactive', 'artistic'])
-    expect(v.stats).toEqual([['Makers in the room', '01'], ['Main pillars', '02'], ['Projects shipped', '3']])
-  })
-  it('reads empty v2 lists as absent, the way v1 pages hide empty sections', () => {
-    const raw = fixture()
-    raw.services.content[0].modes = []
-    raw.works[0].gallery = []
-    const v = toV1(buildContent(raw))
-    expect([v.servicesAll[0].modes, v.works[0].gallery]).toEqual([undefined, undefined])
-  })
-})
-
-/* live + staged content, loaded the way the app loads it (Vite JSON imports) */
-type Docs = Record<'works' | 'services' | 'people' | 'studio' | 'redirects', unknown>
-const docsOf = (files: Record<string, unknown>, dir: string): Docs => {
-  const get = (f: string) => files[`../../${dir}/${f}`]
-  return { works: get('works.json'), services: get('services.json'), people: get('people.json'), studio: get('studio.json'), redirects: get('redirects.json') ?? {} }
-}
-const live = docsOf(import.meta.glob('../../content/*.json', { eager: true, import: 'default' }), 'content')
-const stagedFiles = import.meta.glob('../../content/v2/*.json', { eager: true, import: 'default' })
-const staged = Object.keys(stagedFiles).length > 0 ? docsOf(stagedFiles, 'content/v2') : null
-const liveWorks = live.works as unknown[]
-const stagedComplete = Boolean(staged?.works && staged.services && staged.people && staged.studio)
-const SPEC = Object.values(import.meta.glob('../../SPEC.md', { eager: true, query: '?raw', import: 'default' }))[0] as string
+/* live content, loaded the way the app loads it (Vite JSON imports) */
+const files = import.meta.glob('../../content/*.json', { eager: true, import: 'default' })
+const live = Object.fromEntries(['works', 'services', 'people', 'studio', 'redirects'].map((k) => [k, files[`../../content/${k}.json`] ?? (k === 'redirects' ? {} : undefined)]))
 
 describe('live content', () => {
-  it.skipIf(!isV2(live.studio))('v2: passes validateContent (V26, C20)', () => {
+  it('is schema 2 and passes validateContent (V26, C20)', () => {
+    expect(isV2(live.studio)).toBe(true)
     expect(validateContent(live as unknown as RawContent)).toEqual([])
-  })
-  it.skipIf(isV2(live.studio))('v1: the legacy loader still derives every route', () => {
-    const v = fromV1Json(live as unknown as V1Raw)
-    expect(v.works).toHaveLength(liveWorks.length)
-    expect(v.works[0].code).toBe(`NC·${String(liveWorks.length).padStart(3, '0')}`)
-    expect(new Set(v.works.map((w) => w.slug)).size).toBe(liveWorks.length)
-  })
-  it.skipIf(!staged)('staged content/v2 passes validateContent (partial until all four files are staged)', () => {
-    expect(validateContent(staged as unknown as RawContent, { partial: !stagedComplete })).toEqual([])
-  })
-  it.skipIf(!staged?.works || Boolean(staged?.services))('staged works use only the SPEC C19 practice ids', () => {
-    const c19 = SPEC.split('\n').find((l) => l.startsWith('- C19:')) ?? ''
-    const m = c19.match(/content: ([a-z ]+) \| interactive: ([a-z ]+)\)/)
-    const ids = new Set(`${m?.[1]} ${m?.[2]}`.trim().split(/\s+/))
-    expect(ids.size).toBe(10)
-    const unknown = (staged!.works as Array<{ title: string; practices: string[] }>).flatMap((w) => w.practices.filter((p) => !ids.has(p)).map((p) => `${w.title}: ${p}`))
-    expect(unknown).toEqual([])
-  })
-  it.skipIf(!staged?.works || isV2(live.studio))('every live v1 work URL resolves in the staged works (SPEC V21, C20)', () => {
-    const works = staged!.works as Array<{ title: string; slug?: string; aliases?: string[] }>
-    const redirects = (staged!.redirects ?? {}) as Record<string, string>
-    const reachable = new Set([...works.map((w) => w.slug ?? slugify(w.title)), ...works.flatMap((w) => w.aliases ?? []), ...Object.keys(redirects).map((k) => k.replace(/^\/work\//, ''))])
-    const lost = (live.works as Array<{ title: string }>).map((w) => slugify(w.title)).filter((s) => !reachable.has(s))
-    expect(lost).toEqual([])
-  })
-  it.skipIf(!staged?.services || isV2(live.studio))('every live v1 service URL resolves in the staged services (SPEC V21, C20)', () => {
-    type Svc = { label: string; slug?: string; aliases?: string[] }
-    const s = staged!.services as Record<'content' | 'interactive', Svc[]>
-    const all = [...s.content, ...s.interactive]
-    const redirects = (staged!.redirects ?? {}) as Record<string, string>
-    const reachable = new Set([
-      ...all.map((x) => x.slug ?? slugify(x.label)), ...all.flatMap((x) => x.aliases ?? []),
-      ...Object.keys(redirects).filter((k) => k.startsWith('/services/')).map((k) => k.slice('/services/'.length)),
-    ])
-    const v1 = live.services as Record<'content' | 'interactive', Array<{ label: string }>>
-    const lost = [...v1.content, ...v1.interactive].map((x) => slugify(x.label)).filter((x) => !reachable.has(x))
-    expect(lost).toEqual([])
   })
 })

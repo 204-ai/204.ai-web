@@ -1,8 +1,10 @@
 # 204 · NO-CONTENT — site guide for agents
 
 Production site for the 204 creative technology studio (Lisbon). React 19 +
-Vite + TS SPA, deployed to GitHub Pages on every push to `main` (workflow in
-`.github/workflows/deploy.yml`). Live: https://204-ai.github.io/204.ai-web/
+Vite + TS SPA in the "Cinematic" design (SPEC C16–C18). Every push to `main`
+deploys Firebase Hosting (primary, canonical: https://studio204-web.web.app)
+and GitHub Pages (secondary: https://204-ai.github.io/204.ai-web/) from
+`.github/workflows/deploy.yml`.
 
 `SPEC.md` is the project spec — goals (§G), constraints (§C), invariants (§V),
 task ledger (§T), bug log (§B). Read it before structural changes; log new
@@ -10,77 +12,53 @@ invariant-worthy bugs in §B.
 
 ## Content edits (the common job — no code changes needed)
 
-ALL copy/data lives in `content/*.json`. `src/data/studio.ts` is only the
-typed schema + derivation layer on top; components never read JSON directly.
-On branch `v2-cinematic`, `content/*.json` is v2 since T52: see "v2 content
-schema" below. The field list right here describes v1, as on `main`.
+ALL copy/data lives in `content/*.json` (SPEC I.content; `"schema": 2` in
+studio.json). `src/data/studio.ts` loads it and `src/data/content.ts` derives
+the model; components never read JSON directly.
 
-- `content/works.json` — project catalog, NEWEST FIRST. Fields per entry:
-  title, client, cat (`interactive|mapping|branded|artistic`), year, runtime,
-  note (one-liner), scene (`cathedral|desert|interior|water` — placeholder art
-  fallback), optional: media {still, video{webm,mp4}}, body (longform),
-  youtube [ids], gallery [urls].
-- `content/services.json` — pillars `content` + `interactive`; per service:
-  n, label, scene, body, optional still/video/intro/modes/features/relatedCat.
+- `content/works.json` — project catalog, NEWEST FIRST: title, client,
+  practices (service ids, first = primary), year, note, media {still,
+  video{mp4}, focus}; optional slug, aliases, place, date, products, body
+  (string or paragraph list), collab {label, name}, credits [{name, role,
+  handle}], youtube, gallery, logo, wide, format.
+- `content/services.json` — `content` and `interactive` pillars; per service:
+  id, label, title ("\n" = line break), desc, img, lead, modes [{n, label,
+  body}], included, cta; optional slug, aliases, reels, still.
 - `content/people.json` — makers: name, role, optional photo/bio/socials
   {instagram, linkedin, web, email} — only set links render.
-- `content/studio.json` — site settings: name/tag, contact, logoUrl,
-  heroChapters (work SLUGS, reel order), workCategories (filter order),
-  budgetRanges, practice rows, pillarsCount.
+- `content/studio.json` — name/suffix/tag, logoUrl, contact (+ map {url,
+  image?}), heroClips [{work, clip, poster, title?, kind?, place?}], featured
+  bands [{work, …overrides}], the allWork band, process (home dial), practice
+  (about rows), copy (paragraphs only, `**…**` = bold; headlines and UI labels
+  stay in page code), footer {address, socials}, budgetRanges, rnaStudioUrl,
+  trustedBy, partners.
+- `content/redirects.json` (optional) — `{"/old/path": "/live/path"}` for
+  removed pages.
 
 DERIVED — never write these by hand: ids, NC ref codes (position-based,
-newest = highest), slugs (from title), ledger count, category filters, about
-stats, per-route share meta, sitemap. Add/edit JSON → everything follows on
-build.
+newest = highest), slugs (title, or `slug`), service numbers per pillar,
+format (label of the first practice), related work per service, stats,
+redirects (aliases ∪ redirects.json), per-route share meta, sitemap, the
+firebase.json 301s. The build fails with a precise message when a practice is
+not a service id, a hero clip or featured slug does not resolve, a slug
+repeats, or an alias or redirect shadows a live page or points nowhere
+(SPEC V26, C20).
 
 Recipes:
-- New project → prepend (or insert chronologically) in works.json. Codes
-  renumber automatically; that is expected and fine.
-- Feature it on the home reel → add its slug to studio.json heroChapters.
+- New project → prepend it with `practices`; it appears under each listed
+  service, and the codes renumber (expected and fine).
+- Feature it on the home hero → add a `heroClips` entry (work slug, clip,
+  poster); the featured bands are `featured`.
+- Retitle a live project → add its old slug to `aliases`, so the old URL keeps
+  working (then commit the regenerated firebase.json).
+- Remove a project → add `"/work/<old-slug>": "/work"` to `redirects.json`.
 - New maker → append to people.json (photo optional — initials fallback).
+- New media → reference `assets/<file>` (originals live in the gitignored
+  `media-src/cinematic/`), run `node scripts/media-pipeline.mjs --from
+  media-src/cinematic`, then the same with `--rewrite`;
+  `node scripts/media-audit.mjs` must pass afterwards.
 - Facts only: content comes from the studio's real material. Never invent
   clients, dates or claims. Unknown = "—".
-
-### v2 content schema (branch `v2-cinematic`, SPEC I.content)
-
-`"schema": 2` in `content/studio.json` switches the loader: `src/data/content.ts`
-builds the v2 model (exported as `CONTENT`), and the Night Shift pages keep
-reading the old exports through `src/data/compat.ts` until T53–T60 replace
-them. Since T52 the live `content/*.json` is v2 and its media paths point at
-pipeline outputs in `public/media/`. To add media, reference `assets/<file>`
-(originals live in the gitignored `media-src/cinematic/`), then run
-`node scripts/media-pipeline.mjs --from media-src/cinematic` and the same with
-`--rewrite`; `node scripts/media-audit.mjs` must pass afterwards.
-
-- `works.json`: title, client, practices (service ids, first = primary), year,
-  note, media {still, video{mp4}, focus}; optional slug, aliases, place, date,
-  products, body (string or paragraph list), collab {label, name}, credits
-  [{name, role, handle}], youtube, gallery, logo, wide, format.
-- `services.json`: `content` and `interactive` pillars; per service id, label,
-  title ("\n" = line break), desc, img, lead, modes [{n, label, body}],
-  included, cta; optional slug, aliases, reels, still.
-- `people.json`: unchanged.
-- `studio.json`: the v1 settings minus heroChapters, workCategories and
-  pillarsCount, plus schema 2, heroClips [{work, clip, poster, title, kind,
-  place}], featured bands [{work, title, label, poster, clip, focus}] (all but
-  `work` optional, defaulting to the work), the allWork band, process (home
-  dial), copy (paragraphs only, `**…**` = bold; headlines and UI labels stay in
-  page code), footer {address, socials}, contact.map {url, image}.
-- `redirects.json` (optional): `{"/old/path": "/live/path"}` for removed pages.
-
-Derived, never hand-written: ids, NC codes, slugs (title, or `slug`), service
-numbers per pillar, format (label of the first practice), related work per
-service, stats, redirects (aliases plus redirects.json). The build fails with
-a precise message when a practice is not a service id, a hero clip or featured
-slug does not resolve, a slug repeats, or an alias or redirect shadows a live
-page or points nowhere (SPEC V26, C20).
-
-v2 recipes:
-- New project → prepend it with `practices`; it appears under each listed
-  service automatically.
-- Retitle a live project → add its old slug to `aliases`, so the old URL
-  keeps working.
-- Remove a project → add `"/work/<old-slug>": "/work"` to `redirects.json`.
 
 ## Verify before pushing
 
@@ -102,9 +80,8 @@ screenshot). Keep the home fold: hero + strap + CTA above 1080p fold.
 
 ## Conventions & landmines
 
-- Design system (branch `v2-cinematic`): Cinematic tokens (SPEC C17) once in
-  `src/styles/global.css` `:root`, never re-hardcode hex (SPEC V2); the old
-  Night Shift token names are aliases there until T65. Type (C18): Anton SC
+- Design system: Cinematic tokens (SPEC C17) once in `src/styles/global.css`
+  `:root`, never re-hardcode hex (SPEC V2). Type (C18): Anton SC
   display (letter-spacing 0), Poppins body, Cutive Mono labels, latin +
   latin-ext faces in `src/styles/fonts.css`. Sizes use `calc(N * var(--px))`:
   exact up to the 1440px comparison width, capped at 1.5×. v2 primitives live
@@ -112,25 +89,27 @@ screenshot). Keep the home fold: hero + strap + CTA above 1080p fold.
   ChatCloser, Footer, SecLab, Rich); `npm run dev` → `/ds.html` renders them
   for fidelity checks against the prototype. The organism lab/game keep their
   own Archivo Black + JetBrains Mono.
-- Shell (T54): `src/components/Layout.tsx` renders the v2 Nav, Footer, cursor
-  and grain around every page. When a page is rebuilt in v2, add its route to
-  `V2_PAGES` there: that drops the Night Shift top padding (v2 heroes sit under
-  the fixed nav) and swaps the entrance for the prototype's page fade. Wrap v2
-  page roots in `className="v2"` for the prototype reset.
+- Shell: `src/components/Layout.tsx` renders the Nav, Footer, cursor and grain
+  around every page; pages own their top spacing under the fixed nav (heroes
+  sit beneath it) and fade in like the prototype. Wrap page roots in
+  `className="v2"` for the prototype reset.
 - `design/` = imported claude.ai/design prototype + Webflow scrape snapshot
   (`design/scrape/extracted.json`). Read-only reference; never imported by
   app code (SPEC V9).
-- Media is SELF-HOSTED in `public/media/` (SPEC V4; migrated via
-  `scripts/media-pipeline.mjs` — rerun-safe if new Webflow URLs appear in
-  content). Non-hero stills use `-p-800` renditions with onError fallback.
-  v2 images carry intrinsic `width`/`height` (SPEC V30): `imgDims(url)` from
+- Media is SELF-HOSTED in `public/media/` (SPEC V4) through
+  `scripts/media-pipeline.mjs` (role renditions -p-800/-p-500/-p-320/-p-160,
+  byte-stable names, V27); pages pick them with `rendition()` in srcsets.
+  Images carry intrinsic `width`/`height` (SPEC V30): `imgDims(url)` from
   `src/lib/dims.ts` reads `virtual:media-dims`, which `vite.config.ts` derives
   from `scripts/media-manifest.json` at build time (nothing to regenerate).
 - Animations: transform/opacity only, gated behind
-  `prefers-reduced-motion: no-preference`. Entrance choreography: h1 is the
-  only riser; media fades w/ scale-settle; secondary fades late; pagers wipe
-  directionally. `<main>` has `overflow: clip` — transformed entrances must
-  not grow the scrollable area (§B: scrollbar flash).
+  `prefers-reduced-motion: no-preference`. Entrances are the prototype's
+  reveals (`r-up` / `r-in` / `r-scale` with `d-1`…`d-6` delays) plus the page
+  fade. Infinite motion (loops, hero rotator, process dial, clips, cursor) is
+  static under reduced motion and pauses in a hidden tab (V24; `a11y-check`).
+  Loops use `overflow: clip`, never hidden. `<main>` has `overflow: clip` —
+  transformed entrances must not grow the scrollable area (§B: scrollbar
+  flash); `v6-check` therefore ignores it when looking for spills.
 - Ref-callback gotcha: callbacks feeding player state must be identity-stable
   (memoized) — React 19 reruns ref cleanup on identity change (§B5).
   `<video>` needs `key={src}` to actually switch footage; mp4 before webm

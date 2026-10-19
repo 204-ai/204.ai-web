@@ -112,6 +112,17 @@
   }
 }
 
+/* local: CSS modules scope keyframe names, so the global fadeIn is not visible here */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
 @media (max-width: 1080px) {
   .lightbox {
     padding: 16px;
