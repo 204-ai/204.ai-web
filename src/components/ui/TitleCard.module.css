@@ -1,0 +1,54 @@
+/* prototype .titlecard */
+.card {
+  background: var(--ink-95);
+  padding: calc(120 * var(--px)) var(--side-pad);
+  display: grid;
+  grid-template-columns: calc(120 * var(--px)) 1fr calc(120 * var(--px));
+  gap: calc(32 * var(--px));
+  align-items: end;
+  border-top: 1px solid var(--line-faint);
+  border-bottom: 1px solid var(--line-faint);
+  min-height: calc(280 * var(--px));
+}
+
+.chap {
+  font-family: var(--font-mono);
+  font-size: calc(13 * var(--px));
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-50);
+}
+
+.name {
+  font-family: var(--font-display);
+  font-size: calc(120 * var(--px));
+  line-height: 0.95;
+  text-transform: uppercase;
+  letter-spacing: -0.005em;
+  color: var(--paper);
+}
+
+.tail {
+  font-family: var(--font-mono);
+  font-size: calc(11 * var(--px));
+  letter-spacing: 0.14em;
+  color: var(--ink-50);
+  text-align: right;
+  text-transform: uppercase;
+}
+
+@media (max-width: 1080px) {
+  .card {
+    grid-template-columns: 1fr;
+    min-height: 200px;
+    padding: 60px var(--side-pad);
+  }
+
+  .name {
+    font-size: 64px;
+  }
+
+  .tail {
+    text-align: left;
+  }
+}

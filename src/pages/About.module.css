@@ -1,192 +1,286 @@
-.root {
-  padding: 32px 28px 64px;
+/* prototype .colophon / .colo-* / .prow2 / roster .maker / .rna-card (incl. legibility pass) */
+.colophon {
   display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 40px;
+  grid-template-columns: 1fr 1px 1fr;
+  padding: calc(140 * var(--px)) 0 calc(120 * var(--px));
+  background: var(--ink);
 }
 
-.title {
-  font-size: clamp(44px, 6.6vw, 88px);
-  color: var(--fg);
-  line-height: 0.9;
-  margin: 0;
+.left {
+  padding: 0 calc(56 * var(--px)) 0 var(--side-pad);
 }
 
-.body {
-  font-size: clamp(15px, 1.17vw, 19px);
-  color: var(--fg);
-  line-height: 1.6;
-  margin: 32px 0 0;
-  max-width: 520px;
+.right {
+  grid-column: 3;
+  padding: 0 var(--side-pad) 0 calc(56 * var(--px));
+  border-left: 1px solid var(--line-row);
+}
+
+.lab {
+  margin-bottom: calc(30 * var(--px));
+}
+
+/* h1 keeps the UA bold like the prototype */
+.head {
+  font-family: var(--font-display);
+  font-size: clamp(52px, 7.4vw, 124px);
+  line-height: 0.92;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: var(--paper);
+}
+
+.head em {
+  font-style: normal;
+  color: transparent;
+  -webkit-text-stroke: 2px var(--signal);
+}
+
+.dim {
+  color: var(--paper);
+}
+
+.lead {
+  max-width: 62ch;
+  margin: calc(52 * var(--px)) 0 0;
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: calc(18 * var(--px));
+  line-height: 1.65;
+  color: var(--ink-10);
+}
+
+.lead b {
+  font-weight: 700;
+  color: var(--paper);
 }
 
 .stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-  margin-top: 48px;
-  max-width: 560px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(74 * var(--px));
+  margin: calc(72 * var(--px)) 0 calc(96 * var(--px));
 }
 
-.statValue {
-  font-size: clamp(32px, 3.4vw, 48px);
-  color: var(--fg);
+.fig {
+  font-family: var(--font-display);
+  font-size: clamp(40px, 4vw, 64px);
+  line-height: 1;
+  color: var(--paper);
 }
 
-.statKey {
-  font-size: 10px;
-  color: var(--dim);
-  letter-spacing: 1.5px;
-  margin-top: 6px;
+.cap {
+  margin-top: calc(12 * var(--px));
+  font-family: var(--font-mono);
+  font-size: calc(11 * var(--px));
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--mono-label);
 }
 
 .practice {
-  margin-top: 44px;
-  max-width: 560px;
+  display: flex;
+  flex-direction: column;
 }
 
-.practiceRow {
+.prow {
   display: grid;
-  grid-template-columns: 34px 1fr;
-  gap: 4px 14px;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--hairline);
-  align-items: baseline;
+  grid-template-columns: calc(64 * var(--px)) 1fr;
+  gap: calc(14 * var(--px));
+  padding: calc(26 * var(--px)) 0;
+  border-bottom: 1px solid var(--line-strong);
 }
 
-.practiceNum {
-  font-size: 11px;
-  color: var(--accent-text);
+.prow:first-child {
+  border-top: 1px solid var(--line-strong);
 }
 
-.practiceLabel {
-  font-size: clamp(17px, 1.5vw, 24px);
-  color: var(--fg);
+.n {
+  font-family: var(--font-mono);
+  font-size: calc(12 * var(--px));
+  letter-spacing: 0.16em;
+  color: var(--signal);
 }
 
-.practiceBody {
-  grid-column: 2;
-  font-size: 13px;
-  color: var(--dim);
-  line-height: 1.5;
-}
-
-.side {
-  border-left: 1px solid var(--hairline);
-  padding-left: 32px;
-}
-
-.person {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--hairline);
-  gap: 12px;
-}
-
-.personName {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.personPhoto {
-  width: 44px;
-  height: 44px;
-  object-fit: cover;
-  border-radius: 2px;
-  filter: grayscale(0.35) contrast(1.05);
-  transition: filter 0.3s;
-  /* own layer — filtered imgs sometimes miss their first paint otherwise (§B9) */
-  transform: translateZ(0);
-}
-
-.person {
-  transition: background 0.15s;
-}
-
-.person:hover {
-  background: rgba(255, 255, 255, 0.02);
-}
-
-.person:hover .personLabel {
-  color: var(--accent-text);
-}
-
-.personLabel {
-  transition: color 0.18s;
-}
-
-.person:hover .personPhoto {
-  filter: grayscale(0) contrast(1.05);
-}
-
-.personNum {
-  font-size: 10px;
-  color: var(--dim);
-}
-
-.personLabel {
-  font-size: 16px;
-  color: var(--fg);
-  font-style: italic;
-}
-
-.personRole {
-  font-size: 10px;
-  color: var(--dim);
-  letter-spacing: 1.5px;
+.t {
+  font-family: var(--font-display);
+  font-size: calc(27 * var(--px));
+  line-height: 1;
   text-transform: uppercase;
-  align-self: center;
+  color: var(--paper);
 }
 
-.hiring {
-  margin-top: 32px;
-  padding: 20px;
-  background: var(--accent-soft);
-  border: 1px solid var(--accent-border);
-}
-
-.hiringLabel {
-  font-size: 10px;
-  color: var(--accent);
-  letter-spacing: 2px;
-  margin-bottom: 10px;
-}
-
-.rnaLink {
-  display: inline-block;
-  margin-top: 14px;
-  font-size: 10px;
-  letter-spacing: 2px;
-  color: var(--accent-text);
-  border-bottom: 1px solid transparent;
-  transition: border-color 0.15s;
-}
-
-.rnaLink:hover {
-  border-color: var(--accent-text);
-}
-
-.hiringBody {
-  font-size: clamp(14px, 1.1vw, 17px);
-  color: var(--fg);
+.d {
+  margin-top: calc(11 * var(--px));
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: calc(15 * var(--px));
   line-height: 1.5;
-  margin: 0;
+  color: var(--ink-30);
 }
 
-@media (max-width: 900px) {
-  .root {
+.makers {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: calc(64 * var(--px));
+}
+
+.maker {
+  display: grid;
+  grid-template-columns: calc(40 * var(--px)) calc(62 * var(--px)) 1fr auto calc(24 * var(--px));
+  align-items: center;
+  gap: calc(22 * var(--px));
+  padding: calc(16 * var(--px)) 0;
+  border-bottom: 1px solid var(--line-strong);
+  cursor: pointer;
+  transition: padding-left 0.25s ease, border-color 0.25s ease;
+}
+
+.maker:first-child {
+  border-top: 1px solid var(--line-strong);
+}
+
+.maker:hover,
+.maker:focus-visible {
+  padding-left: 10px;
+  border-color: var(--signal);
+}
+
+.mn {
+  font-family: var(--font-mono);
+  font-size: calc(11 * var(--px));
+  letter-spacing: 0.16em;
+  color: var(--mono-label);
+}
+
+.shot {
+  display: grid;
+  place-items: center;
+  width: calc(62 * var(--px));
+  height: calc(62 * var(--px));
+  overflow: hidden;
+  background: var(--ink-90);
+  border: 1px solid var(--line-row);
+  font-family: var(--font-mono);
+  font-size: calc(12 * var(--px));
+  letter-spacing: 0.1em;
+  color: var(--mono-label);
+}
+
+.shot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 20%;
+}
+
+.name {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: calc(20 * var(--px));
+  color: var(--paper);
+}
+
+.role {
+  font-family: var(--font-mono);
+  font-size: calc(11 * var(--px));
+  letter-spacing: 0.16em;
+  text-align: right;
+  text-transform: uppercase;
+  color: var(--mono-label);
+}
+
+.ar {
+  font-family: var(--font-mono);
+  font-size: calc(14 * var(--px));
+  color: var(--ink-50);
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.maker:hover .ar,
+.maker:focus-visible .ar {
+  opacity: 1;
+  transform: none;
+  color: var(--signal);
+}
+
+.rna {
+  padding: calc(30 * var(--px)) calc(32 * var(--px)) calc(26 * var(--px));
+  border: 1px solid var(--signal);
+  background: var(--signal-faint);
+}
+
+.rnaLab {
+  margin-bottom: calc(20 * var(--px));
+  font-family: var(--font-mono);
+  font-size: calc(12 * var(--px));
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--signal);
+}
+
+.rna p {
+  margin: 0 0 calc(22 * var(--px));
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: calc(17 * var(--px));
+  line-height: 1.6;
+  color: var(--paper);
+}
+
+.rna a {
+  color: var(--signal);
+  text-decoration: none;
+}
+
+.rna a:hover,
+.rna a:focus-visible {
+  text-decoration: underline;
+}
+
+.link {
+  font-family: var(--font-mono);
+  font-size: calc(12 * var(--px));
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 1040px) {
+  .colophon {
     grid-template-columns: 1fr;
-    padding: 24px 16px 48px;
-    gap: 32px;
+    gap: 80px;
+    padding: 120px 0 90px;
   }
 
-  .side {
-    border-left: none;
-    padding-left: 0;
-    border-top: 1px solid var(--hairline);
-    padding-top: 24px;
+  .left {
+    padding: 0 var(--side-pad);
+  }
+
+  .right {
+    grid-column: 1;
+    padding: 70px var(--side-pad) 0;
+    border-left: 0;
+    border-top: 1px solid var(--line-row);
+  }
+
+  .maker {
+    grid-template-columns: 32px 52px 1fr;
+    gap: 16px;
+  }
+
+  .shot {
+    width: 52px;
+    height: 52px;
+  }
+
+  .role {
+    grid-column: 2 / -1;
+    text-align: left;
+  }
+
+  .ar {
+    display: none;
   }
 }

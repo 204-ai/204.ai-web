@@ -1,20 +1,30 @@
 import { useRef, useState, type FormEvent } from 'react'
-import { ICONS, type IconName } from '../components/icons'
+import { Pill } from '../components/ui/Pill'
+import { Rich } from '../components/ui/Rich'
+import { SecLab } from '../components/ui/SecLab'
+import { describe } from '../data/content'
+import { CONTENT } from '../data/studio'
 import { useHead } from '../hooks/useHead'
-import { trackLead, trackMapLoad } from '../lib/analytics'
-import { BUDGET_RANGES, CONTACT } from '../data/studio'
+import { trackLead, trackMapClick, trackMapLoad, trackSocialClick } from '../lib/analytics'
 import styles from './Contact.module.css'
 
-const MAPS_URL = 'https://www.google.com/maps/search/?api=1&query=R.+Ferreira+Lapa+12A,+1150-157+Lisboa'
-
-// Real form backend when configured (POST JSON, 2xx = delivered); without it
-// the form falls back to the visitor's mail client, same as before.
+// Brief intake (SPEC C15, I.brief): POST JSON to the `brief` function when configured,
+// else the visitor's mail client, as before.
 const FORM_ENDPOINT = import.meta.env.VITE_FORM_ENDPOINT as string | undefined
 
-// reCAPTCHA Enterprise (invisible, score-based). Script is injected only on
-// first form interaction (click-to-load pattern, SPEC V4) — never on page
-// load. Unset = no captcha.
+// reCAPTCHA Enterprise (invisible, score-based): the script loads on the first focus inside
+// the form, never on page load (SPEC V4). Unset = no captcha.
 const RECAPTCHA_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY as string | undefined
+
+const CAPTCHA_WAIT_MS = 8000
+
+/** `p`, or `fallback` once `ms` pass first */
+const within = <T,>(p: Promise<T>, ms: number, fallback: T): Promise<T> =>
+  Promise.race([p, new Promise<T>((resolve) => setTimeout(() => resolve(fallback), ms))])
+
+// click-to-load map (SPEC V4): no tiles until asked
+const OSM_EMBED =
+  'https://www.openstreetmap.org/export/embed.html?bbox=-9.1494%2C38.7236%2C-9.1374%2C38.7296&layer=mapnik&marker=38.7266%2C-9.1434'
 
 declare global {
   interface Window {
@@ -27,60 +37,65 @@ declare global {
   }
 }
 
-const INFO: Array<[IconName, string, string, string?]> = [
-  ['email', 'EMAIL', CONTACT.email, `mailto:${CONTACT.email}`],
-  ['studio', 'STUDIO', CONTACT.studio, MAPS_URL],
-  ['instagram', 'INSTAGRAM', CONTACT.instagram, CONTACT.instagramUrl],
-  ['linkedin', 'LINKEDIN', CONTACT.linkedin, CONTACT.linkedinUrl],
+type FieldKey = 'name' | 'org' | 'email'
+const FIELDS: Array<[FieldKey, string, string, string, boolean]> = [
+  ['name', 'name', 'text', 'name', false],
+  ['org', 'organisation', 'text', 'organization', false],
+  ['email', 'email — so we can get back to you', 'email', 'email', true],
 ]
 
+/** v2 contact (prototype Contact): lead, contact rows, map, brief intake wired to the brief function. */
 export function Contact() {
-  useHead(
-    'Contact',
-    'Send a brief, not a form. Three lines: who you are, what you’re making, when you need it by.',
-  )
+  useHead('Contact', describe.contact(CONTENT))
+  const { studio } = CONTENT
+  const c = studio.contact
+  const mapUrl = c.map?.url
   const [brief, setBrief] = useState({ name: '', org: '', email: '', budget: '', scope: '' })
-  const [trap, setTrap] = useState('') // honeypot — humans never see the field
+  const [trap, setTrap] = useState('') // honeypot: humans never see the field
   const [state, setState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
-  const captchaRequested = useRef(false)
+  // settles once the injected script has loaded or failed; null until the first focus
+  const captchaLoaded = useRef<Promise<void> | null>(null)
 
-  // lazy-inject the recaptcha script the moment someone starts on the form
   const loadCaptcha = () => {
-    if (!RECAPTCHA_KEY || captchaRequested.current) return
-    captchaRequested.current = true
-    const s = document.createElement('script')
-    s.src = `https://www.google.com/recaptcha/enterprise.js?render=${RECAPTCHA_KEY}`
-    s.async = true
-    document.head.appendChild(s)
+    if (!RECAPTCHA_KEY || captchaLoaded.current) return
+    captchaLoaded.current = new Promise<void>((resolve) => {
+      const s = document.createElement('script')
+      s.src = `https://www.google.com/recaptcha/enterprise.js?render=${RECAPTCHA_KEY}`
+      s.async = true
+      s.onload = () => resolve()
+      s.onerror = () => resolve()
+      document.head.appendChild(s)
+    })
   }
 
+  // a submit right after the first focus waits for the script instead of sending no token
+  // (the function fails closed without one); a script that never answers counts as blocked
   const captchaToken = async (): Promise<string> => {
+    if (!RECAPTCHA_KEY) return ''
+    loadCaptcha()
+    await within(captchaLoaded.current ?? Promise.resolve(), CAPTCHA_WAIT_MS, undefined)
     const g = window.grecaptcha?.enterprise
-    if (!RECAPTCHA_KEY || !g) return '' // key unset or script blocked — server decides
-    await new Promise<void>((r) => g.ready(r))
-    return g.execute(RECAPTCHA_KEY, { action: 'brief' })
+    if (!g) return '' // script blocked or unreachable: the server decides
+    const ready = await within(new Promise<boolean>((r) => g.ready(() => r(true))), CAPTCHA_WAIT_MS, false)
+    return ready ? g.execute(RECAPTCHA_KEY, { action: 'brief' }) : ''
   }
 
   const briefMailto = () => {
-    const subject = `Brief — ${brief.name || 'new project'}`
-    const body = [
+    const subject = `Brief — ${brief.org || brief.name || 'new project'}`
+    const head = [
       `Name: ${brief.name}`,
       brief.org && `Organisation: ${brief.org}`,
       `Reply to: ${brief.email}`,
       brief.budget && `Budget: ${brief.budget}`,
-      '',
-      brief.scope,
-    ]
-      .filter(Boolean)
-      .join('\n')
-    return `mailto:${CONTACT.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+    ].filter(Boolean)
+    const body = [head.join('\n'), brief.scope].filter(Boolean).join('\n\n')
+    return `mailto:${c.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
   }
 
   const submit = async (e: FormEvent) => {
     e.preventDefault()
     if (state === 'sending') return
     if (!FORM_ENDPOINT) {
-      // no endpoint configured — deliver the brief via the visitor's mail client
       trackLead(brief.budget)
       window.location.href = briefMailto()
       setState('sent')
@@ -95,7 +110,7 @@ export function Contact() {
         body: JSON.stringify({ ...brief, website: trap, token }),
         signal: AbortSignal.timeout(12000),
       })
-      if (!res.ok) throw new Error(`form endpoint ${res.status}`)
+      if (!res.ok) throw new Error(`brief endpoint ${res.status}`)
       trackLead(brief.budget)
       setState('sent')
     } catch {
@@ -104,178 +119,185 @@ export function Contact() {
   }
 
   const replyBy = new Date(Date.now() + 2 * 86400000).toDateString().slice(4)
+  const rows: Array<[string, string, string]> = [
+    ['email', c.email, `mailto:${c.email}`],
+    ['studio', c.studio, mapUrl ?? ''],
+    ['instagram', c.instagram, c.instagramUrl],
+    ['linkedin', c.linkedin, c.linkedinUrl],
+  ]
 
   return (
-    <div className={styles.root}>
-      <div>
-        <div className="t-label" style={{ marginBottom: 8 }}>§ 05 / WRITE TO US</div>
-        <h1 className={`t-display ${styles.title}`}>
-          Send a <span style={{ color: 'var(--accent)' }}>brief</span>
-          <span style={{ color: 'var(--dim)' }}>,</span>
-          <br />
-          not a <span style={{ color: 'var(--dim)' }}>form.</span>
-        </h1>
-        <p className={`t-serif ${styles.body}`}>
-          The fastest way to start a conversation is a three-line email: who you are, what you're making, and when you
-          need it by. We read everything and reply within two working days.
-        </p>
-
-        <dl className={`t-mono ${styles.info} anim-fade`}>
-          {INFO.map(([icon, k, v, href]) => (
-            <div key={k} className={styles.infoRow}>
-              <dt className={styles.infoKey}>
-                <span className={styles.infoIcon}>{ICONS[icon]}</span>
-                {k}
-              </dt>
-              <dd className={styles.infoValue}>
+    <div className="v2">
+      <section className={styles.contact}>
+        <div className={styles.left}>
+          <SecLab className={styles.lab}>§ 05 / write to us</SecLab>
+          <h1 className={styles.head}>
+            Send a
+            <br />
+            <em>brief.</em>
+          </h1>
+          <p className={styles.lead}>
+            <Rich text={studio.copy.contact.lead} />
+          </p>
+          <div className={styles.rows}>
+            {rows.map(([k, v, href]) => (
+              <div key={k} className={styles.row}>
+                <span className={styles.k}>{k}</span>
                 {href ? (
-                  <a href={href} target={href.startsWith('http') ? '_blank' : undefined} rel="noreferrer">
+                  <a
+                    className={styles.v}
+                    href={href}
+                    target={href.startsWith('http') ? '_blank' : undefined}
+                    rel="noreferrer"
+                    onClick={() => {
+                      if (k === 'instagram' || k === 'linkedin') trackSocialClick(k)
+                      else if (k === 'studio') trackMapClick('studio_row')
+                    }}
+                  >
                     {v}
                   </a>
                 ) : (
-                  v
+                  <span className={styles.v}>{v}</span>
                 )}
-              </dd>
-            </div>
-          ))}
-        </dl>
-
-        <div className={styles.findUs}>
-          <div className="t-label" style={{ marginBottom: 12 }}>/ FIND US</div>
-          <MapEmbed />
-        </div>
-      </div>
-
-      <div className={`${styles.panel} anim-fade`}>
-        <div className="t-label" style={{ marginBottom: 20 }}>/ BRIEF INTAKE · v02</div>
-        {state === 'sent' ? (
-          <div className={styles.sent}>
-            <div className={`t-mono ${styles.sentBadge}`}>● RECEIVED</div>
-            <div className={`t-display ${styles.sentTitle}`}>Thank you.</div>
-            <div className={styles.sentNote}>
-              We'll read it today and reply to {brief.email || 'you'} by {replyBy}.
-            </div>
-          </div>
-        ) : (
-          <form onSubmit={submit} onFocus={loadCaptcha}>
-            {/* honeypot — visually hidden; bots that fill it get dropped server-side */}
-            <input
-              type="text"
-              name="website"
-              value={trap}
-              onChange={(e) => setTrap(e.target.value)}
-              className={styles.trap}
-              tabIndex={-1}
-              autoComplete="off"
-              aria-hidden="true"
-            />
-            {(
-              [
-                ['name', 'Name', 'text', 'name', false],
-                ['org', 'Organisation', 'text', 'organization', false],
-                ['email', 'Email — so we can get back to you', 'email', 'email', true],
-              ] as const
-            ).map(([k, l, type, auto, required]) => (
-              <label key={k} className={styles.field}>
-                <span className={`t-mono ${styles.fieldLabel}`}>{l.toUpperCase()}</span>
-                <input
-                  value={brief[k]}
-                  onChange={(e) => setBrief({ ...brief, [k]: e.target.value })}
-                  className={styles.input}
-                  type={type}
-                  autoComplete={auto}
-                  required={required}
-                />
-              </label>
+              </div>
             ))}
-            <fieldset className={styles.field} style={{ border: 'none', padding: 0, margin: '0 0 16px' }}>
-              <legend className={`t-mono ${styles.fieldLabel}`} style={{ padding: 0 }}>
-                BUDGET RANGE
-              </legend>
-              <div className={styles.chips}>
-                {BUDGET_RANGES.map((b) => (
-                  <button
-                    type="button"
-                    key={b}
-                    onClick={() => setBrief({ ...brief, budget: b })}
-                    className={`t-mono ${styles.chip} ${brief.budget === b ? styles.chipActive : ''}`}
-                    aria-pressed={brief.budget === b}
-                  >
-                    {b}
-                  </button>
+          </div>
+          <SecLab className={styles.findLab}>/ find us</SecLab>
+          <MapBox url={mapUrl} image={c.map?.image} />
+        </div>
+
+        <div className={styles.right}>
+          <div className={styles.intake}>
+            <SecLab className={styles.intakeLab}>/ brief intake · v02</SecLab>
+            {state === 'sent' ? (
+              <div className={styles.sent} role="status">
+                <div className={styles.sentHead}>
+                  Thank <em>you.</em>
+                </div>
+                <p className={styles.sentNote}>
+                  We'll read it today and reply to {brief.email || 'you'} by {replyBy}.
+                </p>
+              </div>
+            ) : (
+              <form className={styles.form} onSubmit={submit} onFocus={loadCaptcha}>
+                {/* honeypot: off-canvas; bots that fill it get dropped server-side (SPEC V20) */}
+                <input
+                  type="text"
+                  name="website"
+                  value={trap}
+                  onChange={(e) => setTrap(e.target.value)}
+                  className={styles.trap}
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                />
+                {FIELDS.map(([k, label, type, auto, required]) => (
+                  <label key={k} className={styles.fld}>
+                    <span>{label}</span>
+                    <input
+                      type={type}
+                      name={k}
+                      value={brief[k]}
+                      onChange={(e) => setBrief({ ...brief, [k]: e.target.value })}
+                      autoComplete={auto}
+                      required={required}
+                    />
+                  </label>
                 ))}
-              </div>
-            </fieldset>
-            <label className={styles.field}>
-              <span className={`t-mono ${styles.fieldLabel}`}>THE THREE LINES</span>
-              <textarea
-                value={brief.scope}
-                onChange={(e) => setBrief({ ...brief, scope: e.target.value })}
-                rows={5}
-                placeholder="who you are · what you're making · when you need it"
-                className={styles.textarea}
-              />
-            </label>
-            {state === 'error' && (
-              <div className={`t-mono ${styles.error}`} role="alert">
-                ✕ COULDN'T SEND — TRY AGAIN OR{' '}
-                <a href={briefMailto()} className={styles.errorLink}>
-                  EMAIL US DIRECTLY
-                </a>
-              </div>
+                <fieldset className={styles.fld}>
+                  <legend>budget range</legend>
+                  <div className={styles.chips}>
+                    {studio.budgetRanges.map((b) => (
+                      <button
+                        key={b}
+                        type="button"
+                        className={brief.budget === b ? `${styles.chip} ${styles.on}` : styles.chip}
+                        aria-pressed={brief.budget === b}
+                        onClick={() => setBrief({ ...brief, budget: brief.budget === b ? '' : b })}
+                      >
+                        {b}
+                      </button>
+                    ))}
+                  </div>
+                </fieldset>
+                <label className={styles.fld}>
+                  <span>the three lines</span>
+                  <textarea
+                    name="scope"
+                    rows={6}
+                    placeholder="who you are · what you're making · when you need it"
+                    value={brief.scope}
+                    onChange={(e) => setBrief({ ...brief, scope: e.target.value })}
+                  />
+                </label>
+                {state === 'error' && (
+                  <div className={styles.error} role="alert">
+                    ✕ couldn't send — try again or <a href={briefMailto()}>email us directly</a>
+                  </div>
+                )}
+                <Pill wide solid type="submit" disabled={state === 'sending'}>
+                  {state === 'sending' ? '● sending…' : '→ send brief'}
+                </Pill>
+                {RECAPTCHA_KEY && (
+                  // required attribution: the floating badge is hidden, so the notice is inline (C15)
+                  <div className={styles.fine}>
+                    protected by recaptcha ·{' '}
+                    <a href="https://policies.google.com/privacy" target="_blank" rel="noreferrer">
+                      privacy
+                    </a>{' '}
+                    ·{' '}
+                    <a href="https://policies.google.com/terms" target="_blank" rel="noreferrer">
+                      terms
+                    </a>
+                  </div>
+                )}
+              </form>
             )}
-            <button type="submit" className={`t-mono ${styles.submit}`} disabled={state === 'sending'}>
-              {state === 'sending' ? '● SENDING…' : '→ Send Brief'}
-            </button>
-            {RECAPTCHA_KEY && (
-              // required attribution — we hide the floating badge (Google permits
-              // this when the notice is shown inline instead)
-              <p className={`t-mono ${styles.captchaNote}`}>
-                PROTECTED BY RECAPTCHA ·{' '}
-                <a href="https://policies.google.com/privacy" target="_blank" rel="noreferrer">
-                  PRIVACY
-                </a>{' '}
-                ·{' '}
-                <a href="https://policies.google.com/terms" target="_blank" rel="noreferrer">
-                  TERMS
-                </a>
-              </p>
-            )}
-          </form>
-        )}
-      </div>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }
 
-// Click-to-load — no third-party tiles until asked (SPEC V4), dark-filtered
-// into the palette; the Google Maps link rides on the map as an overlay chip.
-function MapEmbed() {
+/**
+ * Prototype .c-map frame. With a static image in studio.json it is the prototype's image
+ * link; without one, the OpenStreetMap embed loads on click (SPEC V4, C22 map call).
+ */
+function MapBox({ url, image }: { url?: string; image?: string }) {
   const [loaded, setLoaded] = useState(false)
+  const label = url && (
+    <a className={styles.lbl} href={url} target="_blank" rel="noreferrer" onClick={() => trackMapClick('map_label')}>
+      open in google maps · lisboa
+    </a>
+  )
+  if (image)
+    return (
+      <a className={styles.map} href={url} target="_blank" rel="noreferrer" onClick={() => trackMapClick('map_image')}>
+        <img className={styles.mapimg} src={image} alt="RnA Studio on the map" loading="lazy" />
+        <span className={styles.lbl}>open in google maps · lisboa</span>
+      </a>
+    )
   return (
     <div className={styles.map}>
       {loaded ? (
-        <iframe
-          src="https://www.openstreetmap.org/export/embed.html?bbox=-9.1494%2C38.7236%2C-9.1374%2C38.7296&layer=mapnik&marker=38.7266%2C-9.1434"
-          title="RnA Studio on the map"
-        />
+        <iframe className={styles.mapimg} src={OSM_EMBED} title="RnA Studio on the map" />
       ) : (
         <button
+          type="button"
+          className={styles.load}
           onClick={() => {
             trackMapLoad()
             setLoaded(true)
           }}
-          className={styles.mapButton}
         >
-          <span className={styles.mapCross} aria-hidden="true">
+          <span className={styles.pin} aria-hidden="true">
             ⌖
           </span>
-          <span className={`t-mono ${styles.mapLabel}`}>LOAD MAP · OPENSTREETMAP</span>
+          <span className={styles.loadLab}>load map · openstreetmap</span>
         </button>
       )}
-      <a href={MAPS_URL} target="_blank" rel="noreferrer" className={`t-mono ${styles.mapsChip}`}>
-        → OPEN IN GOOGLE MAPS
-      </a>
+      {label}
     </div>
   )
 }

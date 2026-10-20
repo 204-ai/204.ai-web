@@ -1,0 +1,8 @@
+/* prototype .sec-lab (contact, colophon, service detail; colour from the legibility pass) */
+.lab {
+  font-family: var(--font-mono);
+  font-size: calc(12 * var(--px));
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--mono-label);
+}

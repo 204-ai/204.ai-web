@@ -6,32 +6,36 @@
 //
 // Reads content/*.json directly (same source the app loads through
 // src/data/studio.ts) — content edits automatically flow into the sitemap
-// and per-route share meta on the next build.
+// and per-route share meta on the next build. Derivations come from
+// src/data/content.ts, which Node imports as TypeScript (type stripping,
+// Node ≥22.18), so slugs and validation match the app exactly.
 
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
+import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { buildContent, describe, isV2, validateContent } from '../src/data/content.ts'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const content = (f) => JSON.parse(readFileSync(join(root, 'content', f), 'utf8'))
 
-/* derivation mirror of src/data/studio.ts — keep in sync */
-const slugify = (t) =>
-  t
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-
-const rawWorks = content('works.json')
-const WORKS = rawWorks.map((w) => ({ ...w, slug: slugify(w.title) }))
-const servicesJson = content('services.json')
-const SERVICES_ALL = [...servicesJson.content, ...servicesJson.interactive].map((s) => ({ ...s, slug: slugify(s.label) }))
-const PEOPLE = content('people.json').map((p) => ({ ...p, slug: slugify(p.name) }))
-const studioJson = content('studio.json')
-// home LCP = the first hero chapter's poster
-const heroWork = WORKS.find((w) => w.slug === studioJson.heroChapters[0])
+const docs = {
+  works: content('works.json'),
+  services: content('services.json'),
+  people: content('people.json'),
+  studio: content('studio.json'),
+  redirects: existsSync(join(root, 'content', 'redirects.json')) ? content('redirects.json') : {},
+}
+if (!isV2(docs.studio)) {
+  console.error('generate-meta: FAIL content/studio.json is not "schema": 2 (v1 content is retired on this branch)')
+  process.exit(1)
+}
+// SPEC V26/C20: broken content fails `npm run build` here (postbuild)
+const problems = validateContent(docs)
+if (problems.length) {
+  console.error(`generate-meta: FAIL content/*.json (SPEC V26/C20):\n  ${problems.join('\n  ')}`)
+  process.exit(1)
+}
+const c = buildContent(docs)
 const dist = join(root, 'dist')
 // e.g. https://204-ai.github.io/204.ai-web — no trailing slash
 const SITE_URL = (process.env.SITE_URL ?? '').replace(/\/$/, '')
@@ -57,54 +61,40 @@ function ogImage(u) {
   return u.replace(/\.(?:png|jpe?g|webp|avif)$/i, '-p-800.jpg')
 }
 
-/** @type {Array<{path: string, title: string, desc: string, image?: string}>} */
+// LCP preloads mirror each page's hero <img> srcset/sizes exactly, or the preload stops
+// matching the picked source and double-downloads (or 404s on a rendition the role lacks)
+const r800 = (u) => u.replace(/\.webp$/, '-p-800.webp')
+const stillPreload = (u, sizes) => u && { href: u, srcset: `${assetUrl(r800(u))} 800w, ${assetUrl(u)} 1920w`, sizes }
+const makerPreload = (u) => u && { href: u, srcset: `${assetUrl(u.replace(/\.webp$/, '-p-320.webp'))} 320w, ${assetUrl(u)} 800w`, sizes: '(max-width: 900px) 100vw, 420px' }
+
+/** @type {Array<{path: string, title: string, desc: string, image?: string, preload?: {href: string, srcset: string, sizes: string}}>} */
 const routes = [
-  {
-    path: '/',
-    title: t(''),
-    preload: heroWork?.media?.still,
-    desc: '204 is a creative technology studio at the intersection of AI, motion, identity and live environments. Based at RnA Studio, Lisbon.',
-  },
-  {
-    path: '/work',
-    title: t('Work'),
-    desc: 'Selected work: interactive installations, immersive mapping, branded and artistic AI film by 204.',
-  },
-  {
-    path: '/services',
-    title: t('Services'),
-    desc: 'Two pillars: AI-powered content creation (branded work, mapping, film, archival) and interactive formats (Magic Mirror, AI Photo Booth, Live Visuals, Augmented Art).',
-  },
-  {
-    path: '/about',
-    title: t('About'),
-    desc: '204 is a creative technology studio led by six makers in Lisbon, working at the intersection of AI, motion, identity and live environments.',
-  },
-  {
-    path: '/contact',
-    title: t('Contact'),
-    desc: 'Send a brief, not a form. Three lines: who you are, what you’re making, when you need it by.',
-  },
-  ...WORKS.map((w) => ({
+  // descriptions: one helper per route type, shared with the pages (describe, src/data/content.ts)
+  { path: '/', title: t(''), desc: describe.home(c), preload: stillPreload(c.heroClips[0]?.poster, '100vw') }, // HeroRotator
+  { path: '/work', title: t('Work'), desc: describe.work(c) },
+  { path: '/services', title: t('Services'), desc: describe.services(c) },
+  { path: '/about', title: t('About'), desc: describe.about(c) },
+  { path: '/contact', title: t('Contact'), desc: describe.contact(c) },
+  ...c.works.map((w) => ({
     path: `/work/${w.slug}`,
     title: t(`${w.title} · Work`),
-    desc: w.note,
+    desc: describe.case(w),
     image: ogImage(w.media?.still),
-    preload: w.media?.still,
+    preload: stillPreload(w.media?.still, '100vw'), // WorkDetail hero
   })),
-  ...SERVICES_ALL.map((s) => ({
+  ...c.services.map((s) => ({
     path: `/services/${s.slug}`,
     title: t(`${s.label} · Service`),
-    desc: s.body,
-    image: ogImage(s.still),
-    preload: s.still,
+    desc: describe.service(s),
+    image: ogImage(s.still ?? s.img),
+    preload: stillPreload(s.still ?? s.img, '(max-width: 1040px) 100vw, 50vw'), // ServiceReel poster
   })),
-  ...PEOPLE.map((p) => ({
+  ...c.people.map((p) => ({
     path: `/makers/${p.slug}`,
     title: t(`${p.name} · Maker`),
-    desc: `${p.name}, ${p.role} at 204 — creative technology studio, Lisbon.`,
+    desc: describe.maker(p),
     image: ogImage(p.photo),
-    preload: p.photo && !p.photo.startsWith('data:') ? p.photo : undefined,
+    preload: p.photo && !p.photo.startsWith('data:') ? makerPreload(p.photo) : undefined, // MakerDetail portrait
   })),
 ]
 
@@ -127,7 +117,7 @@ if (cssLink) {
   const fonts = readdirSync(join(dist, 'assets')).filter(
     (f) =>
       f.endsWith('.woff2') &&
-      /^(archivo-black-latin-400-normal|space-grotesk-latin-400-normal|jetbrains-mono-latin-400-normal)/.test(f),
+      /^(anton-sc-latin-400-normal|poppins-latin-300-normal|cutive-mono-latin-400-normal)/.test(f), // SPEC C18 primary faces
   )
   const preloads = fonts
     .map((f) => `    <link rel="preload" as="font" type="font/woff2" crossorigin href="${assetBase}${f}" />`)
@@ -153,10 +143,8 @@ function metaFor(r) {
     `    <meta name="twitter:image" content="${esc(image)}" />` +
     // LCP: hero media downloads in parallel with the JS bundle instead of
     // being discovered after React mounts
-    // srcset/sizes mirror the MediaStill letterbox img — keep in sync or the
-    // preload stops matching the picked source and double-downloads
     (r.preload
-      ? `\n    <link rel="preload" as="image" href="${esc(assetUrl(r.preload))}" imagesrcset="${esc(`${assetUrl(r.preload).replace(/\.webp$/, '-p-800.webp')} 800w, ${assetUrl(r.preload)} 1920w`)}" imagesizes="(max-width: 900px) 100vw, 62vw" fetchpriority="high" />`
+      ? `\n    <link rel="preload" as="image" href="${esc(assetUrl(r.preload.href))}" imagesrcset="${esc(r.preload.srcset)}" imagesizes="${esc(r.preload.sizes)}" fetchpriority="high" />`
       : '')
   )
 }
@@ -182,6 +170,65 @@ for (const r of routes) {
 
 // 404 fallback keeps the home meta
 writeFileSync(join(dist, '404.html'), render(routes[0]))
+
+/* Retired URLs (SPEC C20, V28): every alias and content/redirects.json entry gets
+   - a static stub for GH Pages: instant meta refresh + canonical to the live page, noindex
+   - a 301 in firebase.json hosting.redirects (generated here, committed; Firebase applies
+     redirects before static files and rewrites)
+   Neither enters the sitemap. */
+const redirects = Object.entries(c.redirects).sort(([a], [b]) => a.localeCompare(b))
+// base-prefixed with a trailing slash: the real file on GH Pages, no extra 301 hop
+const livePath = (p) => (p === '/' ? BASE : `${BASE}${p.slice(1)}/`)
+for (const [from, to] of redirects) {
+  const target = join(dist, from.slice(1), 'index.html')
+  // validateContent already rejects this; checked against the route list so reruns over
+  // the same dist (stubs already written) stay idempotent
+  if (routes.some((r) => r.path === from)) {
+    console.error(`generate-meta: FAIL redirect ${from} would overwrite a live page (SPEC C20)`)
+    process.exit(1)
+  }
+  const href = livePath(to)
+  const canonical = SITE_URL ? `${SITE_URL}${to}` : href
+  mkdirSync(dirname(target), { recursive: true })
+  writeFileSync(
+    target,
+    `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Moved — ${esc(BRAND)}</title>
+<meta name="robots" content="noindex" />
+<link rel="canonical" href="${esc(canonical)}" />
+<meta http-equiv="refresh" content="0; url=${esc(href)}" />
+<script>location.replace(${JSON.stringify(href)} + location.search + location.hash)</script>
+</head>
+<body><p>This page moved to <a href="${esc(href)}">${esc(href)}</a>.</p></body>
+</html>
+`,
+  )
+}
+const fbPath = join(root, 'firebase.json')
+const fb = JSON.parse(readFileSync(fbPath, 'utf8'))
+const reEscape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+const wanted = redirects.map(([from, to]) => ({ regex: `^${reEscape(from)}/?$`, destination: to, type: 301 }))
+if (JSON.stringify(fb.hosting.redirects ?? []) !== JSON.stringify(wanted)) {
+  if (process.env.CI) {
+    console.error('generate-meta: FAIL firebase.json hosting.redirects is stale — run `npm run build` locally and commit firebase.json (SPEC V28)')
+    process.exit(1)
+  }
+  // keep the file's own key order (site, public, …); redirects sit just before rewrites
+  const hosting = {}
+  for (const [k, v] of Object.entries(fb.hosting)) {
+    if (k === 'redirects') continue
+    if (k === 'rewrites') hosting.redirects = wanted
+    hosting[k] = v
+  }
+  if (!('redirects' in hosting)) hosting.redirects = wanted
+  fb.hosting = hosting
+  writeFileSync(fbPath, JSON.stringify(fb, null, 2) + '\n')
+  console.log(`generate-meta: updated firebase.json hosting.redirects (${wanted.length}) — commit it`)
+}
+console.log(`generate-meta: ${redirects.length} redirect stubs + firebase.json 301s (SPEC V28)`)
 
 if (SITE_URL) {
   const sitemap =

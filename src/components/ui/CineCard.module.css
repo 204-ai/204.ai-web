@@ -1,0 +1,142 @@
+/* prototype .cinecard + the .cinegrid variant it is used in */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: calc(24 * var(--px));
+}
+
+.card {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  cursor: pointer;
+  aspect-ratio: 16 / 10;
+  background: var(--ink-95);
+  border: 1px solid var(--line-card);
+}
+
+.img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: var(--ink-90);
+  transition: transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.card:hover .img {
+  transform: scale(1.04);
+}
+
+.scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.15) 35%, rgba(0, 0, 0, 0.55) 72%, rgba(0, 0, 0, 0.92) 100%);
+}
+
+.metaTl,
+.metaTr {
+  position: absolute;
+  top: calc(14 * var(--px));
+  z-index: 2;
+  font-family: var(--font-mono);
+  font-size: calc(11 * var(--px));
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--paper);
+}
+
+.metaTl {
+  left: calc(18 * var(--px));
+  opacity: 0.85;
+}
+
+.metaTr {
+  right: calc(18 * var(--px));
+  opacity: 0.7;
+}
+
+.title {
+  position: absolute;
+  left: calc(24 * var(--px));
+  right: calc(24 * var(--px));
+  bottom: calc(64 * var(--px));
+  z-index: 2;
+  font-family: var(--font-display);
+  font-size: calc(54 * var(--px));
+  line-height: 0.92;
+  text-transform: uppercase;
+  color: var(--paper);
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.6);
+}
+
+.title.poppins {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: calc(36 * var(--px));
+  letter-spacing: -0.005em;
+  text-transform: none;
+}
+
+.sub {
+  position: absolute;
+  left: calc(24 * var(--px));
+  right: calc(24 * var(--px));
+  bottom: calc(24 * var(--px));
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: calc(14 * var(--px));
+  font-family: var(--font-mono);
+  font-size: calc(11 * var(--px));
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--paper);
+  opacity: 0.7;
+}
+
+.arrow {
+  width: calc(36 * var(--px));
+  height: calc(36 * var(--px));
+  border-radius: 50%;
+  border: 1px solid var(--paper);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.25s, background 0.25s, color 0.25s;
+}
+
+.card:hover .arrow {
+  background: var(--paper);
+  color: var(--ink);
+  transform: translateX(4px);
+}
+
+.arrow svg {
+  width: calc(14 * var(--px));
+  height: calc(14 * var(--px));
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.5;
+}
+
+/* prototype: .cinegrid stacks at 1080 */
+@media (max-width: 1080px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .title {
+    font-size: 36px;
+  }
+}
+
+.card:focus-visible {
+  outline-offset: -4px;
+}
