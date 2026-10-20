@@ -1,7 +1,8 @@
 # 204 · NO-CONTENT — site guide for agents
 
-Production site for the 204 creative technology studio (Lisbon). React 19 +
-Vite + TS SPA in the "Cinematic" design (SPEC C16–C18).
+Production site for 204.ai (Dao Llama Labs AG, Zug), the creative technology
+studio working from RnA Studio in Lisbon. React 19 + Vite + TS SPA in the
+"Cinematic" design (SPEC C16–C18).
 `.github/workflows/deploy.yml` deploys Firebase Hosting (primary, canonical:
 https://studio204-web.web.app) and GitHub Pages (secondary:
 https://204-ai.github.io/204.ai-web/). Deploys are MANUAL (Actions tab,
@@ -62,6 +63,12 @@ Recipes:
   `node scripts/media-audit.mjs` must pass afterwards.
 - Facts only: content comes from the studio's real material. Never invent
   clients, dates or claims. Unknown = "—".
+- Entity wording: 204.ai is a brand of Dao Llama Labs AG, Zug; RnA Studio is
+  the studio floor in Lisbon. Write "studio at RnA Studio, Lisbon" or
+  "working from RnA Studio in Lisbon"; never "Lisbon-based studio" or
+  "a Lisbon company". Canonical formats: Magic Mirror, AI Photobooth,
+  Living Paintings (a Magic Mirror variant), Augmented Art, Live Visuals.
+  The client of the Alan Watts work is the Alan Watts Organization.
 
 ## Verify before pushing
 

@@ -233,7 +233,7 @@ const COUNT_WORDS = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven'
 
 /** /about share text with the maker count derived from people.json (useHead and generate-meta, SPEC V10) */
 export const aboutDescription = (makers: number): string =>
-  `204 is a creative technology studio led by ${COUNT_WORDS[makers] ?? makers} makers in Lisbon, working at the intersection of AI, motion, identity and live environments.`
+  `204 is a creative technology studio led by ${COUNT_WORDS[makers] ?? makers} makers at RnA Studio in Lisbon, working at the intersection of AI, motion, identity and live environments.`
 
 /** paragraph copy (`**bold**`, line breaks) as one plain line */
 export const plainText = (s: string): string => s.replace(/\*\*(.+?)\*\*/g, '$1').replace(/\s+/g, ' ').trim()
@@ -260,7 +260,7 @@ export const describe = {
   contact: (c: Content) => excerpt(c.studio.copy.contact.lead),
   case: (w: Work) => excerpt((Array.isArray(w.body) ? w.body[0] : w.body) || w.note),
   service: (s: Service) => excerpt(s.lead),
-  maker: (p: Person) => `${p.name}, ${p.role} at 204 — creative technology studio, Lisbon.`,
+  maker: (p: Person) => `${p.name}, ${p.role} at 204, a creative technology studio working from RnA Studio in Lisbon.`,
 }
 
 /** schema switch: v2 content declares "schema": 2 in studio.json */

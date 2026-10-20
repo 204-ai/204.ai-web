@@ -39,8 +39,8 @@ export function Footer() {
         </div>
       </div>
       <div className={styles.bot}>
-        <div>© {studio.name} / {new Date().getFullYear()} — All rights reserved</div>
-        <div>{'// part of RNA Studio'}</div>
+        <div>© {studio.name}.ai — Dao Llama Labs AG, Zug / {new Date().getFullYear()} — All rights reserved</div>
+        <div>{'// studio at RnA Studio, Lisbon'}</div>
         <div>Site v2 — Cinematic</div>
       </div>
     </footer>

@@ -152,7 +152,7 @@
   },
   {
     "title": "M. K. Čiurlionis — Trail of Angels",
-    "client": "M. K. Čiurlionis",
+    "client": "Oniroco × RnA Studio",
     "practices": [
       "artistic"
     ],
@@ -279,7 +279,7 @@
   },
   {
     "title": "Alan Watts",
-    "client": "Alan Watts Foundation",
+    "client": "Alan Watts Organization",
     "practices": [
       "archival"
     ],
@@ -295,11 +295,11 @@
     "products": "Archival restoration · AI video",
     "body": [
       "In an age where information accelerates beyond comprehension, archives risk becoming static relics — a museum of ideas frozen in time. But what if archives could breathe?",
-      "Restoring archival video and audio from philosopher Alan Watts into a contemporary visual context, in collaboration with the Alan Watts Foundation."
+      "Restoring archival video and audio from philosopher Alan Watts into a contemporary visual context, in collaboration with the Alan Watts Organization."
     ],
     "collab": {
       "label": "In collaboration with",
-      "name": "Alan Watts Foundation"
+      "name": "Alan Watts Organization"
     },
     "youtube": [
       "M585jPAbVKw"
@@ -309,7 +309,14 @@
       "/media/aw-02-c1369b.webp",
       "/media/aw-03-f066f7.webp"
     ],
-    "logo": "/media/logo-alanwatts-b7a6d3.webp"
+    "logo": "/media/logo-alanwatts-b7a6d3.webp",
+    "credits": [
+      {
+        "name": "Jas Black",
+        "role": "Artist",
+        "handle": "@JasBlack"
+      }
+    ]
   },
   {
     "title": "Tkeshii",
@@ -387,7 +394,7 @@
     "place": "Natural History Museum, Lisbon",
     "products": "Interactive installation · live performance · short film",
     "body": [
-      "In collaboration with Barbara Viega we created a custom short film blending AI and real footage that explored the four elements, offering a new perspective on Barbara's journey through nature. Using a variety of AI film creation techniques — including training a video model on Barbara — we crafted a narrative that bridged her body and the natural world through technology.",
+      "In collaboration with Barbara Veiga we created a custom short film blending AI and real footage that explored the four elements, offering a new perspective on Barbara's journey through nature. Using a variety of AI film creation techniques — including training a video model on Barbara — we crafted a narrative that bridged her body and the natural world through technology.",
       "As part of the exhibition opening, 204 presented a site-specific version of the Magic Mirror, trained on the same nature-inspired visuals featured in the video installation. During the live performance, Barbara danced in front of the mirror, her reflection transforming in real time into natural elements: ocean waves, wind textures, forest and fire.",
       "After the performance, guests were invited to step into the mirror themselves — experiencing the transformation firsthand. Each participant became part of the environment, embodying the exhibition's central theme: surrendering to nature."
     ],
@@ -424,7 +431,11 @@
     "date": "2025",
     "place": "KBC Innovation Centre",
     "products": "Magic Mirror · Magic Photo Booth",
-    "body": "Deployed at KBC's innovation centre. Employees were transformed into custom portraits and walked away with branded prints of their alternative selves. Alongside it, a gaming mirror let people surf and choose the path to innovation by leaning left and right, transforming with the Magic Mirror as they went."
+    "body": "Deployed at KBC's innovation centre. Employees were transformed into custom portraits and walked away with branded prints of their alternative selves. Alongside it, a gaming mirror let people surf and choose the path to innovation by leaning left and right, transforming with the Magic Mirror as they went.",
+    "collab": {
+      "label": "Partnered with",
+      "name": "Screenix"
+    }
   },
   {
     "title": "Zeb",
@@ -444,7 +455,7 @@
     "date": "2025 – ongoing",
     "products": "Virtual outfitting · monthly retainer",
     "body": [
-      "An ongoing monthly retainer producing fashion shoots for Zeb's Shop the Look campaigns: 32 looks a month. Given a moodboard for lighting and vibe, plus the models and styled outfits, we generate photoshoots that match their mood for that month. Real clothing, generative photoshoot.",
+      "An ongoing monthly retainer producing fashion shoots for Zeb's Shop the Look campaigns — the first batch alone was 32 looks. Given a moodboard for lighting and vibe, plus the models and styled outfits, we generate photoshoots that match their mood for that month. Real clothing, generative photoshoot.",
       "Consistent style across every output, with models, poses and shots approved by Zeb along the way, and every styled outfit generated true to its detail."
     ],
     "gallery": [
@@ -462,7 +473,11 @@
       "/media/zeb-12-8e3c5b.webp",
       "/media/zeb-13-fa70e4.webp",
       "/media/zeb-14-2cb325.webp"
-    ]
+    ],
+    "collab": {
+      "label": "Partnered with",
+      "name": "Screenix"
+    }
   },
   {
     "title": "Sensoria",
@@ -715,7 +730,11 @@
       "/media/odd-3-79631a.webp",
       "/media/odd-4-1b70d2.webp"
     ],
-    "logo": "/media/logo-oddsgate-231802.webp"
+    "logo": "/media/logo-oddsgate-231802.webp",
+    "collab": {
+      "label": "Partnered with",
+      "name": "MuLabs"
+    }
   },
   {
     "title": "Studio 54b",
@@ -821,7 +840,11 @@
       "/media/yxs-05-be5e11.webp",
       "/media/yxs-06-275fb1.webp"
     ],
-    "logo": "/media/logo-yard-0b4004.webp"
+    "logo": "/media/logo-yard-0b4004.webp",
+    "collab": {
+      "label": "Partnered with",
+      "name": "MuLabs"
+    }
   },
   {
     "title": "Texas Eclipse",
@@ -837,7 +860,7 @@
     "date": "05–09.04.2024",
     "place": "Texas, USA",
     "products": "Dome projection · live visuals",
-    "body": "Eclipses, festivals, big domes, visuals and sound — name a better combination. At Texas Eclipse festival, together with artist Android Jones, we projected large-scale visuals in the impressive dome, allowing viewers to be fully immersed in the visual journey.",
+    "body": "Eclipses, festivals, big domes, visuals and sound — name a better combination. At Texas Eclipse festival, together with artist Android Jones, we projected large-scale visuals in the impressive dome, allowing viewers to be fully immersed in the visual journey. Presented in partnership with Chroma.",
     "collab": {
       "label": "Artist collaboration",
       "name": "Android Jones"
@@ -872,7 +895,7 @@
     "products": "Stage visuals · mapping · live performance",
     "body": [
       "For the Lisbon Insiders Awards, we led the full creative production for the event's visual content. This included the design and animation of the on-stage visuals used throughout the ceremony — from category intros to winner announcements.",
-      "The second part of the night featured a live performance by 204 team member Sofie Heymans, who also created the visuals for her own piece. She collaborated with MuLabs to integrate real-time effects and an avatar system using a Kinect sensor, allowing her movements to generate and manipulate visuals live during the performance. In addition, we handled the full stage and screen build for the event, delivering a complete visual and spatial experience."
+      "The second part of the night featured a live performance by resident artist Sofie Heyman, who also created the visuals for her own piece. She collaborated with MuLabs to integrate real-time effects and an avatar system using a Kinect sensor, allowing her movements to generate and manipulate visuals live during the performance. In addition, we handled the full stage and screen build for the event, delivering a complete visual and spatial experience."
     ],
     "collab": {
       "label": "In collaboration with",
@@ -928,7 +951,11 @@
       "/media/yrd-11-5704eb.webp"
     ],
     "logo": "/media/logo-yard-0b4004.webp",
-    "wide": true
+    "wide": true,
+    "collab": {
+      "label": "Partnered with",
+      "name": "MuLabs"
+    }
   },
   {
     "title": "Vibra",

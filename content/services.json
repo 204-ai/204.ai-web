@@ -171,7 +171,7 @@
         },
         {
           "n": "02",
-          "label": "Living art",
+          "label": "Living Paintings",
           "body": "Participants step inside and animate iconic or branded artworks"
         },
         {
@@ -224,7 +224,7 @@
           "body": "Take-home prints alongside social-ready exports"
         }
       ],
-      "included": "Campaign-aligned prompts · take-home branded souvenir · on-site operator · no app required for guests",
+      "included": "Campaign-aligned prompts · take-home branded souvenir · on-site operator · no app required for guests · runs locally on our own GPU rig — no cloud, no upload, GDPR by architecture",
       "cta": "Bring this to your event",
       "reels": [
         "/media/sd-booth-1-278aa2.mp4"
@@ -239,7 +239,7 @@
       "title": "Augmented\nArt",
       "desc": "Paintings and objects\nthat move when you look",
       "img": "/media/svc-augart-540e1f.webp",
-      "lead": "Living paintings and augmented artworks for museums, galleries and artist collaborations.",
+      "lead": "Animated paintings and augmented artworks for museums, galleries and artist collaborations.",
       "modes": [
         {
           "n": "01",
