@@ -1,123 +1,67 @@
-// Custom dot cursor (Direction A). Active only on precise pointers (SPEC V8):
-// touch devices keep the native cursor and never mount this component.
-
-import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { useMediaQuery } from '../hooks/useMediaQuery'
+import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion'
 import styles from './Cursor.module.css'
 
-interface CursorApi {
-  setLabel: (label: string | null) => void
-}
+const HOT = 'a,button,input,textarea,select,label,[role="button"],[data-cursor="hot"]'
+const IDLE_MS = 2000
 
-const CursorContext = createContext<CursorApi>({ setLabel: () => {} })
-
-// eslint-disable-next-line react-refresh/only-export-components
-export function useCursor() {
-  return useContext(CursorContext)
-}
-
-function useIsFinePointer() {
-  const [fine, setFine] = useState(false)
-  useEffect(() => {
-    const mql = window.matchMedia('(pointer: fine)')
-    setFine(mql.matches)
-    const onChange = (e: MediaQueryListEvent) => setFine(e.matches)
-    mql.addEventListener('change', onChange)
-    return () => mql.removeEventListener('change', onChange)
-  }, [])
-  return fine
-}
-
-export function CursorProvider({ children }: { children: ReactNode }) {
-  const fine = useIsFinePointer()
-  const [label, setLabel] = useState<string | null>(null)
-  const api = useRef<CursorApi>({ setLabel: (l) => setLabel(l) })
-  const setLabelStable = useCallback((l: string | null) => api.current.setLabel(l), [])
-
-  return (
-    <CursorContext.Provider value={{ setLabel: setLabelStable }}>
-      {children}
-      {fine && <CursorDot label={label} />}
-    </CursorContext.Provider>
-  )
-}
-
-type CursorMode = { kind: 'default' | 'ring' | 'label' | 'text'; label?: string }
-
-const INTERACTIVE = 'a, button, [role="button"], select, summary, [data-cursor]'
-
-function CursorDot({ label }: { label: string | null }) {
-  const ref = useRef<HTMLDivElement>(null)
-  const [visible, setVisible] = useState(false)
-  const [mode, setMode] = useState<CursorMode>({ kind: 'default' })
+/**
+ * Prototype CursorDot: a dot glued to the pointer and a ring that eases after it,
+ * shown over interactive elements. Only for precise pointers with motion allowed
+ * (SPEC V8, V24); the easing loop stops 2s after the pointer rests.
+ */
+export function Cursor() {
+  const fine = useMediaQuery('(pointer: fine)')
+  const reduced = usePrefersReducedMotion()
+  const enabled = fine && !reduced
+  const dot = useRef<HTMLDivElement>(null)
+  const ring = useRef<HTMLDivElement>(null)
+  const [on, setOn] = useState(false)
+  const [hot, setHot] = useState(false)
 
   useEffect(() => {
-    document.body.classList.add('custom-cursor')
-    const move = (e: MouseEvent) => {
-      const el = ref.current
-      if (el) el.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`
-      setVisible(true)
+    if (!enabled) return
+    document.body.classList.add('cursor-none')
+    let x = 0
+    let y = 0
+    let rx = 0
+    let ry = 0
+    let raf = 0
+    let lastMove = 0
+    const loop = () => {
+      rx += (x - rx) * 0.18
+      ry += (y - ry) * 0.18
+      if (ring.current) ring.current.style.transform = `translate(${rx}px, ${ry}px)`
+      const settled = Math.abs(x - rx) < 0.1 && Math.abs(y - ry) < 0.1
+      raf = settled && performance.now() - lastMove > IDLE_MS ? 0 : requestAnimationFrame(loop)
     }
-    const leave = () => setVisible(false)
-    // one global reaction for every interactive surface — labelled when the
-    // element (or an ancestor) carries data-cursor, plain ring otherwise
-    const over = (e: MouseEvent) => {
-      const t = e.target as Element | null
-      if (!t || !(t instanceof Element)) return
-      if (t.closest('input, textarea')) {
-        setMode({ kind: 'text' })
-        return
-      }
-      const hit = t.closest(INTERACTIVE)
-      if (!hit) {
-        setMode({ kind: 'default' })
-        return
-      }
-      const labelled = t.closest('[data-cursor]')
-      // a plain link nested inside a labelled surface keeps its own ring
-      if (labelled && (labelled === hit || labelled.contains(hit) === false || hit.contains(labelled))) {
-        const dc = labelled.getAttribute('data-cursor') ?? ''
-        setMode(dc ? { kind: 'label', label: dc } : { kind: 'ring' })
-        return
-      }
-      if (labelled && hit.matches('a, button') && labelled !== hit) {
-        setMode({ kind: 'ring' })
-        return
-      }
-      const dc = labelled?.getAttribute('data-cursor')
-      setMode(dc ? { kind: 'label', label: dc } : { kind: 'ring' })
+    const onMove = (e: PointerEvent) => {
+      x = e.clientX
+      y = e.clientY
+      lastMove = performance.now()
+      if (dot.current) dot.current.style.transform = `translate(${x}px, ${y}px)`
+      setOn(true)
+      setHot(Boolean((e.target as Element | null)?.closest?.(HOT)))
+      if (!raf) raf = requestAnimationFrame(loop)
     }
-    window.addEventListener('mousemove', move)
-    document.addEventListener('mouseover', over)
-    document.documentElement.addEventListener('mouseleave', leave)
+    const onLeave = () => setOn(false)
+    window.addEventListener('pointermove', onMove, { passive: true })
+    document.documentElement.addEventListener('pointerleave', onLeave)
     return () => {
-      document.body.classList.remove('custom-cursor')
-      window.removeEventListener('mousemove', move)
-      document.removeEventListener('mouseover', over)
-      document.documentElement.removeEventListener('mouseleave', leave)
+      window.removeEventListener('pointermove', onMove)
+      document.documentElement.removeEventListener('pointerleave', onLeave)
+      cancelAnimationFrame(raf)
+      document.body.classList.remove('cursor-none')
     }
-  }, [])
+  }, [enabled])
 
-  // context label (legacy API) wins over the auto mode
-  const effective: CursorMode = label ? { kind: 'label', label } : mode
-  const cls =
-    effective.kind === 'label'
-      ? styles.expanded
-      : effective.kind === 'ring'
-        ? styles.ring
-        : effective.kind === 'text'
-          ? styles.text
-          : ''
-
+  if (!enabled) return null
+  const state = `${on ? ` ${styles.on}` : ''}${hot ? ` ${styles.hot}` : ''}`
   return (
-    <div
-      ref={ref}
-      // blend lives on the root: its transform isolates children, so a blend
-      // set on the dot itself would never reach the page behind it
-      className={`${styles.root} ${effective.kind === 'label' ? '' : styles.blendRoot}`}
-      style={{ opacity: visible ? 1 : 0 }}
-      aria-hidden="true"
-    >
-      <div className={`${styles.dot} ${cls}`}>{effective.kind === 'label' ? effective.label : ''}</div>
-    </div>
+    <>
+      <div ref={ring} className={`${styles.ring}${state}`} aria-hidden="true" />
+      <div ref={dot} className={`${styles.dot}${state}`} aria-hidden="true" />
+    </>
   )
 }

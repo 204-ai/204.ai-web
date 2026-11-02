@@ -1,56 +1,94 @@
+// SPEC V6: no horizontal overflow at 360 / 768 / 1280 / 1920 on every route (T63), and no
+// element spilling past the viewport unless a clipping container below <body> holds it
+// (html, body and <main> never count: clipping there would only mask a spill).
+//   npm run build && npm run preview -- --port 4573 &
+//   node scripts/v6-check.mjs            every route in dist (alias stubs skipped)
+//   node scripts/v6-check.mjs --quick    the five top-level pages
+import { readdirSync, readFileSync, statSync } from 'node:fs'
+import { dirname, join, relative } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import puppeteer from 'puppeteer-core'
 
 const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
 const BASE = 'http://localhost:4573'
-const ROUTES = ['/', '/work', '/services', '/about', '/contact']
 const WIDTHS = [360, 768, 1280, 1920]
+const dist = join(dirname(fileURLToPath(import.meta.url)), '..', 'dist')
+
+const routes = []
+const walk = (dir) => {
+  for (const f of readdirSync(dir)) {
+    const p = join(dir, f)
+    if (statSync(p).isDirectory()) {
+      if (f !== 'assets' && f !== 'media') walk(p)
+    } else if (f === 'index.html' && !readFileSync(p, 'utf8').includes('http-equiv="refresh"')) {
+      const r = '/' + relative(dist, dirname(p)).split('\\').join('/')
+      routes.push(r === '/' ? '/' : r)
+    }
+  }
+}
+if (process.argv.includes('--quick')) routes.push('/', '/work', '/services', '/about', '/contact')
+else walk(dist)
+routes.sort((a, b) => a.split('/').length - b.split('/').length || a.localeCompare(b))
 
 const browser = await puppeteer.launch({ executablePath: CHROME, headless: 'new' })
 const page = await browser.newPage()
-
 let fail = 0
 for (const w of WIDTHS) {
   await page.setViewport({ width: w, height: 900 })
-  for (const r of ROUTES) {
-    await page.goto(BASE + r, { waitUntil: 'domcontentloaded', timeout: 60000 })
-    await new Promise((res) => setTimeout(res, 600))
+  for (const r of routes) {
+    await page.goto(BASE + (r === '/' ? '/' : `${r}/`), { waitUntil: 'domcontentloaded', timeout: 60000 })
+    await new Promise((res) => setTimeout(res, 500))
     const res = await page.evaluate(() => {
       const de = document.documentElement
-      const overflowEls = []
+      const clipped = (el) => {
+        // page-level wrappers never count: <main> clips for the entrance animations (B-scrollbar
+        // flash), which would hide any spill exactly like body/html would
+        for (let a = el.parentElement; a && a !== document.body && a !== de && a.tagName !== 'MAIN'; a = a.parentElement) {
+          const x = getComputedStyle(a).overflowX
+          if (x === 'hidden' || x === 'clip' || x === 'auto' || x === 'scroll') return true
+        }
+        return false
+      }
+      const fixed = (el) => {
+        for (let a = el; a; a = a.parentElement) if (getComputedStyle(a).position === 'fixed') return true
+        return false
+      }
+      const spill = []
       for (const el of document.querySelectorAll('body *')) {
         const rect = el.getBoundingClientRect()
-        if (rect.right > window.innerWidth + 1 && rect.width > 4) {
-          const cs = getComputedStyle(el)
-          // ignore elements inside horizontal scroll containers
-          let p = el.parentElement, scrollable = false
-          while (p) {
-            const pcs = getComputedStyle(p)
-            if (pcs.overflowX === 'auto' || pcs.overflowX === 'scroll' || pcs.overflowX === 'hidden') { scrollable = true; break }
-            p = p.parentElement
-          }
-          if (!scrollable) overflowEls.push(`${el.tagName}.${String(el.className).slice(0, 40)} right=${Math.round(rect.right)}`)
-        }
-        void csUnused(el)
+        // fixed layers (grain, nav, lightbox) sit on the viewport and cannot create scroll
+        if (rect.right > window.innerWidth + 1 && rect.width > 4 && !fixed(el) && !clipped(el)) spill.push(`${el.tagName}.${String(el.className).slice(0, 40)} right=${Math.round(rect.right)}`)
       }
-      function csUnused() {}
-      return {
-        title: document.title,
-        scrollW: de.scrollWidth,
-        innerW: window.innerWidth,
-        h1: (() => {
-          const h = document.querySelector('h1')
-          return h ? Math.round(parseFloat(getComputedStyle(h).fontSize)) : null
-        })(),
-        overflowEls: overflowEls.slice(0, 5),
-      }
+      const h = document.querySelector('h1')
+      return { title: document.title, scrollW: de.scrollWidth, innerW: window.innerWidth, h1: h ? Math.round(parseFloat(getComputedStyle(h).fontSize)) : null, spill: spill.slice(0, 5), spills: spill.length }
     })
-    const over = res.scrollW > res.innerW
-    if (over) fail++
-    console.log(
-      `${w}px ${r.padEnd(10)} scrollW=${res.scrollW}/${res.innerW} h1=${res.h1}px ${over ? 'OVERFLOW' : 'ok'} | ${res.title.slice(0, 40)}`,
-    )
-    if (res.overflowEls.length) console.log('   spill:', res.overflowEls.join(' | '))
+    let bad = res.scrollW > res.innerW || res.spills > 0
+    // SPEC V23 font assert (once per route): computed display/body/mono = Anton SC/Poppins/Cutive Mono,
+    // latin-ext faces loaded (Č)
+    if (w === 1280) {
+      const f = await page.evaluate(async () => {
+        await document.fonts.ready
+        const first = (el) => (el ? getComputedStyle(el).fontFamily.split(',')[0].replace(/["']/g, '').trim() : null)
+        const mono = [...document.querySelectorAll('body *')].find((el) => first(el) === 'Cutive Mono' && el.textContent.trim())
+        return {
+          display: first(document.querySelector('h1')),
+          body: first(document.body),
+          mono: Boolean(mono),
+          // latin-ext faces load on demand (unicode-range): ask for Č and expect a self-hosted face
+          loaded: (await Promise.all(['Anton SC', 'Poppins', 'Cutive Mono'].map(async (fam) => (await document.fonts.load(`16px "${fam}"`, 'AČ')).length > 0))).every(Boolean),
+        }
+      })
+      if (f.display !== 'Anton SC' || f.body !== 'Poppins' || !f.mono || !f.loaded) {
+        bad = true
+        console.log(`   fonts: ${JSON.stringify(f)}`)
+      }
+    }
+    if (bad) fail++
+    if (bad || routes.length <= 5) console.log(`${w}px ${r.padEnd(34)} scrollW=${res.scrollW}/${res.innerW} h1=${res.h1}px ${bad ? 'OVERFLOW' : 'ok'} | ${res.title.slice(0, 40)}`)
+    if (res.spill.length) console.log('   spill:', res.spill.join(' | '))
   }
 }
 await browser.close()
+console.log(`v6-check: ${routes.length} routes × ${WIDTHS.length} widths, font assert on each route`)
 console.log(fail ? `FAIL ${fail}` : 'V6_PASS')
+process.exit(fail ? 1 : 0)

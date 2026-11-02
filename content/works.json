@@ -1,389 +1,1216 @@
 [
   {
+    "title": "Motel X",
+    "client": "MOTELX",
+    "practices": [
+      "booth"
+    ],
+    "year": "2026",
+    "note": "Magic Photo Booth",
+    "media": {
+      "still": "/media/feat-motelx-0955fe.webp",
+      "video": {
+        "mp4": "/media/feat-motelx-48007f.mp4"
+      }
+    },
+    "date": "July 2026",
+    "place": "Portugal",
+    "products": "Magic Photo Booth · custom frame design",
+    "body": [
+      "MotelX handed us their brand and theme: HORROR. We crafted custom prompts to bring the festival's identity into a custom memory guests could take home.",
+      "The result, in just 45 minutes: over 140 photos taken and saved digitally, and more than 60 printed on the spot."
+    ],
+    "youtube": [
+      "ft8MAHOdR2U"
+    ],
+    "gallery": [
+      "/media/mx-01-f303d5.webp",
+      "/media/mx-02-470c9c.webp",
+      "/media/mx-03-209648.webp",
+      "/media/mx-04-329432.webp",
+      "/media/mx-05-2a3acc.webp",
+      "/media/mx-06-cbe6f4.webp",
+      "/media/mx-07-3c609b.webp",
+      "/media/mx-08-b7bccf.webp",
+      "/media/mx-09-52b137.webp",
+      "/media/mx-10-e35104.webp",
+      "/media/mx-11-d37fdc.webp"
+    ],
+    "logo": "/media/logo-motelx-7c1cb2.webp"
+  },
+  {
     "title": "Delulu",
     "client": "Sofie Heyman",
-    "cat": "interactive",
+    "practices": [
+      "booth",
+      "visuals",
+      "augart",
+      "mirror"
+    ],
     "year": "2026",
-    "runtime": "—",
-    "note": "Magic Mirror collaboration with artist Sofie Heyman.",
-    "scene": "interior",
+    "note": "Sofie Heyman — photobooth, mirror & augmented art",
     "media": {
-      "still": "/media/anaviotti-delulu-167.webp"
-    }
+      "still": "/media/w-delulu-1bed9d.webp",
+      "focus": "center 22%"
+    },
+    "date": "19.02.2026",
+    "body": [
+      "Within minutes of meeting, Milena had already decided to get Sofie Heyman flying with paint. Luckily, with the help of the talented aerial acrobat Jura Hau, the idea left the ground. Sofie had never worked with aerial silk before. Yet, with Jura's guidance, she found herself suspended in the air, painting while flying. Together, they improvised for the first time — using paint, bodies, movement, silk, and canvas as their medium — exploring gravity and everything in between. Discipline met desire. And then the shoot day arrived.",
+      "Behind the scenes, Milena was exploring another tension: digital versus analog — not as enemies, but as collaborators. At a time when technology is often framed as a replacement for handmade art, this project asks something softer: What if it simply supports it? What if real vision, real emotion, and real authorship still belong to the human hand?",
+      "Experimenting with broken technology, Milena dismantled a MacBook Pro screen and transformed its inner reflective layers into handmade analog filters — creating a literal “delulu” lens. Technology re-entered the physical world not as a machine, but as material. The shoot embraced simplicity: studio lamps, a handmade reflector, intuition. Petra behind the camera. Raquel shaping the light. Giovanni capturing the backstage pulse. Jura guiding the body in air. Milena as creative director and camerawoman, building the team that made flight possible.",
+      "Delulu is not just illusion. It is trust. It is chaos organized by vision. It is teamwork turning an idea into gravity-defying reality. Somewhere between dream and discipline, digital and dust, falling and flying — we found it. And that click is real."
+    ],
+    "credits": [
+      {
+        "name": "Milena Kravetz",
+        "role": "Creative Director",
+        "handle": "@Milena_Kravetz"
+      },
+      {
+        "name": "Sofie Heyman",
+        "role": "Dancer & Artist",
+        "handle": "@sofie_heyman"
+      },
+      {
+        "name": "Jura Hau",
+        "role": "Aerial Acrobat",
+        "handle": "@Jurahau"
+      },
+      {
+        "name": "Petra Fogl",
+        "role": "Photographer",
+        "handle": "@fres_lil_pfoto"
+      },
+      {
+        "name": "Geovanny “Gizmuu”",
+        "role": "Videographer",
+        "handle": "@giz.muu"
+      },
+      {
+        "name": "Raquel Pedroto",
+        "role": "Assistant",
+        "handle": "@Kellyprxasamigxs"
+      }
+    ],
+    "youtube": [
+      "afgaSuKahdQ"
+    ],
+    "gallery": [
+      "/media/del-01-9b9f35.webp",
+      "/media/del-02-ab1eeb.webp",
+      "/media/del-03-98f4d8.webp",
+      "/media/del-04-ea3d8f.webp",
+      "/media/del-05-d05f2f.webp",
+      "/media/del-06-2f8d1b.webp",
+      "/media/del-07-a1609a.webp",
+      "/media/del-08-679d05.webp",
+      "/media/del-09-2e2626.webp",
+      "/media/del-13-8d186e.webp",
+      "/media/del-10-fcfab4.webp",
+      "/media/del-11-d0239e.webp",
+      "/media/del-12-6fa83f.webp"
+    ],
+    "wide": true
   },
   {
     "title": "Stand Virtual",
     "client": "Stand Virtual",
-    "cat": "interactive",
+    "practices": [
+      "booth",
+      "branded"
+    ],
     "year": "2026",
-    "runtime": "—",
-    "note": "Interactive AI installation.",
-    "scene": "cathedral",
+    "note": "Magic Photo Booth & branded campaign",
     "media": {
-      "still": "/media/stand.webp"
-    }
-  },
-  {
-    "title": "Portugal Tech Week",
-    "client": "Portugal Tech Week",
-    "cat": "interactive",
-    "year": "2025",
-    "runtime": "—",
-    "note": "Interactive AI installation for Lisbon’s tech flagship event.",
-    "scene": "cathedral",
-    "media": {
-      "still": "/media/portugaltechweek-img.webp"
-    }
-  },
-  {
-    "title": "Sensoria",
-    "client": "—",
-    "cat": "interactive",
-    "year": "2025",
-    "runtime": "—",
-    "note": "Interactive AI installation.",
-    "scene": "water",
-    "media": {
-      "still": "/media/sensoria-img.webp"
-    }
-  },
-  {
-    "title": "Tkeshii",
-    "client": "—",
-    "cat": "interactive",
-    "year": "2025",
-    "runtime": "—",
-    "note": "Interactive AI installation.",
-    "scene": "desert",
-    "media": {
-      "still": "/media/tkeshi-img.webp"
-    }
-  },
-  {
-    "title": "1N: EEG Mirror",
-    "client": "MuLabs × 204",
-    "cat": "interactive",
-    "year": "2025",
-    "runtime": "—",
-    "note": "Real-time brain activity becomes a living artwork. Neurofeedback-driven Magic Mirror, London.",
-    "scene": "water",
-    "media": {
-      "still": "/media/1nport.webp"
+      "still": "/media/w-standv-30a07c.webp",
+      "video": {
+        "mp4": "/media/hero-standv-70227b.mp4"
+      }
     },
-    "body": "Your mind becomes the exhibit. The Brain Mirror translates real-time brain activity into evolving visual forms — 204 generative technology driven by MuLabs neurofeedback. The installation responds to shifts in attention, focus and mental engagement: as you concentrate, the imagery transforms, turning your internal cognitive state into a living artwork. Shown in London.",
+    "date": "05.02.2026",
+    "place": "Portugal",
+    "products": "Magic Photo Booth · branded campaign film",
+    "body": "For Stand Virtual's conference, themed “Back to the Future”, we created an action-packed opening film featuring cars from different eras racing through the streets of Lisbon, showcased in front of hundreds of people. Set with two side-screen videos matched and tailored to key events in the main video — along with a Magic Photo Booth turning you into the future version of yourself, driving.",
+    "youtube": [
+      "S-ZSEsWukmU"
+    ],
     "gallery": [
-      "/media/dev02179.webp",
-      "/media/screenshot-2026-02-26-at-18-56-16.webp",
-      "/media/screenshot-2026-02-26-at-18-56-07.webp"
-    ]
+      "/media/sv-01-7d45d0.webp",
+      "/media/sv-02-320c62.webp",
+      "/media/sv-03-b5ed64.webp",
+      "/media/sv-04-ce6b48.webp",
+      "/media/sv-05-c980c4.webp",
+      "/media/sv-06-b00bd4.webp",
+      "/media/sv-07-86b320.webp",
+      "/media/sv-08-fb52c5.webp",
+      "/media/sv-09-fb408f.webp",
+      "/media/sv-10-d26cf0.webp",
+      "/media/sv-11-6bf505.webp",
+      "/media/sv-12-b316fb.webp"
+    ],
+    "logo": "/media/logo-standv-w-ee822f.webp"
   },
   {
-    "title": "Viva el Gonzo",
-    "client": "Viva el Gonzo",
-    "cat": "interactive",
-    "year": "2025",
-    "runtime": "—",
-    "note": "Magic Mirror experience on location.",
-    "scene": "desert",
+    "title": "M. K. Čiurlionis — Trail of Angels",
+    "client": "M. K. Čiurlionis",
+    "practices": [
+      "artistic"
+    ],
+    "year": "2026",
+    "note": "Dream Worlds — animation",
     "media": {
-      "still": "/media/vivaelgonzo.webp"
-    }
-  },
-  {
-    "title": "Burst",
-    "client": "Francisco Carolinum, Linz",
-    "cat": "interactive",
-    "year": "2025",
-    "runtime": "—",
-    "note": "Magic Mirror experience trained on the Burst style, shown in Linz.",
-    "scene": "cathedral",
-    "media": {
-      "still": "/media/burst-img.webp"
-    }
-  },
-  {
-    "title": "Rare Effect",
-    "client": "Rare Effect, Arroz Estúdios",
-    "cat": "interactive",
-    "year": "2024",
-    "runtime": "—",
-    "note": "Interactive AI installation at Arroz Estúdios, Lisbon.",
-    "scene": "interior",
-    "media": {
-      "still": "/media/filipa-aure-lio-rare-effect-2025-arroz-estu-dios-069.webp"
-    }
-  },
-  {
-    "title": "Hulaween",
-    "client": "Suwannee Hulaween, Florida",
-    "cat": "interactive",
-    "year": "2024",
-    "runtime": "—",
-    "note": "The Spirit Mirror — festival-goers transformed into the spirits of Spirit Lake.",
-    "scene": "desert",
-    "media": {
-      "still": "/media/hulaupscale.webp"
+      "still": "/media/w-ciurlionis-8e7b81.webp"
     },
-    "body": "Florida’s Hulaween is home to Spirit Lake — a lake with a reputation for being haunted, though nobody quite agrees on what lives inside. That legend became the brief: the Spirit Mirror, a Magic Mirror installation that transforms festival-goers into the spirits we imagine beneath the surface. October 24–27, 2024.",
+    "body": "Dream Worlds is a surreal narrative exploration through the subconscious universe of Lithuania's legendary painter and composer, Mikalojus Konstantinas Čiurlionis. Immersed directly within his iconic Symbolist canvases, the artist wanders across vibrant hills, celestial stairways, radiant sunrises, and primordial beasts, moving endlessly through a landscape woven from dream, myth, and imagination.",
+    "collab": {
+      "label": "Artist collaboration",
+      "name": "Jas Black"
+    },
+    "youtube": [
+      "oy18Wv0HLQI"
+    ],
     "gallery": [
-      "/media/2024-11-22-16-18-15.webp",
-      "/media/2024-11-22-16-18-25.webp",
-      "/media/2024-11-22-16-18-32.webp"
-    ]
-  },
-  {
-    "title": "Vagabond",
-    "client": "Vagabond",
-    "cat": "interactive",
-    "year": "2024",
-    "runtime": "—",
-    "note": "Magic Mirror event installation.",
-    "scene": "interior",
-    "media": {
-      "still": "/media/vagabond-cover.webp"
-    }
-  },
-  {
-    "title": "Studio 54b",
-    "client": "Studio 54b",
-    "cat": "interactive",
-    "year": "2024",
-    "runtime": "—",
-    "note": "Interactive AI installation.",
-    "scene": "cathedral"
-  },
-  {
-    "title": "Oddsgate",
-    "client": "Oddsgate",
-    "cat": "interactive",
-    "year": "2024",
-    "runtime": "—",
-    "note": "Interactive AI installation.",
-    "scene": "water",
-    "media": {
-      "still": "/media/oddsgate-cover.webp"
-    }
+      "/media/ciur-01-60f820.webp",
+      "/media/ciur-02-34f55b.webp",
+      "/media/ciur-03-f3c484.webp",
+      "/media/ciur-04-fceeaf.webp",
+      "/media/ciur-05-4b89fd.webp",
+      "/media/ciur-06-7f46e5.webp",
+      "/media/ciur-07-c0181a.webp",
+      "/media/ciur-08-ae7f2f.webp",
+      "/media/ciur-09-ba5ff4.webp",
+      "/media/ciur-10-142998.webp",
+      "/media/ciur-11-586079.webp"
+    ],
+    "wide": true
   },
   {
     "title": "NFC",
     "client": "—",
-    "cat": "interactive",
-    "year": "2024",
-    "runtime": "—",
-    "note": "Interactive AI installation.",
-    "scene": "desert",
+    "practices": [
+      "mirror",
+      "custom"
+    ],
+    "year": "2026",
+    "note": "MOODSCAPE — immersive environment",
     "media": {
-      "still": "/media/nfc-cover.webp"
-    }
+      "still": "/media/nfc-01-3cfd1c.webp"
+    },
+    "date": "2026",
+    "place": "Unicorn Factory, Lisbon",
+    "products": "Immersive environment · AI installations · VR preview",
+    "body": [
+      "MOODSCAPE was an immersive digital art environment by RnA Studio for NFC Summit 2026. We took over the basement of Unicorn Factory and turned it into a sensory world where AI, digital art, sound, architecture, and human interaction come together — a space to step away from the conference and into something else entirely.",
+      "Visitors didn't just view the work, they moved through it. Interactive AI installations, generative artworks, audiovisual experiences, and community showcases from invited artists and collectives, alongside a preview of Trail of Angels, featuring the work of M. K. Čiurlionis."
+    ],
+    "gallery": [
+      "/media/nfc-01-3cfd1c.webp",
+      "/media/nfc-02-1c9d27.webp",
+      "/media/nfc-03-79d745.webp",
+      "/media/nfc-04-ce5741.webp",
+      "/media/nfc-05-22b440.webp",
+      "/media/nfc-06-b9ad05.webp",
+      "/media/nfc-07-1a8aae.webp",
+      "/media/nfc-08-54f900.webp",
+      "/media/nfc-09-c5b406.webp",
+      "/media/nfc-10-559932.webp",
+      "/media/nfc-11-154fe1.webp",
+      "/media/nfc-12-b5245e.webp",
+      "/media/nfc-13-2e14ef.webp",
+      "/media/nfc-14-a8eadf.webp"
+    ],
+    "logo": "/media/logo-nfc-602094.webp"
   },
   {
-    "title": "Synesthesia",
-    "client": "Magic Mirror",
-    "cat": "interactive",
-    "year": "2024",
-    "runtime": "—",
-    "note": "Audio-reactive Magic Mirror set — sound becomes image in real time.",
-    "scene": "water",
-    "media": {
-      "still": "/media/synesthesia-magicmirror-poster.webp",
-      "video": {
-        "mp4": "/media/synesthesia-magicmirror.mp4"
-      }
-    }
-  },
-  {
-    "title": "Yard Episode",
-    "client": "Yards",
-    "cat": "mapping",
-    "year": "2024",
-    "runtime": "—",
-    "note": "Live visuals and mapping for the Yards episodes.",
-    "scene": "interior",
-    "media": {
-      "still": "/media/yards-episodes-2024-finalvid-poster.webp",
-      "video": {
-        "mp4": "/media/yards-episodes-2024-finalvid.mp4"
-      }
-    }
-  },
-  {
-    "title": "Zuzalu × Grimes",
-    "client": "Zuzalu",
-    "cat": "interactive",
-    "year": "2024",
-    "runtime": "—",
-    "note": "AI installation collaboration staged with Grimes.",
-    "scene": "desert"
-  },
-  {
-    "title": "Texas Eclipse",
-    "client": "Texas Eclipse Festival",
-    "cat": "mapping",
-    "year": "2024",
-    "runtime": "—",
-    "note": "Immersive projection mapping under a total eclipse.",
-    "scene": "desert",
-    "media": {
-      "still": "/media/texas-img.webp"
-    }
-  },
-  {
-    "title": "Lisbon Insiders",
-    "client": "Lisbon Insiders",
-    "cat": "interactive",
-    "year": "2024",
-    "runtime": "—",
-    "note": "Interactive AI installation.",
-    "scene": "cathedral"
-  },
-  {
-    "title": "Wines Around The World",
+    "title": "Clarissa",
     "client": "—",
-    "cat": "interactive",
-    "year": "2023",
-    "runtime": "—",
-    "note": "Interactive AI installation.",
-    "scene": "interior",
+    "practices": [
+      "artistic"
+    ],
+    "year": "2026",
+    "note": "Animation",
     "media": {
-      "still": "/media/winesfromanother.webp"
-    }
+      "still": "/media/cla-thumb-baa6a7.webp",
+      "focus": "50% 32%"
+    },
+    "date": "2026",
+    "products": "Animation · narrative series",
+    "body": [
+      "204 was brought in to bring Clarissa back — the whip-smart, fourth-wall-breaking star of Nickelodeon's Clarissa Explains It All (1991–1994) — and finally give her the format she was built for. The original show's whole gimmick was Clarissa turning to the camera to explain her life straight to the audience; three decades later, we gave her an app to do exactly that, now as a two-way conversation instead of a monologue.",
+      "Talk to Clarissa and she explains her world in her own voice — the mismatched outfits, the bedroom, her running rivalry with her little brother Ferguson, all intact. Visitors can chat with her, dig into her history, and play through games and mysteries built around her universe. She's still working out the kinks — this is presented as her own personal project, in progress, imperfect on purpose."
+    ],
+    "collab": {
+      "label": "In collaboration with",
+      "name": "Mitchell Kriegman"
+    },
+    "gallery": [
+      "/media/cla-01-141f12.webp",
+      "/media/cla-02-05a992.webp",
+      "/media/cla-03-0f24c1.webp",
+      "/media/cla-04-bbf8c5.webp",
+      "/media/cla-05-7b8391.webp"
+    ]
   },
   {
-    "title": "Mazarine",
-    "client": "Auriece Vettier",
-    "cat": "interactive",
-    "year": "2023",
-    "runtime": "—",
-    "note": "Augmented art collaboration with Auriece Vettier.",
-    "scene": "water",
+    "title": "Burst_",
+    "client": "Francisco Carolinum, Linz",
+    "practices": [
+      "mirror",
+      "augart"
+    ],
+    "year": "2025",
+    "note": "The Burst_ Book — Linz Museum",
     "media": {
-      "still": "/media/mazarine-img.webp"
-    }
+      "still": "/media/w-burst-c8ed97.webp"
+    },
+    "date": "04.02.2025",
+    "place": "Austria",
+    "body": "For Burst_'s solo exhibition in Linz Museum, we introduced The Burst_ Book as an interactive art piece. Visitors could write their own prompt — anything from “Batman eating a banana” to their wildest imagined scenes — and watch it come to life, generated in Burst_'s signature style. The model was trained entirely on his body of work, so each co-created image felt like an extension of his visual universe. It was a playful, participatory piece that gave audiences a chance to think like the artist and see their ideas interpreted through his lens.",
+    "gallery": [
+      "/media/burst-01-1794fc.webp",
+      "/media/burst-02-5941dd.webp",
+      "/media/burst-03-53f578.webp",
+      "/media/burst-04-45da14.webp",
+      "/media/burst-05-dd6139.webp",
+      "/media/burst-06-8cede3.webp",
+      "/media/burst-07-7e6a2e.webp",
+      "/media/burst-08-ee999e.webp"
+    ]
+  },
+  {
+    "title": "Alan Watts",
+    "client": "Alan Watts Foundation",
+    "practices": [
+      "archival"
+    ],
+    "year": "2025 – ongoing",
+    "note": "Archival restoration",
+    "media": {
+      "still": "/media/feat-alanwatts-c79fdb.webp",
+      "video": {
+        "mp4": "/media/feat-alanwatts-8d126c.mp4"
+      },
+      "focus": "50% 30%"
+    },
+    "products": "Archival restoration · AI video",
+    "body": [
+      "In an age where information accelerates beyond comprehension, archives risk becoming static relics — a museum of ideas frozen in time. But what if archives could breathe?",
+      "Restoring archival video and audio from philosopher Alan Watts into a contemporary visual context, in collaboration with the Alan Watts Foundation."
+    ],
+    "collab": {
+      "label": "In collaboration with",
+      "name": "Alan Watts Foundation"
+    },
+    "youtube": [
+      "M585jPAbVKw"
+    ],
+    "gallery": [
+      "/media/aw-01-6b25dc.webp",
+      "/media/aw-02-c1369b.webp",
+      "/media/aw-03-f066f7.webp"
+    ],
+    "logo": "/media/logo-alanwatts-b7a6d3.webp"
+  },
+  {
+    "title": "Tkeshii",
+    "client": "—",
+    "practices": [
+      "mirror",
+      "visuals"
+    ],
+    "year": "2025",
+    "note": "Liminal Lens — live band visuals",
+    "media": {
+      "still": "/media/w-tkeshii-af7ba2.webp"
+    },
+    "date": "2025",
+    "place": "Georgia",
+    "body": "At TKESHII, we hosted workshops, DJ sets by our team member CIN, and a series of immersive visual performances. One of the highlights was a live collaborative piece created for a rock band using our Magic Mirror attachment, Liminal Lens, to generate evolving, real-time augmented visuals. The system responded intuitively to the band's presence, blurring the line between performer and projection. The result was an early example of a hybrid band-and-AI visual performance — mysterious, reactive, and unlike anything seen on stage before.",
+    "youtube": [
+      "GUBqvaLPYC8"
+    ],
+    "gallery": [
+      "/media/tke-01-041c83.webp",
+      "/media/tke-02-c1929c.webp",
+      "/media/tke-03-492dd7.webp",
+      "/media/tke-04-9ec398.webp",
+      "/media/tke-05-fc32f0.webp",
+      "/media/tke-06-5f8c13.webp"
+    ],
+    "logo": "/media/logo-tkeshii-b0be0f.webp"
+  },
+  {
+    "title": "Portugal Tech Week",
+    "client": "Portugal Tech Week",
+    "practices": [
+      "mirror",
+      "augart",
+      "custom"
+    ],
+    "year": "2025",
+    "note": "Content, magic mirror & augmented art",
+    "media": {
+      "still": "/media/w-techweek-75ac68.webp"
+    },
+    "date": "2025",
+    "place": "Portugal",
+    "body": "At Portugal Tech Week, we presented a series of installations exploring the evolving relationship between human expression and intelligent systems. Our Magic Mirror appeared as a living, responsive sculpture that reinterpreted each viewer's presence through real-time transformation — shifting from poetic to playful depending on the moment. We exhibited a dual augmented art piece that placed organic creation and AI-generated imagery side by side: one canvas unfolding an artist's gestures as living video, the other revealing an artificial system dreaming in the artist's visual language. Across the space, a dedicated screen showcased our experimental AI content, while an additional AR painting from BURST extended the experience into mixed reality. Together, these works formed a continuum between physical and digital creation, inviting guests to witness how perception, technology, and imagination co-produce new forms of art.",
+    "youtube": [
+      "g4ajBUJtYRg"
+    ],
+    "gallery": [
+      "/media/ptw-01-a079d1.webp",
+      "/media/ptw-02-3f854c.webp",
+      "/media/ptw-03-981880.webp",
+      "/media/ptw-04-de5d18.webp",
+      "/media/ptw-05-d416d1.webp",
+      "/media/ptw-06-3a2033.webp",
+      "/media/ptw-07-60cdad.webp",
+      "/media/ptw-08-030512.webp",
+      "/media/ptw-09-8490a3.webp"
+    ],
+    "logo": "/media/logo-techweek-9b34b3.webp"
+  },
+  {
+    "title": "Surrender to Nature",
+    "client": "—",
+    "practices": [
+      "mirror",
+      "branded"
+    ],
+    "year": "2025",
+    "note": "Magic mirror & content",
+    "media": {
+      "still": "/media/stn-thumb-a7d4f9.webp"
+    },
+    "date": "2025",
+    "place": "Natural History Museum, Lisbon",
+    "products": "Interactive installation · live performance · short film",
+    "body": [
+      "In collaboration with Barbara Viega we created a custom short film blending AI and real footage that explored the four elements, offering a new perspective on Barbara's journey through nature. Using a variety of AI film creation techniques — including training a video model on Barbara — we crafted a narrative that bridged her body and the natural world through technology.",
+      "As part of the exhibition opening, 204 presented a site-specific version of the Magic Mirror, trained on the same nature-inspired visuals featured in the video installation. During the live performance, Barbara danced in front of the mirror, her reflection transforming in real time into natural elements: ocean waves, wind textures, forest and fire.",
+      "After the performance, guests were invited to step into the mirror themselves — experiencing the transformation firsthand. Each participant became part of the environment, embodying the exhibition's central theme: surrendering to nature."
+    ],
+    "collab": {
+      "label": "Artist collaboration",
+      "name": "Barbara Viega"
+    },
+    "youtube": [
+      "bLpDzI_2-_E"
+    ],
+    "gallery": [
+      "/media/stn-01-784c24.webp",
+      "/media/stn-02-1a101d.webp",
+      "/media/stn-03-d6cea2.webp",
+      "/media/stn-04-f00fe0.webp",
+      "/media/stn-05-183234.webp",
+      "/media/stn-06-b188d9.webp",
+      "/media/stn-07-200524.webp"
+    ],
+    "logo": "/media/logo-barbara-7cb5c2.webp"
+  },
+  {
+    "title": "KBC",
+    "client": "KBC",
+    "practices": [
+      "mirror",
+      "booth"
+    ],
+    "year": "2025",
+    "note": "Magic mirror & Magic Photo Booth",
+    "media": {
+      "still": "/media/kbc-thumb-992bc4.webp"
+    },
+    "date": "2025",
+    "place": "KBC Innovation Centre",
+    "products": "Magic Mirror · Magic Photo Booth",
+    "body": "Deployed at KBC's innovation centre. Employees were transformed into custom portraits and walked away with branded prints of their alternative selves. Alongside it, a gaming mirror let people surf and choose the path to innovation by leaning left and right, transforming with the Magic Mirror as they went."
+  },
+  {
+    "title": "Zeb",
+    "client": "Zeb",
+    "practices": [
+      "fashion"
+    ],
+    "year": "2025 – ongoing",
+    "note": "Virtual outfitting — ongoing",
+    "media": {
+      "still": "/media/zeb-thumb2-acedc8.webp",
+      "video": {
+        "mp4": "/media/sd-fashion-1-5603d5.mp4"
+      },
+      "focus": "50% 30%"
+    },
+    "date": "2025 – ongoing",
+    "products": "Virtual outfitting · monthly retainer",
+    "body": [
+      "An ongoing monthly retainer producing fashion shoots for Zeb's Shop the Look campaigns: 32 looks a month. Given a moodboard for lighting and vibe, plus the models and styled outfits, we generate photoshoots that match their mood for that month. Real clothing, generative photoshoot.",
+      "Consistent style across every output, with models, poses and shots approved by Zeb along the way, and every styled outfit generated true to its detail."
+    ],
+    "gallery": [
+      "/media/zeb-01-a73572.webp",
+      "/media/zeb-02-e78898.webp",
+      "/media/zeb-03-4cd250.webp",
+      "/media/zeb-04-bf9b71.webp",
+      "/media/zeb-05-808678.webp",
+      "/media/zeb-06-01fa6b.webp",
+      "/media/zeb-07-b6b10c.webp",
+      "/media/zeb-08-331de9.webp",
+      "/media/zeb-09-cf4bcb.webp",
+      "/media/zeb-10-5cbcf8.webp",
+      "/media/zeb-11-933ab1.webp",
+      "/media/zeb-12-8e3c5b.webp",
+      "/media/zeb-13-fa70e4.webp",
+      "/media/zeb-14-2cb325.webp"
+    ]
+  },
+  {
+    "title": "Sensoria",
+    "client": "—",
+    "practices": [
+      "mirror",
+      "visuals"
+    ],
+    "year": "2025",
+    "note": "Magic mirror, live visuals & mapping",
+    "media": {
+      "still": "/media/w-sensoria-5ea4a2.webp"
+    },
+    "date": "2025",
+    "place": "Northern Portugal",
+    "products": "Festival build · Magic Mirror · live visuals",
+    "body": [
+      "We traveled to the north of Portugal to help build a week-long festival for SensorIA, partnering with them to create daily installations and immersive experiences for their guests. Each day introduced a new performance or visual environment, designed to elevate the atmosphere and deepen audience engagement.",
+      "One of the standout moments was Reggie Watts's special performance night, where we created a live-reactive visual backdrop. Using our Magic Mirror system, we mixed real-time video input of Reggie into evolving, AI-driven visuals that shifted with the energy of his set.",
+      "Another memorable evening featured our music puppets installation for Maz's performance: Dimi controlled the visual content while Val directed the movement, and throughout the show guests stepped into the Lucid Puppets booth to manipulate the visuals themselves — creating a collaborative, ever-changing performance space."
+    ],
+    "collab": {
+      "label": "Featured performance",
+      "name": "Reggie Watts"
+    },
+    "youtube": [
+      "rBPc1U5YHnM"
+    ],
+    "gallery": [
+      "/media/sen-1-334575.webp",
+      "/media/sen-2-b021f8.webp",
+      "/media/sen-3-193434.webp",
+      "/media/sen-4-507548.webp"
+    ],
+    "wide": true
+  },
+  {
+    "title": "Talent in Limbo",
+    "client": "—",
+    "practices": [
+      "artistic"
+    ],
+    "year": "2025",
+    "note": "Animation",
+    "media": {
+      "still": "/media/w-talentinlimbo-20acfc.webp"
+    },
+    "date": "2025",
+    "products": "Animation · narrative short",
+    "body": "A surreal afterlife talent show where the dead return for one final performance. Hosted by Adolf Hitler and judged by Jesus, Satan, Amy Winehouse, and Simon Cowell Bot, the show decides who will pass through the Golden Gates of Heaven, who will burn through Hell's Door, and who must face the mysterious unknown.",
+    "collab": {
+      "label": "Resident artist",
+      "name": "Jas Black"
+    },
+    "youtube": [
+      "oMizuOOh-RY"
+    ],
+    "gallery": [
+      "/media/til-1-b8a2a8.webp",
+      "/media/til-2-70fdf8.webp",
+      "/media/til-3-07a89b.webp",
+      "/media/til-4-885ee3.webp",
+      "/media/til-5-97ab6c.webp",
+      "/media/til-6-e80055.webp"
+    ]
+  },
+  {
+    "title": "1N — EEG Mirror",
+    "client": "MuLabs × 204",
+    "practices": [
+      "mirror"
+    ],
+    "year": "2025",
+    "note": "Neurofeedback mirror",
+    "media": {
+      "still": "/media/eeg-01-cbb1f1.webp"
+    },
+    "place": "London",
+    "products": "Magic Mirror · neurofeedback (MuLabs)",
+    "body": "Your mind becomes the exhibit. The Brain Mirror translates your real-time brain activity into evolving visual forms. Powered by 204.ai generative technology and MuLabs neurofeedback, the installation responds to shifts in attention, focus, and mental engagement. As you concentrate, the imagery transforms, turning your internal cognitive state into a living artwork.",
+    "collab": {
+      "label": "In collaboration with",
+      "name": "MuLabs"
+    },
+    "gallery": [
+      "/media/eeg-01-cbb1f1.webp",
+      "/media/eeg-02-350f1f.webp",
+      "/media/eeg-03-1004e0.webp",
+      "/media/eeg-04-542161.webp"
+    ]
+  },
+  {
+    "title": "Thorneshade",
+    "client": "—",
+    "practices": [
+      "artistic"
+    ],
+    "year": "2025",
+    "note": "Character short film",
+    "media": {
+      "still": "/media/w-thorneshade-9b25d0.webp"
+    },
+    "date": "2025",
+    "products": "Branded campaign · short-form film",
+    "body": "We created a short ad for a hypothetical sunglasses brand called “Thorneshade,” inspired by the energy of raving and the organic beauty of a rose bush. By blending stylized storytelling with captivating, experimental visuals, we set out to pull the viewer into a vibrant world before transitioning into more classic product-driven imagery. The result is a short, film-like ad that not only showcases the allure of Thorneshade but also highlights our creative range and production skills.",
+    "youtube": [
+      "7hSz2VXEsic"
+    ],
+    "gallery": [
+      "/media/thn-01-a246e0.webp",
+      "/media/thn-02-ac1c87.webp",
+      "/media/thn-03-a8ec90.webp",
+      "/media/thn-04-0163cb.webp",
+      "/media/thn-05-73d430.webp",
+      "/media/thn-06-f3ceb7.webp"
+    ]
   },
   {
     "title": "RUBr",
     "client": "Concept condom brand",
-    "cat": "branded",
-    "year": "—",
-    "runtime": "—",
-    "note": "Full brand book, packaging and AI-assisted campaign for a hypothetical condom brand.",
-    "scene": "cathedral",
+    "practices": [
+      "branded"
+    ],
+    "year": "2025",
+    "note": "Branded campaign",
     "media": {
-      "still": "/media/rubr-img.webp"
+      "still": "/media/rub-04-f0af76.webp"
     },
-    "body": "A self-initiated showcase of creative thinking and advertising craft: we designed a hypothetical condom brand end to end — brand book, wrappers and boxes, plus a campaign of posters and films to market it. Our designers built the entire brand; AI helped produce the campaign videos and product imagery. Landmark buildings become subtle, unmistakable reminders of why protection matters.",
+    "date": "2025",
+    "products": "Branded campaign · brand identity · packaging",
+    "body": "In an effort to showcase our creative thinking and advertising skills, we designed a hypothetical condom brand — brand book, condom wrappers and boxes, plus a campaign with posters and videos to market them. AI helped create the campaign videos and product images, but our designer built the entire brand. Using well-known buildings and finding subtle but clear ways of showcasing how one should use protection, we designed a marketing campaign and three example executions to advertise the product.",
     "youtube": [
-      "HerOGLgpefU",
-      "kLC9BqOVwOU"
+      "kLC9BqOVwOU",
+      "HerOGLgpefU"
+    ],
+    "gallery": [
+      "/media/rub-01-8e1c03.webp",
+      "/media/rub-02-dbfd27.webp",
+      "/media/rub-03-6fbc9b.webp",
+      "/media/rub-04-f0af76.webp",
+      "/media/rub-05-93c24d.webp",
+      "/media/rub-06-304eab.webp"
+    ]
+  },
+  {
+    "title": "Rare Effect",
+    "client": "Rare Effect, Arroz Estúdios",
+    "practices": [
+      "augart",
+      "mirror"
+    ],
+    "year": "2024",
+    "note": "Augmented art & magic mirror",
+    "media": {
+      "still": "/media/w-rareeffect-cbb4c7.webp"
+    },
+    "date": "07–15.11.2024",
+    "place": "Portugal",
+    "products": "Magic Mirror with touch features · Augmented art",
+    "body": [
+      "Bare to the Earth.",
+      "In a dim, enclosed space, nature reclaims its ground. Vibrant vines weave through flickering analog TVs, reflecting fragmented images of yourself — alien yet deeply human. Touch a VHS tape to uncover memories of an ancient future, transforming the visuals in real-time. Here, obsolescence comes alive — symbols of the past blend with AI to reveal the quiet strength of nature and the delicate vulnerability of humanity."
+    ],
+    "youtube": [
+      "sDOwyfIroWQ"
+    ],
+    "gallery": [
+      "/media/rare-01-c9b69e.webp",
+      "/media/rare-02-325852.webp",
+      "/media/rare-03-a4d204.webp",
+      "/media/rare-04-dbee95.webp",
+      "/media/rare-05-26cae6.webp",
+      "/media/rare-06-e04372.webp"
+    ],
+    "logo": "/media/logo-rareeffect-9afc9d.webp"
+  },
+  {
+    "title": "Hulaween",
+    "client": "Suwannee Hulaween, Florida",
+    "practices": [
+      "mirror"
+    ],
+    "year": "2024",
+    "note": "Spirit Mirror",
+    "media": {
+      "still": "/media/hul-01-2bf27a.webp"
+    },
+    "date": "24–27.10.2024",
+    "place": "Florida, USA",
+    "products": "Magic Mirror — Spirit Mirror",
+    "body": "Halloween got a whole lot spookier when we got involved. In Florida's famous Hulaween there's a lake named “Spirit Lake” known for being haunted — no one really knows what lives inside. This inspired us to create the Spirit Mirror, where participants can be transformed into the spirits we imagine live within it.",
+    "gallery": [
+      "/media/hul-01-2bf27a.webp",
+      "/media/hul-02-49cb02.webp",
+      "/media/hul-03-aa4dc8.webp",
+      "/media/hul-04-774ef4.webp"
+    ],
+    "logo": "/media/logo-hula-2a4079.webp"
+  },
+  {
+    "title": "Vagabond",
+    "client": "Vagabond",
+    "practices": [
+      "mirror"
+    ],
+    "year": "2024",
+    "note": "Magic touch — plant installation",
+    "media": {
+      "still": "/media/w-vagabond-00979d.webp"
+    },
+    "date": "11.10.2024",
+    "place": "Portugal",
+    "body": "Making memories with plants through our magic touch installation — allowing you to connect with nature and interact with plant creatures, a puppetry show controlled by you, creating sensual visuals on the ceiling of the venue for all to enjoy. Mixed in with music and performance to create this enticing and ever-changing interactive environment. Be sure to catch the next Vagabond event to be truly blown away.",
+    "youtube": [
+      "VVwLu2xbatY"
+    ],
+    "gallery": [
+      "/media/vag-01-6470ff.webp",
+      "/media/vag-02-81fc1d.webp",
+      "/media/vag-03-deb2ef.webp",
+      "/media/vag-04-c1a910.webp",
+      "/media/vag-05-abc602.webp",
+      "/media/vag-06-c91cc6.webp",
+      "/media/vag-07-f87786.webp",
+      "/media/vag-08-59e339.webp",
+      "/media/vag-09-bf4d03.webp"
+    ],
+    "logo": "/media/logo-vagabond-c6eb7f.webp"
+  },
+  {
+    "title": "Oddsgate",
+    "client": "Oddsgate",
+    "practices": [
+      "custom"
+    ],
+    "year": "2024",
+    "note": "Custom content installation",
+    "media": {
+      "still": "/media/w-oddsgate-90db5e.webp"
+    },
+    "date": "24–26.09.2024",
+    "products": "Custom content · neurofeedback installation",
+    "body": "With four emotions and eight possible futures, each journey was shaped by neurofeedback. In this interactive experience, visitors traveled to the year 2050, where their emotional state during peak focus determined the path ahead.",
+    "youtube": [
+      "6fQRxHev1CA"
+    ],
+    "gallery": [
+      "/media/odd-1-89c4f7.webp",
+      "/media/odd-2-367d43.webp",
+      "/media/odd-3-79631a.webp",
+      "/media/odd-4-1b70d2.webp"
+    ],
+    "logo": "/media/logo-oddsgate-231802.webp"
+  },
+  {
+    "title": "Studio 54b",
+    "client": "Studio 54b",
+    "practices": [
+      "mirror"
+    ],
+    "year": "2024",
+    "note": "Magic mirror",
+    "media": {
+      "still": "/media/s54-02-b4b142.webp"
+    },
+    "date": "26.09.2024",
+    "place": "Portugal",
+    "products": "Magic Mirror · live visuals",
+    "body": "We shared a special night of creativity: musicians, dancers, live painters, and AI art all coming together. It was one of those moments where art and people naturally connect, creating something beautiful.",
+    "youtube": [
+      "ogMaeCnbhFw"
+    ],
+    "gallery": [
+      "/media/s54-01-2b9398.webp",
+      "/media/s54-02-b4b142.webp",
+      "/media/s54-03-3323c1.webp",
+      "/media/s54-04-6bdefc.webp",
+      "/media/s54-05-16334e.webp",
+      "/media/s54-06-9bbc80.webp"
+    ],
+    "logo": "/media/logo-studio54b-91fb67.webp"
+  },
+  {
+    "title": "Synesthesia",
+    "client": "—",
+    "practices": [
+      "mirror",
+      "visuals",
+      "augart"
+    ],
+    "year": "2024",
+    "note": "Magic mirror, visuals & installations",
+    "media": {
+      "still": "/media/w-synesthesia-df5572.webp"
+    },
+    "date": "30.08–04.09.2024",
+    "place": "Portugal",
+    "body": "Enter the Coven, where the eye is always watching you. We took over a corner of the festival, transforming it into a magical space filled with interactive installations, mesmerizing visuals, and immersive music. Dance with our AI mirror and transform into anything you imagine. Every installation offered something new to experience, blending art, technology, and sound into a journey that engaged all the senses — as well as our collaboration with other artists, elevating their shows with dance and visuals.",
+    "youtube": [
+      "E6_eQs-4GYQ"
+    ],
+    "gallery": [
+      "/media/syn-01-87b553.webp",
+      "/media/syn-02-f8c7d0.webp",
+      "/media/syn-03-24d326.webp",
+      "/media/syn-04-1a3feb.webp",
+      "/media/syn-05-a4a11c.webp",
+      "/media/syn-06-3e2325.webp",
+      "/media/syn-07-37ed35.webp",
+      "/media/syn-08-33747f.webp",
+      "/media/syn-09-966a5a.webp",
+      "/media/syn-10-dda61d.webp",
+      "/media/syn-11-2ce137.webp",
+      "/media/syn-12-0964d9.webp",
+      "/media/syn-13-a2402b.webp",
+      "/media/syn-14-bec971.webp",
+      "/media/syn-15-c832ea.webp",
+      "/media/syn-16-77d704.webp",
+      "/media/syn-17-d02eb9.webp",
+      "/media/syn-18-fbba02.webp",
+      "/media/syn-19-a0129d.webp",
+      "/media/syn-20-6d28a0.webp",
+      "/media/syn-21-6fb125.webp",
+      "/media/syn-22-76446b.webp",
+      "/media/syn-23-2bd6c3.webp",
+      "/media/syn-24-1135e6.webp",
+      "/media/syn-25-2cdadb.webp",
+      "/media/syn-26-d3f229.webp"
+    ],
+    "logo": "/media/logo-synesthesia-bbad13.webp"
+  },
+  {
+    "title": "Yard × Scenarios",
+    "client": "Yards",
+    "practices": [
+      "immersive",
+      "visuals"
+    ],
+    "year": "2024",
+    "note": "Mapping & live visuals",
+    "media": {
+      "still": "/media/yxs-02-b69b72.webp"
+    },
+    "date": "06.07.2024",
+    "place": "Portugal",
+    "products": "Live visuals · architectural mapping",
+    "body": "Live visuals and mapping for Yard's Episode X Scenarios, projected across the building itself. We drew from nature and Portuguese azulejos, building visuals that blended into the architecture rather than sitting on top of it, turning the surface into atmosphere for the DJ to play in and the crowd to move to.",
+    "youtube": [
+      "2XyokYLtg58"
+    ],
+    "gallery": [
+      "/media/yxs-01-7dd7f6.webp",
+      "/media/yxs-02-b69b72.webp",
+      "/media/yxs-03-b8f522.webp",
+      "/media/yxs-04-d28862.webp",
+      "/media/yxs-05-be5e11.webp",
+      "/media/yxs-06-275fb1.webp"
+    ],
+    "logo": "/media/logo-yard-0b4004.webp"
+  },
+  {
+    "title": "Texas Eclipse",
+    "client": "Texas Eclipse Festival",
+    "practices": [
+      "visuals"
+    ],
+    "year": "2024",
+    "note": "Dome visuals — Android Jones",
+    "media": {
+      "still": "/media/tx-02-8217d5.webp"
+    },
+    "date": "05–09.04.2024",
+    "place": "Texas, USA",
+    "products": "Dome projection · live visuals",
+    "body": "Eclipses, festivals, big domes, visuals and sound — name a better combination. At Texas Eclipse festival, together with artist Android Jones, we projected large-scale visuals in the impressive dome, allowing viewers to be fully immersed in the visual journey.",
+    "collab": {
+      "label": "Artist collaboration",
+      "name": "Android Jones"
+    },
+    "gallery": [
+      "/media/tx-01-fcffe5.webp",
+      "/media/tx-02-8217d5.webp",
+      "/media/tx-03-a9655c.webp",
+      "/media/tx-04-36a410.webp",
+      "/media/tx-05-ccaacb.webp",
+      "/media/tx-06-fa2451.webp",
+      "/media/tx-07-7110c2.webp",
+      "/media/tx-08-8045dd.webp",
+      "/media/tx-09-42914b.webp"
+    ],
+    "logo": "/media/logo-eclipse-0cccb8.webp"
+  },
+  {
+    "title": "Lisbon Insiders",
+    "client": "Lisbon Insiders",
+    "practices": [
+      "visuals",
+      "augart"
+    ],
+    "year": "2024",
+    "note": "Visuals, mapping & augmented art",
+    "media": {
+      "still": "/media/li-thumb-ab123b.webp"
+    },
+    "date": "18.03.2024",
+    "place": "Portugal",
+    "products": "Stage visuals · mapping · live performance",
+    "body": [
+      "For the Lisbon Insiders Awards, we led the full creative production for the event's visual content. This included the design and animation of the on-stage visuals used throughout the ceremony — from category intros to winner announcements.",
+      "The second part of the night featured a live performance by 204 team member Sofie Heymans, who also created the visuals for her own piece. She collaborated with MuLabs to integrate real-time effects and an avatar system using a Kinect sensor, allowing her movements to generate and manipulate visuals live during the performance. In addition, we handled the full stage and screen build for the event, delivering a complete visual and spatial experience."
+    ],
+    "collab": {
+      "label": "In collaboration with",
+      "name": "MuLabs"
+    },
+    "youtube": [
+      "dM1ZIEyZqSo"
+    ],
+    "gallery": [
+      "/media/li-01-b04de5.webp",
+      "/media/li-02-fa2159.webp",
+      "/media/li-03-218fe1.webp",
+      "/media/li-04-87503d.webp",
+      "/media/li-05-734ba0.webp",
+      "/media/li-06-178f6f.webp",
+      "/media/li-07-0af594.webp",
+      "/media/li-08-72f574.webp",
+      "/media/li-09-3dbe38.webp",
+      "/media/li-10-72c0b6.webp",
+      "/media/li-11-8ae67f.webp"
+    ],
+    "logo": "/media/logo-lisbon-faf67c.webp"
+  },
+  {
+    "title": "Yard Episode",
+    "client": "Yards",
+    "practices": [
+      "immersive",
+      "visuals"
+    ],
+    "year": "2024",
+    "note": "Mapping & live visuals",
+    "media": {
+      "still": "/media/yrd-02-a97af2.webp"
+    },
+    "place": "Portugal",
+    "products": "Projection mapping · live visuals",
+    "body": "Dive into Yard Episodes, where we transformed Portugal's cliffs with stunning visuals again. This beach party was elevated by our advanced projection mapping, creating a captivating backdrop of lights and colours. Experience the seamless blend of nature and technology that made this event truly stand out. The theme? Jungle, Tulum vibes — to create the perfect beach feel.",
+    "youtube": [
+      "047k81V54mo"
+    ],
+    "gallery": [
+      "/media/yrd-01-2da24b.webp",
+      "/media/yrd-02-a97af2.webp",
+      "/media/yrd-03-dedc13.webp",
+      "/media/yrd-04-a2a8f6.webp",
+      "/media/yrd-05-d40f9e.webp",
+      "/media/yrd-06-e73977.webp",
+      "/media/yrd-07-059b0b.webp",
+      "/media/yrd-08-789670.webp",
+      "/media/yrd-09-aeba39.webp",
+      "/media/yrd-10-81ad96.webp",
+      "/media/yrd-11-5704eb.webp"
+    ],
+    "logo": "/media/logo-yard-0b4004.webp",
+    "wide": true
+  },
+  {
+    "title": "Vibra",
+    "client": "Vibra",
+    "practices": [
+      "mirror",
+      "augart"
+    ],
+    "year": "2024",
+    "note": "Magic mirror & augmented art",
+    "media": {
+      "still": "/media/vib-06-026c0f.webp"
+    },
+    "date": "2024",
+    "place": "Lisbon, Portugal",
+    "products": "Magic Mirror · augmented art",
+    "body": "At Vibra, we reimagined the Magic Mirror as an immersive entryway into an old warehouse filled with art and sound. A thin layer of tulle fabric was suspended in the space, creating a semi-transparent screen. As people passed through, their movements triggered AI-generated reflections that appeared on and behind the fabric — ghostlike, shifting, alive. The layered mesh allowed multiple reflections to overlap, creating a dreamlike atmosphere. Set against the raw textures of the building, the installation transformed the entrance into a living portal, blurring the line between arrival and transformation.",
+    "gallery": [
+      "/media/vib-01-f9fa0d.webp",
+      "/media/vib-02-6db90d.webp",
+      "/media/vib-03-e28726.webp",
+      "/media/vib-04-0b7146.webp",
+      "/media/vib-05-24d305.webp",
+      "/media/vib-06-026c0f.webp",
+      "/media/vib-07-d05595.webp",
+      "/media/vib-08-2d4a9f.webp",
+      "/media/vib-09-da8bef.webp",
+      "/media/vib-10-0231ec.webp",
+      "/media/vib-11-ceb629.webp"
+    ]
+  },
+  {
+    "title": "Breast Cancer Awareness",
+    "client": "—",
+    "practices": [
+      "artistic"
+    ],
+    "year": "2024",
+    "note": "Awareness animation",
+    "media": {
+      "still": "/media/w-breastcancer-092de1.webp"
+    },
+    "date": "2024",
+    "products": "Animation · awareness film",
+    "body": "We set out to raise awareness for breast cancer through a visual journey of strength, metamorphosis, and embodied resilience. Inspired by a heartfelt poem written by our team member Cecilia, we crafted delicate, symbolic visuals that bring her words to life. Each scene was designed to honour the courage of those affected by breast cancer while creating a gentle, transformative atmosphere that amplifies the poem's message. Together, the imagery and poetry form a short but powerful tribute meant to inspire reflection, support, and hope.",
+    "youtube": [
+      "w0aIaXheewk"
+    ],
+    "gallery": [
+      "/media/bc-01-a690d3.webp",
+      "/media/bc-02-0e80b5.webp",
+      "/media/bc-03-5d61c8.webp",
+      "/media/bc-04-61101f.webp",
+      "/media/bc-05-a7d6e8.webp",
+      "/media/bc-06-c6835d.webp"
+    ]
+  },
+  {
+    "title": "Popular Faces",
+    "client": "—",
+    "practices": [
+      "artistic"
+    ],
+    "year": "2024",
+    "note": "Animation",
+    "media": {
+      "still": "/media/w-popularfaces-2513ac.webp"
+    },
+    "date": "2024",
+    "products": "Animation · music video",
+    "body": "Popular Faces is track three of Egotoxin, the thirteen-track, story-heavy album by Boss Moxi. The album is a fusion of rock, opera, spoken word and experimental jazz based in Yugen City — the fictional world in which the band reside. This world is further explored in the hand-drawn, 118-page graphic novel of the same name, which was born as a result of the music.",
+    "collab": {
+      "label": "Resident artist",
+      "name": "Jas Black"
+    },
+    "youtube": [
+      "LTEb1dN-Gjc"
+    ],
+    "gallery": [
+      "/media/pf-1-2a51f8.webp",
+      "/media/pf-2-39dc2e.webp",
+      "/media/pf-3-169e01.webp",
+      "/media/pf-4-6b4604.webp",
+      "/media/pf-5-7f0eb9.webp",
+      "/media/pf-6-ec9670.webp",
+      "/media/pf-7-04c0da.webp",
+      "/media/pf-8-223b10.webp",
+      "/media/pf-9-c92dc1.webp",
+      "/media/pf-10-b746c1.webp"
+    ]
+  },
+  {
+    "title": "Shower Thoughts",
+    "client": "—",
+    "practices": [
+      "artistic"
+    ],
+    "year": "2024",
+    "note": "Animation",
+    "media": {
+      "still": "/media/w-showerthoughts-d24b2f.webp"
+    },
+    "date": "2024",
+    "products": "Animation · short film",
+    "body": "Shower Thoughts is a short film by our resident artist Jas Black.",
+    "collab": {
+      "label": "Resident artist",
+      "name": "Jas Black"
+    },
+    "youtube": [
+      "A-6-wMJMJgQ"
+    ],
+    "gallery": [
+      "/media/st-1-5294d2.webp",
+      "/media/st-2-b52fcc.webp",
+      "/media/st-3-e37652.webp",
+      "/media/st-4-e7d211.webp",
+      "/media/st-5-66271d.webp",
+      "/media/st-6-3c452a.webp",
+      "/media/st-7-c0b41a.webp",
+      "/media/st-8-9e3e9d.webp"
+    ]
+  },
+  {
+    "title": "Remember",
+    "client": "—",
+    "practices": [
+      "artistic"
+    ],
+    "year": "2024",
+    "note": "Animation",
+    "media": {
+      "still": "/media/w-remember-4fee8b.webp"
+    },
+    "date": "2024",
+    "products": "Animation · short film",
+    "body": "Music video created for the song Remember The Heart by Fine. Augmented with a video synthesiser on an analogue television.",
+    "collab": {
+      "label": "Resident artist",
+      "name": "Jas Black"
+    },
+    "youtube": [
+      "4v44mdTBREE"
+    ],
+    "gallery": [
+      "/media/rem-1-dbb561.webp",
+      "/media/rem-2-33b09f.webp",
+      "/media/rem-3-af0b11.webp",
+      "/media/rem-4-c3611e.webp",
+      "/media/rem-5-4a1363.webp",
+      "/media/rem-6-8defea.webp",
+      "/media/rem-7-933da7.webp",
+      "/media/rem-8-861d55.webp",
+      "/media/rem-9-6915fa.webp",
+      "/media/rem-10-1d2a1c.webp",
+      "/media/rem-11-23084c.webp"
     ]
   },
   {
     "title": "Venom",
     "client": "Concept perfume brand",
-    "cat": "branded",
-    "year": "—",
-    "runtime": "—",
-    "note": "Identity film for a hypothetical perfume — transformation, seduction, embodied desire.",
-    "scene": "water",
+    "practices": [
+      "branded"
+    ],
+    "year": "2024",
+    "note": "Branded — perfume spot",
     "media": {
-      "still": "/media/venom-img.webp"
+      "still": "/media/w-venom-2feced.webp"
     },
-    "body": "A full concept for a hypothetical perfume brand: an identity film crafted entirely from scratch — narrative, visual language and sound design. The piece explores transformation, seduction and embodied desire, using evocative imagery and atmosphere to give the brand its essence.",
+    "date": "2024",
+    "products": "Branded campaign · identity film",
+    "body": "We developed a full concept for a hypothetical perfume brand, crafting an identity film entirely from scratch — complete with narrative, visual language, and sound design. This piece explores themes of transformation, seduction, and embodied desire, using evocative imagery and atmosphere to bring the brand's essence to life.",
     "youtube": [
       "l8mZr3Th5dI"
+    ],
+    "gallery": [
+      "/media/ven-1-d1a4df.webp",
+      "/media/ven-2-60f0c1.webp",
+      "/media/ven-3-685d9c.webp",
+      "/media/ven-4-5606f0.webp",
+      "/media/ven-5-595e52.webp",
+      "/media/ven-6-e27270.webp"
     ]
   },
   {
-    "title": "Remember",
-    "client": "Music video",
-    "cat": "artistic",
-    "year": "—",
-    "runtime": "—",
-    "note": "Artistic AI music video.",
-    "scene": "interior",
-    "media": {
-      "still": "/media/remember-img.webp"
-    }
-  },
-  {
-    "title": "Shower Thoughts",
-    "client": "—",
-    "cat": "artistic",
-    "year": "—",
-    "runtime": "—",
-    "note": "Artistic AI film.",
-    "scene": "desert",
-    "media": {
-      "still": "/media/shower-thoughts-img.webp"
-    }
-  },
-  {
-    "title": "Thorneshade",
-    "client": "—",
-    "cat": "branded",
-    "year": "—",
-    "runtime": "—",
-    "note": "Branded content film.",
-    "scene": "cathedral",
-    "media": {
-      "still": "/media/thorneshade-img.webp"
-    }
-  },
-  {
-    "title": "Surrender to Nature",
-    "client": "—",
-    "cat": "artistic",
-    "year": "—",
-    "runtime": "—",
-    "note": "Artistic film.",
-    "scene": "water"
-  },
-  {
-    "title": "Talent in Limbo",
-    "client": "—",
-    "cat": "artistic",
-    "year": "—",
-    "runtime": "—",
-    "note": "Satirical film.",
-    "scene": "interior",
-    "media": {
-      "still": "/media/talentinlimbo-img.webp"
-    }
-  },
-  {
-    "title": "Popular Faces",
-    "client": "—",
-    "cat": "artistic",
-    "year": "—",
-    "runtime": "—",
-    "note": "Artistic music video.",
-    "scene": "desert",
-    "media": {
-      "still": "/media/popularfaces-img.webp"
-    }
-  },
-  {
-    "title": "Breast Cancer Awareness",
-    "client": "—",
-    "cat": "branded",
-    "year": "—",
-    "runtime": "—",
-    "note": "Branded awareness campaign.",
-    "scene": "interior",
-    "media": {
-      "still": "/media/breastcancer-img.webp"
-    }
-  },
-  {
-    "title": "BIOxyz Coin Launch",
+    "title": "BioXYZ",
     "client": "BIOxyz",
-    "cat": "branded",
-    "year": "—",
-    "runtime": "—",
-    "note": "Branded launch content.",
-    "scene": "cathedral",
+    "practices": [
+      "branded"
+    ],
+    "year": "2024",
+    "note": "Branded campaign",
     "media": {
-      "still": "/media/bioxyz-img.webp"
-    }
+      "still": "/media/w-bioxyz-7135d7.webp"
+    },
+    "aliases": [
+      "bioxyz-coin-launch"
+    ],
+    "date": "2024",
+    "products": "Branded campaign · token launch",
+    "body": "Starting from the brand's own character drawings, we brought them to life through custom animations that stayed true to BioXYZ's identity. The result was a promotional video for their new coin that translated abstract ideas into a vivid story, aligned naturally with BioXYZ's identity.",
+    "youtube": [
+      "yRWp7PHtjIo"
+    ],
+    "gallery": [
+      "/media/bio-1-617b2b.webp",
+      "/media/bio-2-56e5c9.webp",
+      "/media/bio-3-02446f.webp",
+      "/media/bio-4-8672e5.webp",
+      "/media/bio-5-9af628.webp",
+      "/media/bio-6-e31083.webp"
+    ],
+    "logo": "/media/logo-bioxyz-460ab9.webp"
+  },
+  {
+    "title": "Wines From Another World",
+    "client": "—",
+    "practices": [
+      "augart"
+    ],
+    "year": "2023",
+    "note": "Augmented art",
+    "media": {
+      "still": "/media/win-01-e89085.webp"
+    },
+    "aliases": [
+      "wines-around-the-world"
+    ],
+    "date": "31.10.2023",
+    "place": "Portugal",
+    "products": "Augmented art · interactive installation",
+    "body": [
+      "At ‘Wine From Another World’ we infused traditional elements with avant-garde technology, enriching cultural and sensory experiences. The event blended centurial architecture with cutting-edge digital artistry.",
+      "We teamed up with MuLabs to create two interactive installations for the launch of the new wine of Wines From Another World — elevating the wine-tasting experience through innovative technology and compelling narrative."
+    ],
+    "collab": {
+      "label": "Technical collaboration",
+      "name": "MuLabs"
+    },
+    "youtube": [
+      "QO9h-y_I2PY"
+    ],
+    "gallery": [
+      "/media/win-01-e89085.webp",
+      "/media/win-02-323646.webp",
+      "/media/win-03-78312e.webp",
+      "/media/win-04-30653a.webp",
+      "/media/win-05-93eee2.webp",
+      "/media/win-06-a11f45.webp",
+      "/media/win-07-184956.webp"
+    ],
+    "logo": "/media/logo-wines-1459fc.webp"
+  },
+  {
+    "title": "Mazarine",
+    "client": "Aurèce Vettier",
+    "practices": [
+      "augart"
+    ],
+    "year": "2023",
+    "note": "Augmented art — Aurèce Vettier",
+    "media": {
+      "still": "/media/w-mazarine-589574.webp"
+    },
+    "date": "04.02.2023",
+    "place": "Paris, France",
+    "products": "Augmented art · projection mapping",
+    "body": [
+      "Take a classical painting and add an extra edge to bring it to life. Together with Aurèce Vettier we added new layers and brought the painting's story to life. With our special techniques and ComfyUI we are able to bring any painting to life.",
+      "204.no-content and Aurèce Vettier (FR) present “everything takes place as it did not exist (a transfiguration)” — a breakthrough piece where the painting serves as the physical vessel for an imaginative mapping projection. A journey evoking an inflection point in one's life, the passage from one world to another, surrounded by an imaginary but reassuring nature, a four-eyed black cat, and formidable atmospheric phenomena."
+    ],
+    "collab": {
+      "label": "Artist collaboration",
+      "name": "Aurèce Vettier"
+    },
+    "youtube": [
+      "IplS0KR4ERs"
+    ],
+    "gallery": [
+      "/media/maz-01-48d1a7.webp",
+      "/media/maz-02-d35bf2.webp"
+    ],
+    "logo": "/media/logo-obscura-153846.webp"
   }
 ]

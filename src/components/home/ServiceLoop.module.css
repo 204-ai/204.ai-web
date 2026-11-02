@@ -1,0 +1,85 @@
+/* prototype .svc-loop (home variant) */
+.loop {
+  padding: calc(110 * var(--px)) 0 calc(96 * var(--px));
+  background: var(--ink-95);
+  overflow: clip;
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: calc(12 * var(--px));
+  padding: 0 var(--side-pad);
+  margin-bottom: calc(56 * var(--px));
+}
+
+.lab {
+  font-family: var(--font-mono);
+  font-size: calc(12 * var(--px));
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--mono-label);
+}
+
+.head h2 {
+  font-family: var(--font-display);
+  font-size: clamp(38px, 5vw, 72px);
+  line-height: 0.96;
+  text-transform: uppercase;
+  color: var(--paper);
+}
+
+.wrap {
+  overflow: clip;
+  padding: 0 var(--side-pad);
+  -webkit-mask-image: linear-gradient(90deg, transparent, var(--black) 6%, var(--black) 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, var(--black) 6%, var(--black) 94%, transparent);
+}
+
+.track {
+  --tile: calc(290 * var(--px));
+  --gap: calc(16 * var(--px));
+  display: flex;
+  gap: var(--gap);
+  width: max-content;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .track {
+    animation: svcRoll 110s linear infinite;
+  }
+
+  .wrap:hover .track {
+    animation-play-state: paused;
+  }
+}
+
+/* keyboard: the row stops and scrolls, so a focused tile is never clipped out of view */
+.wrap:focus-within {
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.wrap:focus-within .track {
+  animation: none;
+}
+
+/* one full set of tiles per cycle; --n = number of services */
+@keyframes svcRoll {
+  to {
+    transform: translateX(calc(-1 * var(--n) * (var(--tile) + var(--gap))));
+  }
+}
+
+/* tile size in the loop (prototype .svc-tile base 290×420) */
+.loopTile {
+  flex: 0 0 auto;
+  width: var(--tile);
+  height: calc(420 * var(--px));
+}
+
+.foot {
+  display: flex;
+  justify-content: center;
+  margin-top: calc(48 * var(--px));
+}

@@ -1,120 +1,100 @@
 import { Link, useParams } from 'react-router-dom'
-import { MediaStill } from '../components/MediaStill'
+import { ServiceReel } from '../components/service/ServiceReel'
+import { Pill } from '../components/ui/Pill'
+import { Rich } from '../components/ui/Rich'
+import { SecLab } from '../components/ui/SecLab'
+import { describe, type Service } from '../data/content'
+import { CONTENT } from '../data/studio'
 import { useHead } from '../hooks/useHead'
 import { trackCta } from '../lib/analytics'
-import { SERVICES_ALL, SERVICES_INTERACTIVE, WORKS } from '../data/studio'
 import { NotFound } from './NotFound'
 import styles from './ServiceDetail.module.css'
 
+/** /services/:slug — unknown slugs fall through to redirects, then 404. */
 export function ServiceDetail() {
   const { slug } = useParams()
-  const idx = SERVICES_ALL.findIndex((s) => s.slug === slug)
-  const s = SERVICES_ALL[idx]
+  const { services } = CONTENT
+  const i = services.findIndex((s) => s.slug === slug)
+  if (i < 0) return <NotFound />
+  return <ServicePage key={services[i].slug} service={services[i]} index={i} />
+}
 
-  useHead(
-    s ? `${s.label} · Service` : '404',
-    s ? s.body : 'Service not found.',
-    s?.still,
-  )
-
-  if (!s) return <NotFound />
-
-  const pillar = SERVICES_INTERACTIVE.includes(s) ? '.INTERACTIVE' : '.CONTENT'
-  const related = s.relatedCat ? WORKS.filter((w) => w.cat === s.relatedCat).slice(0, 4) : []
-  const prev = SERVICES_ALL[(idx - 1 + SERVICES_ALL.length) % SERVICES_ALL.length]
-  const next = SERVICES_ALL[(idx + 1) % SERVICES_ALL.length]
+/** v2 service detail (prototype ServiceDetail) */
+function ServicePage({ service: s, index: i }: { service: Service; index: number }) {
+  const { services } = CONTENT
+  useHead(`${s.label} · Service`, describe.service(s), s.still ?? s.img)
+  const next = services[(i + 1) % services.length]
+  const nextTitle = next.title.replace(/\n/g, ' ')
 
   return (
-    <div className={styles.root}>
-      <Link to="/services" className={`t-mono ${styles.back}`}>
-        ← SERVICES
-      </Link>
-
-      <div className="t-label" style={{ margin: '18px 0 8px' }}>
-        / {pillar} — {s.n}
-      </div>
-      <h1 className={`t-display ${styles.title}`}>{s.label}</h1>
-
-      {/* media left; selected work in this practice rides beside it,
-          intro + CTA follow underneath */}
-      <div className={styles.top}>
-        <div className={`${styles.hero} anim-media`}>
-          <MediaStill
-            scene={s.scene}
-            media={s.still || s.video ? { still: s.still, video: s.video } : undefined}
-            playing
-            priority
-          />
-        </div>
-        <aside className="anim-fade">
-          {related.length > 0 ? (
-            <>
-              <div className="t-label" style={{ marginBottom: 4 }}>/ SELECTED WORK IN THIS PRACTICE</div>
-              {related.map((w) => (
-                <Link key={w.id} to={`/work/${w.slug}`} className={styles.relatedRow}>
-                  <span className={`t-mono ${styles.relatedCode}`}>{w.code}</span>
-                  <span className={`t-display ${styles.relatedTitle}`}>{w.title}</span>
-                  <span className={`t-mono ${styles.relatedMeta}`}>{w.year}</span>
-                </Link>
-              ))}
-            </>
-          ) : (
-            <>
-              <p className={`t-serif ${styles.intro}`}>{s.intro ?? s.body}</p>
-              <Link to="/contact" className={`t-mono ${styles.cta}`} onClick={() => trackCta('bring_to_event', { service: s.label })}>
-                → BRING THIS TO YOUR EVENT
-              </Link>
-            </>
-          )}
-        </aside>
-      </div>
-
-      {related.length > 0 && (
-        <div className={`${styles.introBlock} anim-fade`}>
-          <p className={`t-serif ${styles.intro}`}>{s.intro ?? s.body}</p>
-          <Link to="/contact" className={`t-mono ${styles.cta}`}>
-            → BRING THIS TO YOUR EVENT
+    <div className="v2">
+      <section className={styles.detail}>
+        <div className={styles.left}>
+          <Link className={styles.back} to="/services">
+            ← services
           </Link>
+          <SecLab className={styles.lab}>
+            / .{s.pillar} — {s.n}
+          </SecLab>
+          <h1 className={styles.title}>
+            <Rich text={s.title} />
+          </h1>
+          <ServiceReel reels={s.reels ?? []} poster={s.still ?? s.img} />
+          <p className={styles.lead}>{s.lead}</p>
+          <Pill to="/contact" onClick={() => trackCta('bring_to_event', { service: s.label })}>
+            → {s.cta}
+          </Pill>
         </div>
-      )}
 
-      {s.modes && (
-        <section className={`${styles.section} anim-fade`}>
-          <div className="t-label" style={{ marginBottom: 4 }}>/ ONE SYSTEM — MULTIPLE MODES</div>
-          {s.modes.map((m) => (
-            <div key={m.n} className={styles.modeRow}>
-              <span className={`t-mono ${styles.modeNum}`}>{m.n}.</span>
-              <span className={`t-display ${styles.modeLabel}`}>{m.label}</span>
-              <span className={styles.modeBody}>{m.body}</span>
-            </div>
-          ))}
-        </section>
-      )}
-
-      {s.features && (
-        <section className={`${styles.section} anim-fade`}>
-          <div className="t-label" style={{ marginBottom: 14 }}>/ FEATURES</div>
-          <div className={styles.features}>
-            {s.features.map((f) => (
-              <div key={f.label} className={styles.feature}>
-                <div className={`t-mono ${styles.featureLabel}`}>{f.label}</div>
-                <div className={styles.featureBody}>{f.body}</div>
+        <div className={styles.right}>
+          <SecLab className={styles.lab}>/ modes in this practice</SecLab>
+          <div className={styles.modes}>
+            {s.modes.map((m) => (
+              <div key={m.n} className={styles.mrow}>
+                <div className={styles.n}>{m.n}</div>
+                <div>
+                  <div className={styles.t}>{m.label}</div>
+                  <div className={styles.d}>{m.body}</div>
+                </div>
               </div>
             ))}
           </div>
-        </section>
-      )}
 
-      <nav className={styles.pager} aria-label="More services">
-        <Link to={`/services/${prev.slug}`} state={{ pager: 'prev' }} className={`${styles.pagerLink} anim-wipe-l`}>
-          <span className={`t-mono ${styles.pagerLabel}`}>← PREV</span>
-          <span className={`t-display ${styles.pagerTitle}`}>{prev.label}</span>
+          <SecLab className={styles.lab}>/ what's included</SecLab>
+          <p className={styles.incl}>{s.included}</p>
+
+          {/* derived from works[].practices (SPEC C19); a service without work hides the block (V26) */}
+          {s.works.length > 0 && (
+            <>
+              <SecLab className={styles.lab}>/ selected work in this practice</SecLab>
+              <div className={styles.works}>
+                {s.works.map((w) => (
+                  <Link key={w.slug} to={`/work/${w.slug}`} className={styles.wrow}>
+                    <span className={styles.code}>{w.code}</span>
+                    <span className={styles.ttl}>{w.title}</span>
+                    <span className={styles.ar} aria-hidden="true">
+                      →
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      </section>
+
+      <section className={styles.next}>
+        <div className={styles.nextLab}>/ next service</div>
+        <Link className={styles.row} to={`/services/${next.slug}`}>
+          <h2>{nextTitle}</h2>
+          <div className={styles.go}>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          </div>
         </Link>
-        <Link to={`/services/${next.slug}`} state={{ pager: 'next' }} className={`${styles.pagerLink} ${styles.pagerRight} anim-wipe-r`}>
-          <span className={`t-mono ${styles.pagerLabel}`}>NEXT →</span>
-          <span className={`t-display ${styles.pagerTitle}`}>{next.label}</span>
-        </Link>
-      </nav>
+        <Pill to={`/services/${next.slug}`}>Next — {nextTitle} →</Pill>
+      </section>
     </div>
   )
 }

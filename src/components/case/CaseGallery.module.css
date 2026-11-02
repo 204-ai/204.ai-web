@@ -1,0 +1,27 @@
+/* prototype .case-gallery */
+.gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px var(--side-pad) calc(40 * var(--px));
+  background: var(--ink);
+}
+
+.cols {
+  display: grid;
+  gap: 8px;
+  align-items: start;
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.g {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--black);
+}

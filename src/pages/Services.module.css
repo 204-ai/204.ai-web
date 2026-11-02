@@ -1,146 +1,79 @@
-.root {
-  padding: 32px 28px 64px;
+/* prototype .svc-page / .svc-pillar (final values incl. the "pillar labels — bigger" pass) */
+.page {
+  padding: calc(150 * var(--px)) 0 calc(110 * var(--px));
+  background: var(--ink);
 }
 
-.title {
-  font-size: clamp(44px, 6.9vw, 92px);
-  color: var(--fg);
-  margin: 0;
+.page h1 {
+  margin-bottom: calc(70 * var(--px));
+  padding: 0 var(--side-pad);
+  font-family: var(--font-display);
+  font-size: clamp(46px, 6.6vw, 110px);
+  line-height: 0.96;
+  text-transform: uppercase;
+  color: var(--paper);
 }
 
-/* pillar section header — label + rule so sections read as chapters,
-   clearly set off from the page title and from the card display type */
-.pillarHead {
+.pillar {
+  margin-bottom: calc(86 * var(--px));
+}
+
+/* an h2 for the outline; looks like the prototype's mono label row */
+.pillarLab {
   display: flex;
-  align-items: center;
-  gap: 18px;
-  margin: 52px 0 14px;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: calc(16 * var(--px));
+  margin-bottom: calc(30 * var(--px));
+  padding: 0 var(--side-pad);
+  font-family: var(--font-mono);
+  font-size: calc(12 * var(--px));
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--mono-label);
 }
 
-.pillarHead .pillarRule,
-.pillarRule {
-  flex: 1;
-  height: 1px;
-  background: var(--hairline);
+.pl {
+  font-family: var(--font-display);
+  font-size: clamp(26px, 3vw, 44px);
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: lowercase;
+  color: var(--paper);
+}
+
+.pd {
+  font-family: var(--font-mono);
+  font-size: calc(13 * var(--px));
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--mono-label);
 }
 
 .grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1px;
-  background: var(--hairline);
+  grid-template-columns: repeat(5, 1fr);
+  gap: calc(16 * var(--px));
+  padding: 0 var(--side-pad);
 }
 
-.card {
-  display: block;
-  background: var(--bg);
-  padding: 32px 28px;
-  position: relative;
-  min-height: 240px;
-  overflow: hidden;
+.tile {
+  width: auto;
+  height: min(46vw, 430px);
 }
 
-.cardMore {
-  display: inline-block;
-  margin-top: 18px;
-  font-size: 10px;
-  letter-spacing: 2px;
-  color: var(--accent-text);
-  transition:
-    opacity 0.2s,
-    transform 0.28s cubic-bezier(0.2, 0.7, 0.3, 1);
-}
+@media (max-width: 1100px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 
-@media (prefers-reduced-motion: no-preference) {
-  .card:hover .cardMore {
-    transform: translateX(5px);
+  .tile {
+    height: 420px;
   }
 }
 
-.cardBg {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  -webkit-mask-image: linear-gradient(to left, #000 0%, #000 20%, rgba(0, 0, 0, 0.65) 45%, transparent 78%);
-  mask-image: linear-gradient(to left, #000 0%, #000 20%, rgba(0, 0, 0, 0.65) 45%, transparent 78%);
-  transition: opacity 0.3s;
-}
-
-.cardBgInner {
-  position: absolute;
-  inset: 0;
-  transition: transform 0.5s ease;
-}
-
-.cardContent {
-  position: relative;
-}
-
-.cardHead {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 28px;
-}
-
-.cardNum {
-  font-size: 11px;
-  color: var(--accent);
-  letter-spacing: 2px;
-}
-
-.cardNext {
-  font-size: 10px;
-  color: var(--dim);
-  letter-spacing: 1.5px;
-}
-
-.cardLabel {
-  font-size: clamp(28px, 3.2vw, 44px);
-  color: var(--fg);
-  margin: 0 0 20px;
-  transition: text-shadow 0.25s;
-}
-
-.cardBody {
-  font-size: clamp(14px, 1.1vw, 17px);
-  color: var(--dim);
-  line-height: 1.55;
-  max-width: 420px;
-  margin: 0;
-}
-
-.footerLink {
-  color: var(--fg);
-  transition: color 0.15s;
-}
-
-.footerLink:hover {
-  color: var(--accent);
-}
-
-.footer {
-  margin-top: 40px;
-  padding: 24px 0;
-  border-top: 1px solid var(--hairline);
-  border-bottom: 1px solid var(--hairline);
-  display: flex;
-  justify-content: space-between;
-  font-size: 11px;
-  color: var(--dim);
-  letter-spacing: 1px;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-@media (max-width: 900px) {
-  .root {
-    padding: 24px 16px 48px;
-  }
-
-  .title {
-    max-width: none;
-  }
-
+@media (max-width: 620px) {
   .grid {
     grid-template-columns: 1fr;
   }

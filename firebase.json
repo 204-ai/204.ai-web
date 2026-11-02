@@ -12,6 +12,53 @@
       "firebase.json",
       "**/.*"
     ],
+    "redirects": [
+      {
+        "regex": "^/services/ai-photo-booth/?$",
+        "destination": "/services/magic-photo-booth",
+        "type": 301
+      },
+      {
+        "regex": "^/services/artistic-style-film/?$",
+        "destination": "/services/animation-film",
+        "type": 301
+      },
+      {
+        "regex": "^/services/branded-work-campaigns/?$",
+        "destination": "/services/branded-campaigns",
+        "type": 301
+      },
+      {
+        "regex": "^/services/digital-archival-preservation/?$",
+        "destination": "/services/archival-preservation",
+        "type": 301
+      },
+      {
+        "regex": "^/services/immersive-mapping/?$",
+        "destination": "/services/vfx-mapping",
+        "type": 301
+      },
+      {
+        "regex": "^/work/bioxyz-coin-launch/?$",
+        "destination": "/work/bioxyz",
+        "type": 301
+      },
+      {
+        "regex": "^/work/viva-el-gonzo/?$",
+        "destination": "/work",
+        "type": 301
+      },
+      {
+        "regex": "^/work/wines-around-the-world/?$",
+        "destination": "/work/wines-from-another-world",
+        "type": 301
+      },
+      {
+        "regex": "^/work/zuzalu-grimes/?$",
+        "destination": "/work",
+        "type": 301
+      }
+    ],
     "rewrites": [
       {
         "source": "**",

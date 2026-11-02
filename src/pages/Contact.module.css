@@ -1,82 +1,187 @@
-.root {
-  padding: 32px 28px 64px;
+/* prototype .contact2 / .c-* / .intake (final values incl. "contact details — Poppins, larger") */
+.contact {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 40px;
+  padding: calc(130 * var(--px)) 0 calc(110 * var(--px));
+  background: var(--ink);
 }
 
-.title {
-  font-size: clamp(48px, 7.8vw, 104px);
-  color: var(--fg);
-  line-height: 0.88;
-  margin: 0;
+.left {
+  padding: 0 calc(60 * var(--px)) 0 var(--side-pad);
 }
 
-.body {
-  margin: 32px 0 0;
-  font-size: clamp(14px, 1.1vw, 17px);
-  color: var(--fg);
-  line-height: 1.7;
-  max-width: 440px;
+.right {
+  padding: 0 var(--side-pad) 0 0;
 }
 
-.info {
-  margin: 40px 0 0;
-  font-size: 12px;
+.lab,
+.intakeLab {
+  margin-bottom: calc(28 * var(--px));
 }
 
-.infoRow {
-  display: grid;
-  grid-template-columns: 110px 1fr;
-  gap: 20px;
-  padding: 6px 0;
+/* h1 keeps the UA bold like the prototype */
+.head {
+  font-family: var(--font-display);
+  font-size: clamp(52px, 7.2vw, 120px);
+  line-height: 0.92;
+  text-transform: uppercase;
+  color: var(--paper);
 }
 
-.infoKey {
-  color: var(--dim);
-  letter-spacing: 1px;
+.head em,
+.sentHead em {
+  font-style: normal;
+  color: transparent;
+  -webkit-text-stroke: 2px var(--signal);
+}
+
+.lead {
+  max-width: 52ch;
+  margin: calc(48 * var(--px)) 0 0;
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: calc(18 * var(--px));
+  line-height: 1.65;
+  color: var(--ink-10);
+}
+
+.lead b {
+  font-weight: 700;
+  color: var(--paper);
+}
+
+.rows {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column;
+  gap: calc(14 * var(--px));
+  margin: calc(56 * var(--px)) 0 calc(76 * var(--px));
 }
 
-.infoIcon {
-  width: 14px;
-  height: 14px;
+.row {
+  display: grid;
+  grid-template-columns: calc(150 * var(--px)) 1fr;
+  gap: calc(18 * var(--px));
+  align-items: baseline;
+}
+
+.k {
+  font-family: var(--font-mono);
+  font-size: calc(12 * var(--px));
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--mono-label);
+}
+
+.v {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: calc(18 * var(--px));
+  line-height: 1.45;
+  letter-spacing: 0;
+  color: var(--paper);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a.v:hover,
+a.v:focus-visible {
+  color: var(--signal);
+}
+
+.findLab {
+  margin-bottom: calc(18 * var(--px));
+}
+
+.map {
+  position: relative;
   display: block;
-  flex: none;
+  height: calc(300 * var(--px));
+  overflow: hidden;
+  border: 1px solid var(--line-field);
+  background: var(--ink-95);
+  text-decoration: none;
 }
 
-.infoIcon svg {
+.mapimg {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  display: block;
+  border: 0;
+  object-fit: cover;
+  object-position: 22% 42%;
+  filter: invert(1) grayscale(1) contrast(0.92) brightness(0.86);
 }
 
-.infoValue {
-  color: var(--fg);
-  margin: 0;
-  overflow-wrap: anywhere;
+.load {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: calc(12 * var(--px));
+  width: 100%;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.2s;
 }
 
-.infoValue a:hover {
-  color: var(--accent);
+.load:hover,
+.load:focus-visible {
+  background: var(--line-faint);
 }
 
-/* ─── form panel ─── */
-.panel {
-  border: 1px solid var(--hairline);
-  padding: 28px;
-  background: rgba(255, 255, 255, 0.02);
-  align-self: start;
+.pin {
+  font-size: calc(18 * var(--px));
+  line-height: 1;
+  color: var(--signal);
 }
 
-.field {
-  display: block;
-  margin-bottom: 16px;
+.loadLab,
+.lbl {
+  font-family: var(--font-mono);
+  font-size: calc(12 * var(--px));
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--mono-label);
 }
 
-/* honeypot — off-canvas, not display:none (bots skip hidden inputs) */
+.lbl {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  padding: calc(14 * var(--px)) calc(18 * var(--px));
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.85));
+  color: var(--paper);
+  text-decoration: none;
+}
+
+a.lbl:hover,
+a.lbl:focus-visible {
+  color: var(--signal);
+}
+
+/* like the prototype, the label keeps its 28px margin and the column gap adds 26px */
+.intake {
+  display: flex;
+  flex-direction: column;
+  gap: calc(26 * var(--px));
+  padding: calc(38 * var(--px)) calc(40 * var(--px)) calc(34 * var(--px));
+  border: 1px solid var(--line-field);
+  background: var(--ink-95);
+}
+
+.form {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: calc(26 * var(--px));
+}
+
+/* honeypot: off-canvas, not display:none (bots skip hidden inputs) */
 .trap {
   position: absolute;
   left: -9999px;
@@ -85,244 +190,167 @@
   overflow: hidden;
 }
 
-.fieldLabel {
-  display: block;
-  font-size: 9px;
-  color: var(--dim);
-  letter-spacing: 2px;
-  margin-bottom: 6px;
+.fld {
+  display: flex;
+  flex-direction: column;
+  gap: calc(12 * var(--px));
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
 }
 
-.input {
-  width: 100%;
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid var(--hairline);
-  color: var(--fg);
-  font-size: 15px;
-  padding: 8px 0;
-  outline: none;
+.fld > span,
+.fld > legend {
+  padding: 0;
+  font-family: var(--font-mono);
+  font-size: calc(12 * var(--px));
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--mono-label);
+}
+
+/* a legend is not a flex item: space it like the label rows */
+.fld > legend {
+  margin-bottom: calc(12 * var(--px));
+}
+
+.fld input {
+  padding: 10px 2px;
+  border: 0;
+  border-bottom: 1px solid var(--line-input);
   border-radius: 0;
+  background: transparent;
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: calc(17 * var(--px));
+  color: var(--paper);
+  outline: none;
+  transition: border-color 0.2s;
 }
 
-.input:focus {
-  border-bottom-color: var(--accent);
+/* the prototype's focus cue (signal border), thickened to 2px so it reads as a focus ring (V25) */
+.fld input:focus {
+  border-bottom-color: var(--signal);
+  box-shadow: 0 1px 0 var(--signal);
+}
+
+.fld textarea {
+  min-height: calc(150 * var(--px));
+  padding: calc(16 * var(--px));
+  border: 1px solid var(--line-input);
+  border-radius: 0;
+  background: transparent;
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: calc(17 * var(--px));
+  line-height: 1.55;
+  color: var(--paper);
+  outline: none;
+  resize: vertical;
+  transition: border-color 0.2s;
+}
+
+.fld textarea:focus {
+  border-color: var(--signal);
+  box-shadow: 0 0 0 1px var(--signal);
+}
+
+.fld textarea::placeholder {
+  color: var(--ink-30);
 }
 
 .chips {
   display: flex;
-  gap: 6px;
   flex-wrap: wrap;
-  margin-top: 8px;
+  gap: calc(10 * var(--px));
 }
 
 .chip {
+  padding: calc(9 * var(--px)) calc(18 * var(--px));
+  border: 1px solid var(--line-chip);
+  border-radius: 999px;
   background: transparent;
-  color: var(--dim);
-  border: 1px solid var(--hairline);
-  font-size: 10px;
-  letter-spacing: 1px;
-  padding: 6px 12px;
+  font-family: var(--font-mono);
+  font-size: calc(12 * var(--px));
+  letter-spacing: 0.12em;
+  color: var(--paper);
   cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
 }
 
-.chipActive {
-  background: var(--fg);
-  color: var(--bg);
-  border-color: var(--fg);
+.chip:hover,
+.chip:focus-visible {
+  border-color: var(--paper);
 }
 
-.textarea {
-  width: 100%;
-  background: transparent;
-  border: 1px solid var(--hairline);
-  color: var(--fg);
-  font-size: 13px;
-  padding: 12px;
-  outline: none;
-  resize: none;
-  border-radius: 0;
-  line-height: 1.5;
-}
-
-.textarea:focus {
-  border-color: var(--accent);
-}
-
-.textarea::placeholder {
-  color: var(--dim);
-}
-
-.submit {
-  width: 100%;
-  background: var(--accent);
-  color: var(--bg);
-  border: none;
-  font-size: 11px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  padding: 14px 0;
-  cursor: pointer;
-  margin-top: 4px;
-}
-
-.submit:hover {
-  filter: brightness(1.1);
-}
-
-.submit:disabled {
-  opacity: 0.6;
-  cursor: default;
-  filter: none;
+.chip.on {
+  border-color: var(--paper);
+  background: var(--paper);
+  color: var(--ink);
 }
 
 .error {
-  font-size: 10px;
-  letter-spacing: 1.5px;
-  color: var(--accent-text);
-  margin: 0 0 12px;
-  line-height: 1.6;
+  font-family: var(--font-mono);
+  font-size: calc(12 * var(--px));
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--paper);
 }
 
-.errorLink {
-  color: var(--fg);
-  text-decoration: underline;
-  text-underline-offset: 3px;
+.error a {
+  color: var(--signal);
 }
 
-.errorLink:hover {
-  color: var(--accent-text);
-}
-
-.captchaNote {
-  margin: 12px 0 0;
-  font-size: 8px;
-  letter-spacing: 1.5px;
-  color: var(--dim);
+.fine {
+  font-family: var(--font-mono);
+  font-size: calc(11 * var(--px));
+  letter-spacing: 0.14em;
   text-align: center;
+  text-transform: uppercase;
+  color: var(--ink-30);
 }
 
-.captchaNote a {
-  text-decoration: underline;
-  text-underline-offset: 2px;
+.fine a {
+  color: var(--ink-10);
 }
 
-.captchaNote a:hover {
-  color: var(--fg);
-}
-
-/* badge hidden — inline notice above stands in for it */
-:global(.grecaptcha-badge) {
-  visibility: hidden;
-}
-
-/* ─── sent state ─── */
 .sent {
-  padding: 60px 0;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: calc(22 * var(--px));
+  padding: calc(24 * var(--px)) 0 calc(12 * var(--px));
 }
 
-.sentBadge {
-  font-size: 11px;
-  color: var(--accent);
-  letter-spacing: 2px;
-  margin-bottom: 12px;
-}
-
-.sentTitle {
-  font-size: 40px;
-  color: var(--fg);
-  margin-bottom: 14px;
+.sentHead {
+  font-family: var(--font-display);
+  font-size: clamp(40px, 4.4vw, 72px);
+  line-height: 0.92;
+  text-transform: uppercase;
+  color: var(--paper);
 }
 
 .sentNote {
-  font-size: 13px;
-  color: var(--dim);
+  max-width: 40ch;
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: calc(17 * var(--px));
+  line-height: 1.6;
+  color: var(--ink-10);
 }
 
-@media (max-width: 900px) {
-  .root {
+@media (max-width: 1040px) {
+  .contact {
     grid-template-columns: 1fr;
-    padding: 24px 16px 48px;
-    gap: 32px;
+    gap: 70px;
   }
-}
 
-/* ─── find us (map) ─── */
-.findUs {
-  margin-top: 32px;
-  max-width: 560px;
-}
+  .left,
+  .right {
+    padding: 0 var(--side-pad);
+  }
 
-.map {
-  position: relative;
-  aspect-ratio: 16 / 9;
-  background: #0f0f0f;
-  border: 1px solid var(--hairline);
-  overflow: hidden;
-}
-
-.map iframe {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border: 0;
-  /* pull the light tiles into the noir palette */
-  filter: invert(0.92) hue-rotate(180deg) grayscale(0.35) contrast(0.9) brightness(0.9);
-}
-
-.mapButton {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  transition: background 0.2s;
-}
-
-.mapButton:hover {
-  background: rgba(255, 255, 255, 0.03);
-}
-
-.mapCross {
-  font-size: 30px;
-  line-height: 1;
-  color: var(--accent-text);
-}
-
-.mapLabel {
-  font-size: 10px;
-  letter-spacing: 2px;
-  color: var(--dim);
-}
-
-/* overlay chip — always visible on top of placeholder AND loaded map */
-.mapsChip {
-  position: absolute;
-  right: 10px;
-  bottom: 10px;
-  z-index: 2;
-  font-size: 10px;
-  letter-spacing: 1.5px;
-  color: var(--fg);
-  background: rgba(10, 10, 10, 0.85);
-  border: 1px solid var(--hairline);
-  padding: 8px 12px;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  transition:
-    color 0.15s,
-    border-color 0.15s;
-}
-
-.mapsChip:hover {
-  color: var(--accent-text);
-  border-color: var(--accent-text);
+  .row {
+    grid-template-columns: 1fr;
+  }
 }

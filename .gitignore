@@ -20,3 +20,10 @@ npm-debug.log*
 # media pipeline originals cache + firebase deploy cache
 media-src/
 .firebase/
+
+# v2 Cinematic prototype drop folder — never committed (SPEC C16/V22).
+# Code lives in design/cinematic/, originals in media-src/cinematic/.
+204-site/
+# local-only link so the prototype serves with its assets (SPEC V23).
+# No trailing slash: git treats a symlink as a file, not a directory.
+design/cinematic/assets

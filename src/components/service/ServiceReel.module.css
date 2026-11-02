@@ -1,0 +1,57 @@
+/* prototype .sd-hero / .sd-hero-reel / .sd-bars */
+.hero {
+  position: relative;
+  height: min(46vw, 460px);
+  overflow: hidden;
+  border-radius: calc(14 * var(--px));
+  background: var(--ink-93);
+}
+
+.media {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bars {
+  position: absolute;
+  left: calc(16 * var(--px));
+  right: calc(16 * var(--px));
+  bottom: calc(14 * var(--px) - 8px);
+  z-index: 2;
+  display: flex;
+  gap: calc(8 * var(--px));
+}
+
+/* 3px bars with a taller hit area */
+.b {
+  flex: 1;
+  padding: 8px 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.track {
+  display: block;
+  height: 3px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--line-bar);
+}
+
+.fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--paper);
+  transform-origin: left;
+  transition: transform 0.2s linear;
+}
+
+.on .fill {
+  background: var(--signal);
+}

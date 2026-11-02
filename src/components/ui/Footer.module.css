@@ -1,0 +1,114 @@
+/* prototype .footer */
+.footer {
+  background: var(--ink-97);
+  color: var(--ink-30);
+  padding: calc(80 * var(--px)) var(--side-pad) calc(36 * var(--px));
+  border-top: 1px solid var(--line-soft);
+  display: flex;
+  flex-direction: column;
+  gap: calc(64 * var(--px));
+}
+
+.top {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: calc(48 * var(--px));
+  align-items: start;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  gap: calc(18 * var(--px));
+}
+
+.brand img {
+  display: block;
+  max-width: 100%;
+  height: calc(56 * var(--px));
+  width: auto;
+  object-fit: contain;
+}
+
+.brand img + p {
+  margin-top: calc(6 * var(--px));
+}
+
+.brand p {
+  font-family: var(--font-mono);
+  font-size: calc(12 * var(--px));
+  line-height: 1.6;
+  max-width: 36ch;
+  color: var(--ink-30);
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: calc(14 * var(--px));
+}
+
+.col h6 {
+  font-family: var(--font-mono);
+  font-size: calc(11 * var(--px));
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-50);
+  margin-bottom: calc(6 * var(--px));
+  font-weight: 400;
+}
+
+.col a {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: calc(14 * var(--px));
+  color: var(--paper);
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.col a:hover {
+  opacity: 1;
+  color: var(--signal);
+}
+
+.col a.studio {
+  font-weight: 500;
+}
+
+.address {
+  font-family: var(--font-mono);
+  font-size: calc(12 * var(--px));
+  line-height: 1.55;
+  color: var(--paper);
+  opacity: 0.6;
+}
+
+.bot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: calc(24 * var(--px));
+  border-top: 1px solid var(--line-soft);
+  padding-top: calc(24 * var(--px));
+  font-family: var(--font-mono);
+  font-size: calc(10 * var(--px));
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-50);
+}
+
+@media (max-width: 1080px) {
+  .top {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+}
+
+@media (max-width: 760px) {
+  .bot {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}

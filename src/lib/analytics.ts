@@ -23,7 +23,16 @@ export function trackPageView(path: string, title: string) {
   })
 }
 
-/* Named interactions. Keep event/param names stable — GA4 reports key on them. */
+/* Named interactions. Keep event/param names stable — GA4 reports key on them.
+   v2 surfaces (SPEC T62):
+   - select_chapter {project}      home hero dots (work title, as v1)
+   - filter_work {category, selection}  /work practice pills (multi-select)
+   - video_open {project, video_id}     case lightbox (work title, as v1)
+   - cta_click {cta, …}            pills into /contact, the closer, the all-work band
+   - social_click {network, person?}   maker links, contact rows, footer socials
+   - map_load / map_click {where}  contact map (OSM on click / Google Maps links)
+   - generate_lead {budget, form}  brief intake
+   reel_play_toggle had its surface in the v1 hero player only. */
 export function trackCta(cta: string, extra?: Record<string, string>) {
   gtag('event', 'cta_click', { cta, ...extra })
 }
@@ -53,6 +62,11 @@ export function trackLead(budget: string) {
   gtag('event', 'generate_lead', { budget: budget || 'unspecified', form: 'brief_intake' })
 }
 
-export function trackWorkFilter(category: string) {
-  gtag('event', 'filter_work', { category })
+/** `category` = the practice toggled (or 'all'); `selection` = what is selected afterwards */
+export function trackWorkFilter(category: string, selection?: string[]) {
+  gtag('event', 'filter_work', { category, ...(selection ? { selection: selection.join(',') || 'all' } : {}) })
+}
+
+export function trackMapClick(where: string) {
+  gtag('event', 'map_click', { where })
 }

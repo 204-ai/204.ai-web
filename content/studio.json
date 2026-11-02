@@ -1,28 +1,185 @@
 {
+  "schema": 2,
   "name": "204",
   "suffix": "NO-CONTENT",
   "tag": "Creative technology studio for image, motion & interaction",
-  "logoUrl": "/media/204white.webp",
+  "logoUrl": "/media/204-white-3445d9.webp",
   "contact": {
-    "email": "Hello@204.ai",
-    "studio": "RnA Studio — R. Ferreira Lapa 12A, 1150-157 Lisboa",
+    "email": "hello@204.ai",
+    "studio": "RnA Studio — R. Ferreira Lapa 12A, 1150-157 Lisboa, Portugal",
     "instagram": "@204nocontent.ai",
     "instagramUrl": "https://www.instagram.com/204nocontent.ai/",
     "linkedin": "204-no-content",
-    "linkedinUrl": "https://www.linkedin.com/company/204-no-content/"
+    "linkedinUrl": "https://www.linkedin.com/company/204-no-content/",
+    "map": {
+      "url": "https://maps.app.goo.gl/j5V4zL4ehRgYzgnL9"
+    }
   },
-  "heroChapters": [
-    "synesthesia",
-    "hulaween",
-    "1n-eeg-mirror",
-    "yard-episode"
+  "heroClips": [
+    {
+      "work": "alan-watts",
+      "clip": "/media/feat-alanwatts-8d126c.mp4",
+      "poster": "/media/feat-alanwatts-c79fdb.webp",
+      "kind": "Archival Restoration",
+      "place": "Alan Watts Foundation"
+    },
+    {
+      "work": "motel-x",
+      "clip": "/media/feat-motelx-48007f.mp4",
+      "poster": "/media/feat-motelx-0955fe.webp",
+      "title": "Motel X — Vinte Anos",
+      "kind": "Magic Photo Booth",
+      "place": "Lisbon"
+    },
+    {
+      "work": "stand-virtual",
+      "clip": "/media/hero-standv-70227b.mp4",
+      "poster": "/media/w-standv-30a07c.webp",
+      "title": "Stand Virtual — Back to the Future",
+      "kind": "Branded Campaign",
+      "place": "Lisbon"
+    },
+    {
+      "work": "delulu",
+      "clip": "/media/reel-delulu-0eb7f9.mp4",
+      "poster": "/media/w-delulu-1bed9d.webp",
+      "title": "Delulu — Sofie Heyman",
+      "kind": "Artist Collaboration",
+      "place": "Lisbon"
+    },
+    {
+      "work": "m-k-ciurlionis-trail-of-angels",
+      "clip": "/media/feat-ciurlionis-5a3485.mp4",
+      "poster": "/media/ciur-10-142998.webp",
+      "kind": "Animation & Film",
+      "place": "Lithuania"
+    },
+    {
+      "work": "yard-episode",
+      "clip": "/media/sd-vfx-2-dc367a.mp4",
+      "poster": "/media/yrd-02-a97af2.webp",
+      "kind": "Mapping & Live Visuals",
+      "place": "Lisbon"
+    }
   ],
-  "workCategories": [
-    "interactive",
-    "mapping",
-    "branded",
-    "artistic"
+  "featured": [
+    {
+      "work": "m-k-ciurlionis-trail-of-angels",
+      "title": "M. K. Čiurlionis\nTrail of Angels",
+      "label": "Animation\n& Film",
+      "poster": "/media/ciur-10-142998.webp",
+      "clip": "/media/feat-ciurlionis-5a3485.mp4",
+      "focus": "50% 30%"
+    },
+    {
+      "work": "motel-x",
+      "title": "Motel X\nVinte Anos",
+      "label": "Magic Photo\nBooth",
+      "poster": "/media/feat-motelx-0955fe.webp",
+      "clip": "/media/feat-motelx-48007f.mp4"
+    },
+    {
+      "work": "alan-watts",
+      "title": "Alan\nWatts",
+      "label": "Archival\nRestoration",
+      "poster": "/media/feat-alanwatts-c79fdb.webp",
+      "clip": "/media/feat-alanwatts-8d126c.mp4",
+      "focus": "50% 30%"
+    }
   ],
+  "allWork": {
+    "title": "Other\nProjects",
+    "label": "Selected\nwork",
+    "client": "Various",
+    "year": "2024–26",
+    "poster": "/media/yrd-02-a97af2.webp",
+    "clip": "/media/feat-other-052b2a.mp4"
+  },
+  "process": [
+    {
+      "n": "01",
+      "label": "Discover",
+      "body": "We learn your goals, tone, and audience."
+    },
+    {
+      "n": "02",
+      "label": "Direct",
+      "body": "Human vision leads; AI assists wherever it helps."
+    },
+    {
+      "n": "03",
+      "label": "Build",
+      "body": "We shoot, generate, or construct — on screen or in the room."
+    },
+    {
+      "n": "04",
+      "label": "Deliver",
+      "body": "Shipped, installed, and refined as your story keeps evolving."
+    }
+  ],
+  "practice": [
+    {
+      "n": "01.",
+      "label": "Experience design",
+      "body": "We understand your audience, objectives, and environment."
+    },
+    {
+      "n": "02.",
+      "label": "System development",
+      "body": "We define the experience mode, visual identity, and technical setup."
+    },
+    {
+      "n": "03.",
+      "label": "Technical production",
+      "body": "We develop the AI models, interaction logic, and visual worlds."
+    },
+    {
+      "n": "04.",
+      "label": "Strategic consulting",
+      "body": "We deploy, calibrate, and ensure seamless on-site performance."
+    }
+  ],
+  "copy": {
+    "home": {
+      "who": "204 is a Lisbon-based creative studio. Every world starts with **human direction** — then becomes a film, a campaign, or something you interact with.",
+      "marquee": "Digital Content · Archival Animation · Magic Mirror · Virtual Outfitting"
+    },
+    "closer": {
+      "label": "// let's chat",
+      "title": "Let's bring your\nstory to life",
+      "cta": "Start your project"
+    },
+    "footer": {
+      "blurb": "A creative studio fusing human intention with AI-driven expression. Cinematic content & immersive worlds, built in Lisbon."
+    },
+    "about": {
+      "lead": "Named after HTTP 204 — a response that returns nothing. A joke about studios that deliver exactly that, and a promise that we won't. 204 is a creative technology studio working at the intersection of AI, motion, identity and live environments — translating **human ideas** into responsive worlds."
+    },
+    "contact": {
+      "lead": "The fastest way to start a conversation is a three-line email: who you are, what you're making, and when you need it by. **We read everything** and reply within two working days."
+    },
+    "portfolio": {
+      "lead": "Reels, campaigns, films, mapping and installations\nshot, generated and shaped in Lisbon.",
+      "closer": {
+        "label": "// closing card",
+        "title": "Got something\nin mind?",
+        "cta": "Start a project"
+      }
+    }
+  },
+  "footer": {
+    "address": "R. Ferreira Lapa 12A\n1150-157 Lisboa\nPortugal",
+    "socials": [
+      {
+        "label": "Instagram",
+        "url": "https://www.instagram.com/204nocontent.ai/"
+      },
+      {
+        "label": "LinkedIn",
+        "url": "https://www.linkedin.com/company/204-no-content/"
+      }
+    ]
+  },
   "budgetRanges": [
     "< 25k",
     "25–75k",
@@ -30,119 +187,127 @@
     "200k+",
     "trade"
   ],
-  "practice": [
-    {
-      "n": "01",
-      "label": "Experience Design",
-      "body": "We understand your audience, objectives, and environment."
-    },
-    {
-      "n": "02",
-      "label": "System Development",
-      "body": "We define the experience mode, visual identity, and technical setup."
-    },
-    {
-      "n": "03",
-      "label": "Technical Production",
-      "body": "We develop the AI models, interaction logic, and visual worlds."
-    },
-    {
-      "n": "04",
-      "label": "Strategic Consulting",
-      "body": "We deploy, calibrate, and ensure seamless on-site performance."
-    }
-  ],
-  "pillarsCount": "02",
   "rnaStudioUrl": "https://www.rna-studio.com/",
   "trustedBy": [
     {
       "name": "Lisbon Insiders",
-      "logo": "/media/lisbon-insiders-logo.webp",
+      "logo": "/media/logo-lisbon-faf67c.webp",
       "url": "/work/lisbon-insiders"
     },
     {
-      "name": "Non Fungible Conference",
-      "logo": "/media/nfc-complete-2-1.webp",
+      "name": "NFC",
+      "logo": "/media/logo-nfc-602094.webp",
       "url": "/work/nfc"
     },
     {
-      "name": "StandVirtual",
-      "logo": "/media/stand.webp",
-      "url": "/work/stand-virtual"
-    },
-    {
-      "name": "Vagabond",
-      "logo": "/media/image01.webp",
-      "url": "/work/vagabond"
-    },
-    {
-      "name": "Alan Watts Organization",
-      "logo": "/media/alanwatts-white-sig-copy.webp"
+      "name": "Wines From Another World",
+      "logo": "/media/logo-wines-1459fc.webp",
+      "url": "/work/wines-from-another-world"
     },
     {
       "name": "YARD",
-      "logo": "/media/yards.webp",
+      "logo": "/media/logo-yard-0b4004.webp",
       "url": "/work/yard-episode"
     },
     {
-      "name": "Texas Eclipse Festival",
-      "logo": "/media/66cd5e76-texas-eclipse-festival-logo.webp",
-      "url": "/work/texas-eclipse"
+      "name": "Alan Watts",
+      "logo": "/media/logo-alanwatts-b7a6d3.webp",
+      "url": "/work/alan-watts"
+    },
+    {
+      "name": "Hulaween",
+      "logo": "/media/logo-hula-2a4079.webp",
+      "url": "/work/hulaween"
+    },
+    {
+      "name": "Vagabond",
+      "logo": "/media/logo-vagabond-c6eb7f.webp",
+      "url": "/work/vagabond"
     },
     {
       "name": "Rare Effect",
-      "logo": "/media/rareeffect-logo.webp",
+      "logo": "/media/logo-rareeffect-9afc9d.webp",
       "url": "/work/rare-effect"
     },
     {
-      "name": "Viva el Gonzo",
-      "logo": "/media/viva-el-gonzo-profile-photo-720x720-transparent-3-30-34-pm-1200x1200-copy.webp",
-      "url": "/work/viva-el-gonzo"
-    },
-    {
-      "name": "KBC",
-      "logo": "/media/kbc-400-9e95b84803.webp"
-    },
-    {
       "name": "Portugal Tech Week",
-      "logo": "/media/logo-1-1.webp",
+      "logo": "/media/logo-techweek-9b34b3.webp",
       "url": "/work/portugal-tech-week"
     },
     {
       "name": "Studio 54b",
-      "logo": "/media/studio54b-logo.webp",
+      "logo": "/media/logo-studio54b-91fb67.webp",
       "url": "/work/studio-54b"
     },
     {
-      "name": "Hulaween",
-      "logo": "/media/dropshadowhulalogo.webp",
-      "url": "/work/hulaween"
+      "name": "BioXYZ",
+      "logo": "/media/logo-bioxyz-460ab9.webp",
+      "url": "/work/bioxyz"
     },
     {
-      "name": "Wines From Another World",
-      "logo": "/media/winesfromanother.webp",
-      "url": "/work/wines-around-the-world"
+      "name": "Quincy Jones",
+      "logo": "/media/logo-quincy-6a4e50.webp"
     },
     {
-      "name": "Tkeshi",
-      "logo": "/media/screenshot-2025-12-02-at-11-49-56.webp",
+      "name": "Obscura",
+      "logo": "/media/logo-obscura-153846.webp",
+      "url": "/work/mazarine"
+    },
+    {
+      "name": "Barbara Veiga",
+      "logo": "/media/logo-barbara-7cb5c2.webp",
+      "url": "/work/surrender-to-nature"
+    },
+    {
+      "name": "MOTELX",
+      "logo": "/media/logo-motelx-7c1cb2.webp",
+      "url": "/work/motel-x"
+    },
+    {
+      "name": "Oddsgate",
+      "logo": "/media/logo-oddsgate-231802.webp",
+      "url": "/work/oddsgate"
+    },
+    {
+      "name": "Standvirtual",
+      "logo": "/media/logo-standv-w-ee822f.webp",
+      "url": "/work/stand-virtual"
+    },
+    {
+      "name": "Synesthesia",
+      "logo": "/media/logo-synesthesia-bbad13.webp",
+      "url": "/work/synesthesia"
+    },
+    {
+      "name": "Tkeshii",
+      "logo": "/media/logo-tkeshii-b0be0f.webp",
       "url": "/work/tkeshii"
+    },
+    {
+      "name": "Texas Eclipse",
+      "logo": "/media/logo-eclipse-0cccb8.webp",
+      "url": "/work/texas-eclipse"
+    },
+    {
+      "name": "KBC",
+      "logo": "/media/kbc-400-9e95b84803.webp",
+      "url": "/work/kbc"
     }
   ],
   "partners": [
     {
       "name": "Screenix",
-      "logo": "/media/image-3.webp",
+      "logo": "/media/logo-screenix-3d8dc8.webp",
       "url": "https://screenix.io/"
     },
     {
-      "name": "TASTE",
-      "logo": "/media/taste-full-logo-filled-white-pink-4x-1.webp",
+      "name": "Taste Labs",
+      "logo": "/media/logo-taste-503614.webp",
       "url": "https://tastelabs.ai/"
     },
     {
-      "name": "tmrw institute for tomorrow",
-      "logo": "/media/logo-tmrw-h-1.webp",
+      "name": "Institute for Tomorrow",
+      "logo": "/media/logo-tmrw-43c913.webp",
       "url": "https://iftomorrow.institute/"
     }
   ]

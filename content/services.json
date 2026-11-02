@@ -1,209 +1,339 @@
 {
   "content": [
     {
-      "n": "01",
-      "label": "Branded Work & Campaigns",
-      "scene": "cathedral",
-      "body": "Visual assets and narratives that express brand identity with clarity and impact.",
-      "intro": "Visual assets and narratives that express brand identity with clarity and impact — from single spots to sustained campaigns, produced with AI speed and human direction.",
-      "relatedCat": "branded"
+      "id": "branded",
+      "label": "Branded Campaigns",
+      "title": "Branded\nCampaigns",
+      "desc": "Ad spots, brand films\n& social content",
+      "img": "/media/svc-branded-a8c9eb.webp",
+      "lead": "Visual assets and narratives that express brand identity with clarity and impact — from single spots to sustained campaigns, produced with human direction, AI speed.",
+      "modes": [
+        {
+          "n": "01",
+          "label": "Ad spots",
+          "body": "Short-form brand films built for a single moment or launch"
+        },
+        {
+          "n": "02",
+          "label": "Campaign systems",
+          "body": "A visual language extended across multiple cuts, cities, or platforms"
+        },
+        {
+          "n": "03",
+          "label": "Product & fashion imagery",
+          "body": "Styled and directed by our team"
+        }
+      ],
+      "included": "Concept & creative direction · scriptwriting & storyboarding · AI-assisted production · full brand asset delivery",
+      "cta": "Bring this to your brand",
+      "aliases": [
+        "branded-work-campaigns"
+      ]
     },
     {
-      "n": "02",
-      "label": "Immersive Mapping",
-      "scene": "desert",
-      "body": "High-end visuals and immersive mapping for any environment, theme, or surface.",
-      "intro": "High-end visuals and immersive mapping for any environment, theme or surface — stages, buildings, domes, landscapes.",
-      "relatedCat": "mapping"
+      "id": "fashion",
+      "label": "Virtual Outfitting",
+      "title": "Virtual\nOutfitting",
+      "desc": "Virtual photoshoots, product\n& e-commerce imagery",
+      "img": "/media/svc-fashion-20b5c5.webp",
+      "lead": "Fashion and product photography, styled and directed by our team — your brand's own studio, without the studio.",
+      "modes": [
+        {
+          "n": "01",
+          "label": "Lookbooks & campaigns",
+          "body": "Full seasonal sets shot virtually from garment references"
+        },
+        {
+          "n": "02",
+          "label": "Product-only catalogue shoots",
+          "body": "Consistent angles and lighting across a full catalogue"
+        },
+        {
+          "n": "03",
+          "label": "Virtual try-on styling",
+          "body": "Garments styled and fitted on model or customer"
+        }
+      ],
+      "included": "Art direction & styling · model/character consistency across shoots · monthly or seasonal delivery · full usage rights",
+      "cta": "Style your next drop",
+      "reels": [
+        "/media/sd-fashion-1-5603d5.mp4"
+      ]
     },
     {
-      "n": "03",
-      "label": "Artistic Style & Film",
-      "scene": "interior",
-      "body": "Character, motion, or abstract animation and stylistic film built to convey story, emotion, or concept.",
-      "intro": "Character, motion or abstract animation and stylistic film — built to convey story, emotion or concept.",
-      "relatedCat": "artistic"
+      "id": "archival",
+      "label": "Archival Preservation",
+      "title": "Archival\nPreservation",
+      "desc": "Restoration & enhancement\nof historical media",
+      "img": "/media/svc-archival2-216f60.webp",
+      "lead": "Restoration and enhancement of archival photos or footage through advanced AI methods — handled with the same care as the original.",
+      "modes": [
+        {
+          "n": "01",
+          "label": "Photo restoration",
+          "body": "Damage, fading and loss recovered without inventing history"
+        },
+        {
+          "n": "02",
+          "label": "Footage restoration & upscaling",
+          "body": "Resolution, frame rate and stability rebuilt for modern screens"
+        },
+        {
+          "n": "03",
+          "label": "Colourisation",
+          "body": "Period-accurate colour brought to black-and-white material"
+        }
+      ],
+      "included": "Damage & quality assessment · frame-by-frame restoration · format delivery for print or screen · archival-safe handling",
+      "cta": "Restore your archive",
+      "aliases": [
+        "digital-archival-preservation"
+      ]
     },
     {
-      "n": "04",
-      "label": "Digital & Archival Preservation",
-      "scene": "water",
-      "body": "Restoration and enhancement of archival photos or footage through advanced AI methods.",
-      "intro": "Restoration and enhancement of archival photos and footage through advanced AI methods — history, kept legible."
+      "id": "immersive",
+      "label": "VFX & Mapping",
+      "title": "VFX &\nMapping",
+      "desc": "Cinematic VFX,\nenvironment & multi-screen",
+      "img": "/media/svc-vfx-53a701.webp",
+      "lead": "High-end visuals and mapping for any environment, theme, or surface — built to scale with the space, not just fill it.",
+      "modes": [
+        {
+          "n": "01",
+          "label": "Building & facade mapping",
+          "body": "Content built to the geometry of the surface it lands on"
+        },
+        {
+          "n": "02",
+          "label": "Stage & set VFX",
+          "body": "Live and in-camera visuals for stages and sets"
+        },
+        {
+          "n": "03",
+          "label": "Environmental theming",
+          "body": "A single visual world extended across a whole venue"
+        }
+      ],
+      "included": "On-site technical scouting · custom visual content · projection/mapping hardware coordination · show programming",
+      "cta": "Map your space",
+      "reels": [
+        "/media/sd-vfx-1-d26281.mp4",
+        "/media/sd-vfx-2-dc367a.mp4"
+      ],
+      "aliases": [
+        "immersive-mapping"
+      ]
+    },
+    {
+      "id": "artistic",
+      "label": "Animation & Film",
+      "title": "Animation\n& Film",
+      "desc": "Character animation,\nmusic videos & stylised film",
+      "img": "/media/svc-animation-e6bcfd.webp",
+      "lead": "Character, motion, or abstract animation built to convey story, emotion, or concept — from a single scene to a full narrative.",
+      "modes": [
+        {
+          "n": "01",
+          "label": "Character animation",
+          "body": "Consistent characters carried across scenes"
+        },
+        {
+          "n": "02",
+          "label": "Music videos",
+          "body": "Performance and narrative cuts built around the track"
+        },
+        {
+          "n": "03",
+          "label": "Narrative short films",
+          "body": "Original stories, written and boarded before a frame exists"
+        }
+      ],
+      "included": "Concept & storyboarding · style development · full animation production · sound design coordination",
+      "cta": "Animate your story",
+      "aliases": [
+        "artistic-style-film"
+      ]
     }
   ],
   "interactive": [
     {
-      "n": "05",
+      "id": "mirror",
       "label": "Magic Mirror",
-      "scene": "cathedral",
-      "body": "Real-time AI mirror installation. Touch prompting, custom-trained styles, custom frames — controlled from the Mirror app.",
-      "still": "/media/magic-livingpainting-poster.webp",
-      "video": {
-        "mp4": "/media/magic-livingpainting.mp4"
-      },
-      "intro": "One system, multiple experiences: a real-time interactive mirror that transforms your audience and places them at the center of the experience.",
+      "title": "Magic\nMirror",
+      "desc": "Live portrait transformation\nfor events & venues",
+      "img": "/media/svc-mirror-b06889.webp",
+      "lead": "A real-time interactive system that transforms and places your audience at the center of the experience. Touch prompting, custom-trained styles, custom frames — controlled from the Mirror app.",
       "modes": [
         {
           "n": "01",
-          "label": "Identity Transformation",
-          "body": "Guests become alternate versions of themselves in real time."
+          "label": "Identity transformation",
+          "body": "Guests become alternate versions of themselves in real time"
         },
         {
           "n": "02",
-          "label": "Living Art",
-          "body": "Participants step inside and animate iconic or branded artworks."
+          "label": "Living art",
+          "body": "Participants step inside and animate iconic or branded artworks"
         },
         {
           "n": "03",
-          "label": "Environment Control",
-          "body": "Movement influences the surrounding visual environment."
+          "label": "Environment control",
+          "body": "Movement influences the surrounding visual environment"
         },
         {
           "n": "04",
-          "label": "Game Mode",
-          "body": "Interactive challenges layered into immersive worlds."
+          "label": "Game mode",
+          "body": "Interactive challenges layered into immersive worlds"
         },
         {
           "n": "05",
           "label": "Neurofeedback",
-          "body": "Brain activity drives responsive live visuals."
+          "body": "Brain activity drives responsive live visuals"
         }
       ],
-      "features": [
-        {
-          "label": "TOUCH PROMPTING",
-          "body": "Activate prompts by touching an object of your choice."
-        },
-        {
-          "label": "LORA TRAINING",
-          "body": "Artist? Brand? Unique style? We train a LoRA so the mirror keeps your style consistent."
-        },
-        {
-          "label": "CUSTOM FRAMES",
-          "body": "A custom frame around the mirror for a more immersive, brand-consistent experience."
-        },
-        {
-          "label": "MIRROR APP",
-          "body": "Control prompts and record your experience from the Mirror app."
-        }
-      ],
-      "relatedCat": "interactive"
+      "included": "Touch prompting · custom-trained styles (LoRA) · custom frames · Mirror app control",
+      "cta": "Bring this to your event",
+      "reels": [
+        "/media/sd-mirror-1-dc2a2b.mp4",
+        "/media/sd-mirror-2-b7bb45.mp4",
+        "/media/sd-mirror-3-14cec0.mp4",
+        "/media/sd-mirror-4-94e333.mp4",
+        "/media/sd-mirror-5-a846f6.mp4"
+      ]
     },
     {
-      "n": "06",
-      "label": "AI Photo Booth",
-      "scene": "interior",
-      "body": "Generative photo booth for events — branded, styled, instantly shareable.",
-      "still": "/media/photobooth-poster.webp",
-      "video": {
-        "mp4": "/media/photobooth.mp4"
-      },
-      "intro": "Instant transformations, branded take-home moments: a real-time AI portrait experience that turns guests into custom identities — built for festivals, brand activations, conferences and cultural events.",
+      "id": "booth",
+      "label": "Magic Photo Booth",
+      "title": "Magic\nPhoto Booth",
+      "desc": "Live capture, on-brand\ngeneration, instant print",
+      "img": "/media/svc-booth-3dd88a.webp",
+      "lead": "Instant branded portraits, directed by our visual system — print or digital, no app needed.",
       "modes": [
         {
           "n": "01",
-          "label": "Custom Worlds & Characters",
-          "body": "Visual worlds and AI characters aligned with your identity or campaign narrative."
+          "label": "Custom visual worlds & characters",
+          "body": "A look built for the campaign, not a filter pack"
         },
         {
           "n": "02",
-          "label": "Branded Booth & Interface",
-          "body": "The booth and its interface carry your brand end to end."
+          "label": "Branded booth & interface design",
+          "body": "The physical booth and its screen carry your identity"
         },
         {
           "n": "03",
-          "label": "Print & Digital Formats",
-          "body": "Print framing plus digital formats, ready to share."
-        },
-        {
-          "n": "04",
-          "label": "Take-Home Souvenir",
-          "body": "Every portrait leaves as a branded memory in hand."
+          "label": "Print & digital formats",
+          "body": "Take-home prints alongside social-ready exports"
         }
       ],
-      "features": [
-        {
-          "label": "TOUCH PROMPTING",
-          "body": "Activate prompts by touching an object of your choice."
-        },
-        {
-          "label": "LORA TRAINING",
-          "body": "Artist? Brand? Unique style? We train a LoRA so the mirror keeps your style consistent."
-        },
-        {
-          "label": "CUSTOM FRAMES",
-          "body": "A custom frame around the mirror for a more immersive, brand-consistent experience."
-        },
-        {
-          "label": "MIRROR APP",
-          "body": "Control prompts and record your experience from the Mirror app."
-        }
+      "included": "Campaign-aligned prompts · take-home branded souvenir · on-site operator · no app required for guests",
+      "cta": "Bring this to your event",
+      "reels": [
+        "/media/sd-booth-1-278aa2.mp4"
       ],
-      "relatedCat": "interactive"
+      "aliases": [
+        "ai-photo-booth"
+      ]
     },
     {
-      "n": "07",
-      "label": "Live Visuals",
-      "scene": "water",
-      "body": "AI-driven VJing and live visuals for stages, performances and immersive spaces.",
-      "still": "/media/livevisualsss-poster.webp",
-      "video": {
-        "mp4": "/media/livevisualsss.mp4"
-      },
-      "intro": "Real-time worlds at architectural scale: stages, buildings, landscapes and performers become responsive visual environments — from intimate venues to cliffs and full facades.",
-      "modes": [
-        {
-          "n": "01",
-          "label": "Stage Visuals",
-          "body": "Real-time visuals that amplify musical energy and live performance."
-        },
-        {
-          "n": "02",
-          "label": "Architectural Mapping",
-          "body": "Large-scale projection transforming buildings and structures."
-        },
-        {
-          "n": "03",
-          "label": "Responsive Atmospheres",
-          "body": "Environments reacting to music, movement, weather data, audience interaction and performance energy."
-        }
-      ],
-      "relatedCat": "interactive"
-    },
-    {
-      "n": "08",
+      "id": "augart",
       "label": "Augmented Art",
-      "scene": "desert",
-      "body": "Living paintings and augmented artworks for museums, galleries and artist collaborations.",
-      "still": "/media/augmented-2-poster.webp",
-      "video": {
-        "mp4": "/media/augmented-2.mp4"
-      },
-      "intro": "Added motion, added story, added depth: physical artworks brought to life through real-time generative layers — extending narrative and atmosphere without altering the original piece.",
+      "title": "Augmented\nArt",
+      "desc": "Paintings and objects\nthat move when you look",
+      "img": "/media/svc-augart-540e1f.webp",
+      "lead": "Living paintings and augmented artworks for museums, galleries and artist collaborations.",
       "modes": [
         {
           "n": "01",
           "label": "Paintings",
-          "body": "Subtle generative layers set static artworks in motion."
+          "body": "Existing works animated in register with the canvas"
         },
         {
           "n": "02",
-          "label": "Large-Scale Murals",
-          "body": "Architectural augmentations expanding narrative across entire walls."
+          "label": "Large-scale murals",
+          "body": "Whole walls brought into motion"
         },
         {
           "n": "03",
-          "label": "Natural Landscapes",
-          "body": "Site-specific layers adapted to organic textures and formations."
+          "label": "Natural landscapes",
+          "body": "Projected environments across natural surfaces"
         },
         {
           "n": "04",
-          "label": "Sculptural Forms",
-          "body": "Projection-mapped systems wrapping three-dimensional objects."
+          "label": "Sculptural forms",
+          "body": "Objects and sculpture mapped in place"
         }
       ],
-      "relatedCat": "interactive"
+      "included": "Projection mapping · custom animation per artwork · site/artwork survey · gallery-safe installation",
+      "cta": "Bring your artwork to life",
+      "reels": [
+        "/media/sd-augart-1-4c8a2b.mp4"
+      ]
+    },
+    {
+      "id": "visuals",
+      "label": "Live Visuals",
+      "title": "Live\nVisuals",
+      "desc": "VJing and live visuals for stages,\nperformances & immersive spaces",
+      "img": "/media/svc-visuals-e6f8ea.webp",
+      "lead": "VJing and live visuals for stages, performances, and immersive spaces — built and operated by our team.",
+      "modes": [
+        {
+          "n": "01",
+          "label": "Stage visuals",
+          "body": "Sets performed live alongside the act"
+        },
+        {
+          "n": "02",
+          "label": "Architectural mapping",
+          "body": "Content built to the geometry of the building"
+        },
+        {
+          "n": "03",
+          "label": "Landscape projections",
+          "body": "Large-scale outdoor and natural-surface work"
+        },
+        {
+          "n": "04",
+          "label": "Dome environments",
+          "body": "Full-surround content for domes and planetariums"
+        },
+        {
+          "n": "05",
+          "label": "Interactive systems",
+          "body": "Visuals that react to bodies, gestures and sound"
+        }
+      ],
+      "included": "Live operation (VJ) · audio/motion-reactive systems · custom visual content · on-site technical setup",
+      "cta": "Bring this to your stage"
+    },
+    {
+      "id": "custom",
+      "label": "Custom Content",
+      "title": "Custom\nContent",
+      "desc": "Bespoke builds shaped\naround your room and brief",
+      "img": "/media/svc-custom-62ac82.webp",
+      "lead": "Bespoke builds shaped around your room and brief — when the idea does not fit any of the boxes above, we build the box.",
+      "modes": [
+        {
+          "n": "01",
+          "label": "Prototypes",
+          "body": "Fast, real builds to test an idea in the room"
+        },
+        {
+          "n": "02",
+          "label": "One-off installs",
+          "body": "Single-venue pieces designed end to end"
+        },
+        {
+          "n": "03",
+          "label": "Tours & rollouts",
+          "body": "One concept, packaged to travel"
+        }
+      ],
+      "included": "Discovery & feasibility · concept design · build & testing · install, training and support",
+      "cta": "Tell us what you need",
+      "reels": [
+        "/media/sd-custom-1-aeb70c.mp4"
+      ]
     }
   ]
 }

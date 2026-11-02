@@ -1,24 +1,46 @@
-// media-pipeline (SPEC C12 / I.media / V15) — one-time, local-only, rerun-safe.
+// media-pipeline (SPEC C12 · C21 · I.media · V15 · V22 · V27) — local-only, rerun-safe.
 //
+// v2 local mode — originals on disk (the prototype drop in media-src/cinematic/):
+//   node scripts/media-pipeline.mjs --from media-src/cinematic             encode, move into public/media/, update the manifest
+//   node scripts/media-pipeline.mjs --from media-src/cinematic --estimate  encode into media-src/.staging/ only; print per-role totals
+//   node scripts/media-pipeline.mjs --from media-src/cinematic --rewrite   rewrite content "assets/<file>" refs to /media/ paths
+//   add --list <file> to read "<role> <file>" lines instead of scanning content/*.json
+//
+// Refs are the "assets/<file>" strings in content/*.json; the JSON key picks the role
+// (still/poster/img/image → still, gallery → gallery, photo → maker, logo/logoUrl → logo,
+// heroClips[].clip → hero, clip/mp4/reels → clip). Unreferenced originals are never encoded.
+// Role rendition sets, budget caps and naming live in scripts/media-lib.mjs. Output names
+// are content-addressed (<slug>-<sha1(bytes + role params):6>.<ext>), so a file already in
+// public/media is never rewritten (V27; /media/** is cached immutable for a year, V14).
+// Encodes land in media-src/.staging/ first, which doubles as the --estimate cache. The
+// tracked manifest scripts/media-manifest.json maps each source path to its outputs, dims
+// and bytes. Totals and orphans: node scripts/media-audit.mjs.
+//
+// v1 URL mode — the original Webflow import (SPEC C12):
 //   node scripts/media-pipeline.mjs            fetch originals + optimize into public/media/
-//   node scripts/media-pipeline.mjs --rewrite  rewrite content/*.json refs via the manifest
-//
-// Scans content/*.json, index.html, src/, scripts/ for cdn.prod.website-files.com
-// URLs. Originals cached in media-src/ (gitignored). Outputs per raster image:
-//   <name>.webp (≤1920w) + <name>-p-500.webp + <name>-p-800.webp + <name>-p-800.jpg (og/share)
-// Per video: single H.264 <name>.mp4 (1080p cap, CRF 23, faststart); webm inputs
-// map to the mp4 twin (webm dropped site-wide, SPEC B5). Manifest written to
-// scripts/media-manifest.json. Fails hard if V15 budget breached (60MB total / 15MB file).
+//   node scripts/media-pipeline.mjs --rewrite  rewrite content/*.json refs via the URL manifest
+// Scans content/*.json, index.html, src/, scripts/ for cdn.prod.website-files.com URLs.
+// Originals and the URL manifest stay in media-src/ (gitignored): the manifest keys are CDN
+// URLs, which the SPEC V4 grep keeps out of tracked files. Per raster: <name>.webp (≤1920w)
+// + -p-160/-p-320/-p-500/-p-800 webp + -p-800.jpg (og/share). Per video: one H.264 mp4 on
+// an encode ladder down to the V15 video cap; webm maps to its mp4 twin (SPEC B5).
 
 import { execFileSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs'
-import { basename, extname, join } from 'node:path'
+import { basename, extname, join, relative, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { parseArgs } from 'node:util'
+import {
+  BUDGET, LOCAL_REF, MB, collectLocalRefs, formatReport, parseList, processLocal, readManifest, resolveRoles, writeManifest,
+} from './media-lib.mjs'
 
-const ROOT = new URL('..', import.meta.url).pathname
+const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const SRC_DIR = join(ROOT, 'media-src')
 const OUT_DIR = join(ROOT, 'public', 'media')
-const MANIFEST = join(SRC_DIR, 'media-manifest.json')
+const MANIFEST = join(SRC_DIR, 'media-manifest.json') // v1 URL manifest, gitignored (see header)
+const LOCAL_MANIFEST = join(ROOT, 'scripts', 'media-manifest.json') // v2, tracked (SPEC V22)
+const STAGING = join(SRC_DIR, '.staging')
 
 const RASTER = /\.(png|jpe?g|webp|avif|gif)$/i
 const VIDEO = /\.(mp4|webm|mov)$/i
@@ -110,14 +132,14 @@ function hasAudio(src) {
 }
 
 // encode ladder (§B6): quality first — 1080p/CRF23 unless that lands over
-// the V15 40MB video cap, then step down.
+// the V15 video cap, then step down.
 const VIDEO_LADDER = [
   [1080, 23],
   [720, 26],
   [720, 28],
   [540, 30],
 ]
-const VIDEO_CAP = 38 * 1048576
+const VIDEO_CAP = BUDGET.videoBytes // SPEC V15, single source in media-lib.mjs
 
 function processVideo(src, outFile) {
   if (existsSync(outFile) && statSync(outFile).size <= VIDEO_CAP) return
@@ -144,6 +166,7 @@ async function build() {
   const { default: sharp } = await import('sharp')
   mkdirSync(SRC_DIR, { recursive: true })
   mkdirSync(OUT_DIR, { recursive: true })
+  const before = new Set(readdirSync(OUT_DIR))
 
   const urls = collectUrls()
   console.log(`found ${urls.length} CDN urls`)
@@ -197,21 +220,23 @@ async function build() {
   writeFileSync(MANIFEST, JSON.stringify(manifest, null, 1) + '\n')
   console.log(`fetched ${fetched} new originals → ${SRC_DIR}`)
 
-  /* size report + V15 gate */
+  /* size report + V15 per-file gate on this run's new outputs (totals: media-audit.mjs) */
   const files = readdirSync(OUT_DIR).map((f) => ({ f, size: statSync(join(OUT_DIR, f)).size }))
   const total = files.reduce((s, x) => s + x.size, 0)
-  const srcTotal = readdirSync(SRC_DIR).reduce((s, f) => s + statSync(join(SRC_DIR, f)).size, 0)
+  const srcTotal = readdirSync(SRC_DIR, { withFileTypes: true })
+    .filter((e) => e.isFile())
+    .reduce((s, e) => s + statSync(join(SRC_DIR, e.name)).size, 0)
   files.sort((a, b) => b.size - a.size)
   console.log('\nlargest outputs:')
   for (const { f, size } of files.slice(0, 10)) console.log(`  ${(size / 1048576).toFixed(2).padStart(7)} MB  ${f}`)
   console.log(`\noriginals ${(srcTotal / 1048576).toFixed(1)} MB → optimized ${(total / 1048576).toFixed(1)} MB (${files.length} files)`)
 
-  const overVid = files.filter((x) => VIDEO.test(x.f) && x.size > 40 * 1048576)
-  const overImg = files.filter((x) => !VIDEO.test(x.f) && x.size > 2 * 1048576)
-  if (overVid.length) throw new Error(`V15 breach: videos >40MB: ${overVid.map((x) => x.f).join(', ')}`)
-  if (overImg.length) throw new Error(`V15 breach: imgs >2MB: ${overImg.map((x) => x.f).join(', ')}`)
-  if (total > 80 * 1048576) throw new Error(`V15 breach: public/media total ${(total / 1048576).toFixed(1)}MB > 80MB`)
-  console.log('V15 budget OK')
+  const fresh = files.filter((x) => !before.has(x.f))
+  const overVid = fresh.filter((x) => VIDEO.test(x.f) && x.size > BUDGET.videoBytes)
+  const overImg = fresh.filter((x) => !VIDEO.test(x.f) && x.size > BUDGET.imageBytes)
+  if (overVid.length) throw new Error(`V15 breach: new videos > ${BUDGET.videoBytes / MB}MB: ${overVid.map((x) => x.f).join(', ')}`)
+  if (overImg.length) throw new Error(`V15 breach: new imgs > ${BUDGET.imageBytes / MB}MB: ${overImg.map((x) => x.f).join(', ')}`)
+  console.log(`V15 per-file caps OK for ${fresh.length} new outputs — totals + orphans: node scripts/media-audit.mjs`)
 }
 
 /* ---------------- rewrite content JSONs ---------------- */
@@ -248,5 +273,86 @@ function rewrite() {
   }
 }
 
-if (process.argv.includes('--rewrite')) rewrite()
+/* ---------------- v2 local mode (SPEC C21 / T47) ---------------- */
+
+function readContentDocs() {
+  const dir = join(ROOT, 'content')
+  return Object.fromEntries(
+    readdirSync(dir)
+      .filter((f) => f.endsWith('.json'))
+      .sort()
+      .map((f) => [f, JSON.parse(readFileSync(join(dir, f), 'utf8'))]),
+  )
+}
+
+async function localMode({ from, list, estimate, rewrite: rewriteRefs, concurrency }) {
+  const fromDir = resolve(ROOT, from)
+  if (!existsSync(fromDir)) throw new Error(`--from ${from}: no such directory`)
+  if (rewriteRefs) return rewriteLocal(fromDir)
+  const refs = list ? parseList(readFileSync(resolve(list), 'utf8'), list) : collectLocalRefs(readContentDocs())
+  const roles = resolveRoles(refs)
+  if (!roles.size) return console.log(`no "assets/<file>" refs in ${list ?? 'content/*.json'} — nothing to do`)
+  console.log(`${roles.size} referenced originals in ${relative(ROOT, fromDir)}${estimate ? ' (estimate: outputs stay in media-src/.staging)' : ''}`)
+  const { default: sharp } = await import('sharp')
+  const t0 = Date.now()
+  const res = await processLocal({
+    sharp, fromDir, roles, stagingDir: STAGING, outDir: estimate ? null : OUT_DIR, root: ROOT,
+    concurrency: Number(concurrency), log: (m) => console.log(`  ${m}`),
+  })
+  console.log(formatReport(res, { estimate, seconds: (Date.now() - t0) / 1000 }))
+  if (!estimate && Object.keys(res.entries).length) {
+    const manifest = readManifest(LOCAL_MANIFEST)
+    Object.assign(manifest.local, res.entries) // merge, never clobber (SPEC B11)
+    writeManifest(LOCAL_MANIFEST, manifest)
+    console.log(`manifest: ${relative(ROOT, LOCAL_MANIFEST)} (${Object.keys(manifest.local).length} entries)`)
+  }
+  if (res.errors.length || res.totalBytes > BUDGET.totalBytes) process.exitCode = 1
+}
+
+function rewriteLocal(fromDir) {
+  const { local } = readManifest(LOCAL_MANIFEST)
+  const dir = join(ROOT, 'content')
+  const unresolved = []
+  const updates = []
+  for (const f of readdirSync(dir).filter((x) => x.endsWith('.json')).sort()) {
+    let hits = 0
+    const walk = (node) => {
+      if (Array.isArray(node)) return node.map(walk)
+      if (node && typeof node === 'object') return Object.fromEntries(Object.entries(node).map(([k, v]) => [k, walk(v)]))
+      const m = typeof node === 'string' ? node.match(LOCAL_REF) : null
+      if (!m) return node
+      const entry = local[relative(ROOT, join(fromDir, m[1]))]
+      if (!entry) {
+        unresolved.push(`${f}: ${node}`)
+        return node
+      }
+      hits++
+      return entry.path
+    }
+    const out = walk(JSON.parse(readFileSync(join(dir, f), 'utf8')))
+    if (hits) updates.push({ f, out, hits })
+  }
+  // all-or-nothing: no content file changes while any ref still lacks an output
+  if (unresolved.length) throw new Error(`no manifest entry (run --from ${relative(ROOT, fromDir)} first):\n  ${unresolved.join('\n  ')}`)
+  for (const { f, out, hits } of updates) {
+    writeFileSync(join(dir, f), JSON.stringify(out, null, 2) + '\n')
+    console.log(`${f}: ${hits} refs rewritten`)
+  }
+  if (!updates.length) console.log('no "assets/<file>" refs left in content/*.json')
+}
+
+/* ---------------- main ---------------- */
+
+const { values: args } = parseArgs({
+  options: {
+    from: { type: 'string' },
+    list: { type: 'string' },
+    estimate: { type: 'boolean', default: false },
+    rewrite: { type: 'boolean', default: false },
+    concurrency: { type: 'string', default: '4' },
+  },
+})
+if (args.from) await localMode(args)
+else if (args.list || args.estimate) throw new Error('--list and --estimate need --from <dir>')
+else if (args.rewrite) rewrite()
 else await build()
