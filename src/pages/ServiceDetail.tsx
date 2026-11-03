@@ -34,7 +34,7 @@ function ServicePage({ service: s, index: i }: { service: Service; index: number
             ← services
           </Link>
           <SecLab className={styles.lab}>
-            / .{s.pillar} — {s.n}
+            / {s.pillar === 'content' ? 'content creation' : 'interactive installations'}
           </SecLab>
           <h1 className={styles.title}>
             <Rich text={s.title} />
@@ -47,26 +47,26 @@ function ServicePage({ service: s, index: i }: { service: Service; index: number
         </div>
 
         <div className={styles.right}>
-          <SecLab className={styles.lab}>/ modes in this practice</SecLab>
+          <h2 className={styles.sectionTitle}>Ways to use it</h2>
           <div className={styles.modes}>
             {s.modes.map((m) => (
               <div key={m.n} className={styles.mrow}>
                 <div className={styles.n}>{m.n}</div>
                 <div>
-                  <div className={styles.t}>{m.label}</div>
+                  <h3 className={styles.t}>{m.label}</h3>
                   <div className={styles.d}>{m.body}</div>
                 </div>
               </div>
             ))}
           </div>
 
-          <SecLab className={styles.lab}>/ what's included</SecLab>
+          <h2 className={styles.sectionTitle}>What's included</h2>
           <p className={styles.incl}>{s.included}</p>
 
           {/* derived from works[].practices (SPEC C19); a service without work hides the block (V26) */}
           {s.works.length > 0 && (
             <>
-              <SecLab className={styles.lab}>/ selected work in this practice</SecLab>
+              <h2 className={styles.sectionTitle}>Selected work</h2>
               <div className={styles.works}>
                 {s.works.map((w) => (
                   <Link key={w.slug} to={`/work/${w.slug}`} className={styles.wrow}>

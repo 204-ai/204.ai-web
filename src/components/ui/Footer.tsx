@@ -15,10 +15,12 @@ export function Footer() {
           <p>{studio.copy.footer.blurb}</p>
         </div>
         <div className={styles.col}>
-          <h6>Studio</h6>
-          <Link to="/">Home</Link>
+          <h6>Explore</h6>
+          <a href={`${import.meta.env.BASE_URL}#productions`}>Productions</a>
+          <a href={`${import.meta.env.BASE_URL}#experiences`}>Experiences</a>
+          <a href={`${import.meta.env.BASE_URL}#technology`}>Technology</a>
           <Link to="/services">Services</Link>
-          <Link to="/work">Our Work</Link>
+          <Link to="/work">All work</Link>
           <Link to="/about">About</Link>
           <Link to="/contact">Contact</Link>
         </div>

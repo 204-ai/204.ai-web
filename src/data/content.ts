@@ -83,6 +83,9 @@ export interface RawPerson {
 export interface PartnerLogo {
   name: string
   logo: string
+  note?: string
+  /** Curated home-wall hierarchy; omitted until the relationship is substantiated. */
+  tier?: 'lead' | 'featured' | 'more'
   /** internal path (project page) or external site — only set links render as anchors */
   url?: string
 }

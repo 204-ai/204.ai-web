@@ -43,3 +43,5 @@
   background: var(--ink);
   border-top: 1px solid var(--line-soft);
 }
+
+:global(#productions), :global(#experiences), :global(#technology) { scroll-margin-top: 90px; }

@@ -1,0 +1,50 @@
+[
+  {
+    "id": "cosmos",
+    "title": "Forest to cosmos",
+    "video": "assets/dome-cosmos.mp4",
+    "poster": "assets/dome-cosmos.webp",
+    "duration": 38.5,
+    "format": "equirect",
+    "width": 1920,
+    "height": 960,
+    "stage": "previsualisation",
+    "credit": "204.ai, Sanctuary previz"
+  },
+  {
+    "id": "forest",
+    "title": "Forest path",
+    "video": "assets/dome-forest.mp4",
+    "poster": "assets/dome-forest.webp",
+    "duration": 38.5,
+    "format": "equirect",
+    "width": 1920,
+    "height": 960,
+    "stage": "previsualisation",
+    "credit": "204.ai, Sanctuary previz"
+  },
+  {
+    "id": "sanctuaries",
+    "title": "Five sanctuaries",
+    "video": "assets/dome-sanctuaries.mp4",
+    "poster": "assets/dome-sanctuaries.webp",
+    "duration": 40.167,
+    "format": "equirect",
+    "width": 1920,
+    "height": 960,
+    "stage": "previsualisation",
+    "credit": "204.ai, Sanctuary previz"
+  },
+  {
+    "id": "dreamers-house",
+    "title": "Dreamer's house",
+    "video": "assets/dome-dreamers-house.mp4",
+    "poster": "assets/dome-dreamers-house.webp",
+    "duration": 36.833,
+    "format": "equirect",
+    "width": 1920,
+    "height": 960,
+    "stage": "previsualisation",
+    "credit": "204.ai, Sanctuary previz"
+  }
+]

@@ -74,7 +74,7 @@ jobs:
           VITE_RECAPTCHA_SITE_KEY: 6LcYjl8tAAAAAKJYjGwaDw_-g7mKbDUzxqrFmsVR
 
       - name: SPA fallback (404.html)
-        run: cp dist/index.html dist/404.html
+        run: cp dist/app-shell.html dist/404.html
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

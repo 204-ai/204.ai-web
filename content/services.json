@@ -94,9 +94,9 @@
       "id": "immersive",
       "label": "VFX & Mapping",
       "title": "VFX &\nMapping",
-      "desc": "Cinematic VFX,\nenvironment & multi-screen",
+      "desc": "Produced visuals for stages,\nfacades & multi-screen",
       "img": "/media/svc-vfx-53a701.webp",
-      "lead": "High-end visuals and mapping for any environment, theme, or surface — built to scale with the space, not just fill it.",
+      "lead": "Custom visual content for stages, buildings and multi-screen environments — designed for the surfaces and screens it plays on.",
       "modes": [
         {
           "n": "01",
@@ -204,6 +204,7 @@
       "id": "booth",
       "label": "Magic Photo Booth",
       "title": "Magic\nPhoto Booth",
+      "slug": "magic-photo-booth",
       "desc": "Live capture, on-brand\ngeneration, instant print",
       "img": "/media/svc-booth-3dd88a.webp",
       "lead": "Instant branded portraits, directed by our visual system — print or digital, no app needed.",
@@ -224,7 +225,7 @@
           "body": "Take-home prints alongside social-ready exports"
         }
       ],
-      "included": "Campaign-aligned prompts · take-home branded souvenir · on-site operator · no app required for guests · runs locally on our own GPU rig — no cloud, no upload, GDPR by architecture",
+      "included": "Campaign-aligned prompts · take-home branded souvenir · on-site operator · no app required for guests · local processing available, with no cloud upload required",
       "cta": "Bring this to your event",
       "reels": [
         "/media/sd-booth-1-278aa2.mp4"
@@ -272,9 +273,9 @@
       "id": "visuals",
       "label": "Live Visuals",
       "title": "Live\nVisuals",
-      "desc": "VJing and live visuals for stages,\nperformances & immersive spaces",
+      "desc": "Live-operated, reactive visuals\nfor stages & immersive spaces",
       "img": "/media/svc-visuals-e6f8ea.webp",
-      "lead": "VJing and live visuals for stages, performances, and immersive spaces — built and operated by our team.",
+      "lead": "Live-operated visuals that respond to music, movement and performance — for stages, buildings and immersive spaces.",
       "modes": [
         {
           "n": "01",
@@ -307,8 +308,9 @@
     },
     {
       "id": "custom",
-      "label": "Custom Content",
-      "title": "Custom\nContent",
+      "label": "Custom Installations",
+      "title": "Custom\nInstallations",
+      "slug": "custom-content",
       "desc": "Bespoke builds shaped\naround your room and brief",
       "img": "/media/svc-custom-62ac82.webp",
       "lead": "Bespoke builds shaped around your room and brief — when the idea does not fit any of the boxes above, we build the box.",

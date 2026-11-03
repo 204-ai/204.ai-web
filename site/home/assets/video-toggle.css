@@ -1,0 +1,17 @@
+/* The image is the button; the native control strip stays directly accessible. */
+.screen>.play.video-surface-toggle{inset:0;z-index:3;display:grid;place-items:center;width:auto;height:auto;margin:0;padding:0;border:0;border-radius:0;background:transparent;backdrop-filter:none;cursor:pointer}
+.screen.has-video>.play.video-surface-toggle{bottom:64px}
+.screen>.play.video-surface-toggle[hidden]{display:none}
+.screen>.play.video-surface-toggle>.video-toggle-icon{display:grid;place-items:center;width:60px;height:60px;padding:0 0 0 2px;border:1px solid #ffffffaa;border-radius:50%;background:#151515aa;backdrop-filter:blur(6px);font:20px/1 var(--body);color:var(--paper);opacity:1}
+.screen>.play.video-surface-toggle.is-playing>.video-toggle-icon{opacity:0;padding:0}
+.screen>.play.video-surface-toggle.is-playing:hover>.video-toggle-icon,.screen>.play.video-surface-toggle:focus-visible>.video-toggle-icon{opacity:1}
+.screen>.play.video-surface-toggle:focus-visible{outline:2px solid var(--signal);outline-offset:-5px}
+.full-hero-stage{cursor:pointer}
+.full-hero-bottom>a{max-width:calc(100% - 260px)}
+.dunbrae-actions{display:flex;flex-wrap:wrap;gap:12px}
+.dunbrae-actions [hidden]{display:none}
+.dunbrae-compare.is-video #dunbrae-reveal{pointer-events:none}
+.dunbrae-compare.is-video .compare-divider{display:none}
+.dunbrae-compare.is-video video{cursor:pointer}
+@media(max-width:620px){.screen>.play.video-surface-toggle>.video-toggle-icon{width:46px;height:46px;font-size:16px}.full-hero-bottom>a{max-width:none}}
+@media(hover:none){.screen>.play.video-surface-toggle.is-playing:hover>.video-toggle-icon{opacity:0}}

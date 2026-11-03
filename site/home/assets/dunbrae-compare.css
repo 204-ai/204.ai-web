@@ -1,0 +1,24 @@
+.dim-playtests{margin-top:28px;min-width:0;max-width:100%;scroll-margin-top:110px}
+.playtest-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:13px}.playtest-head .label{font-size:10px;letter-spacing:.03em}
+.playtest-arrows{display:flex;align-items:center;gap:10px}.playtest-arrows button{display:grid;place-items:center;width:34px;height:34px;background:transparent;border:1px solid var(--line);border-radius:50%;font-size:18px}.playtest-arrows button:hover{border-color:var(--signal)}.playtest-arrows>span{font:10px var(--mono);color:var(--dim);min-width:47px;text-align:center}
+.playtest-slide[hidden]{display:none}.playtest-slide{min-width:0}
+.dunbrae-compare,.face-playtest{position:relative;aspect-ratio:16/10;width:100%;margin:0;background:#090909;overflow:clip;border-radius:6px;isolation:isolate}
+.dunbrae-compare>img,.dunbrae-compare>video,.face-playtest>img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.dunbrae-compare .compare-sketch{clip-path:inset(0 calc(100% - var(--reveal)) 0 0)}.dunbrae-compare [hidden]{display:none}
+.compare-label{position:absolute;top:10px;padding:5px 7px;background:#151515d9;border:1px solid #ffffff38;border-radius:3px;color:var(--paper);font:9px/1.3 var(--mono);pointer-events:none}
+.compare-label-sketch{left:10px}.compare-label-output{right:10px}
+.compare-divider{position:absolute;left:var(--reveal);top:0;bottom:0;width:2px;background:var(--paper);transform:translateX(-1px);pointer-events:none;box-shadow:0 0 4px #0008}
+.compare-divider>span{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:32px;height:32px;display:grid;place-items:center;background:var(--paper);color:var(--ink);border-radius:50%;font-size:19px;line-height:1;box-shadow:0 2px 12px #0006;pointer-events:none}
+#dunbrae-reveal{position:absolute;inset:0;width:100%;height:100%;margin:0;padding:0;opacity:0;cursor:ew-resize;touch-action:pan-y}
+.dunbrae-compare:focus-within{outline:2px solid var(--signal);outline-offset:4px}
+.playtest-caption{margin-top:12px}.playtest-caption strong{font-size:12px;font-weight:400}.story .playtest-caption p{font-size:11px;margin:4px 0 0;max-width:none;line-height:1.6}
+.dunbrae-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;min-height:32px}.dunbrae-actions button{font:10px var(--mono);padding:8px 12px;border:1px solid var(--line);background:transparent;border-radius:20px}.dunbrae-actions button:hover{border-color:var(--signal)}.playtest-source{font:9px/1.6 var(--mono);color:var(--dim);margin-top:14px;min-height:32px}
+.face-playtest{display:block;padding:0;cursor:pointer}.face-playtest>span{position:absolute;bottom:13px;left:50%;transform:translateX(-50%);padding:7px 11px;background:#151515dd;border:1px solid #ffffff66;border-radius:20px;font:10px var(--mono);white-space:nowrap}
+#dimination>*{min-width:0}
+@media(max-width:620px){.dim-playtests{margin-top:22px}.playtest-head .label{font-size:9px}.playtest-arrows{gap:8px}.playtest-arrows button{width:36px;height:36px}.compare-label{font-size:8px;padding:4px 5px}.compare-label-sketch{left:7px}.compare-label-output{right:7px}.compare-divider>span{width:28px;height:28px}.story .playtest-caption p{font-size:11px}}
+.dim-film-credits{display:flex;flex-direction:column;gap:5px;font:10px/1.6 var(--mono);color:var(--dim);margin-block:0 20px}.story .screen.dim-youtube{aspect-ratio:16/9}.dim-youtube iframe{position:absolute;inset:0;width:100%;height:100%;border:0;z-index:3}.dim-youtube:has(iframe)::after{display:none}
+.family-hover{position:relative;width:100%;aspect-ratio:16/10;overflow:clip;border-radius:6px;background:#090909}.family-hover svg{display:block;width:100%;height:100%}.family-head{position:absolute;transform:translate(-50%,-50%);border:0;border-radius:50%;padding:0;background:transparent;cursor:pointer;min-width:44px;min-height:44px}.family-head:focus-visible{outline:2px solid var(--signal);outline-offset:2px}
+
+#dimination{scroll-margin-top:110px}
+/* Reveal quickly, then let each head fade independently as the pointer moves on. */
+.dimi-face-layer{opacity:0;transition:opacity 3s ease-out}.dimi-face-layer.is-revealed{opacity:1;transition-duration:.12s}@media(prefers-reduced-motion:reduce){.dimi-face-layer,.dimi-face-layer.is-revealed{transition:none}}

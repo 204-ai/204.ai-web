@@ -23,6 +23,14 @@
   margin-bottom: calc(22 * var(--px));
 }
 
+.sectionTitle {
+  margin-bottom: calc(22 * var(--px));
+  font-family: var(--font-mono);
+  font-size: calc(13 * var(--px));
+  font-weight: 400;
+  color: var(--mono-label);
+}
+
 .back {
   display: inline-block;
   margin-bottom: calc(26 * var(--px));

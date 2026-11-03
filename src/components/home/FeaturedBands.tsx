@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import type { Pillar } from '../../data/content'
 import { CONTENT } from '../../data/studio'
 import { useDocumentHidden } from '../../hooks/useDocumentHidden'
 import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion'
@@ -83,22 +84,20 @@ function Band({ to, onClick, title, poster, clip, focus, meta }: BandProps) {
 }
 
 /** Prototype "Featured work": three case bands and the band into /work. */
-export function FeaturedBands() {
+export function FeaturedBands({ pillar }: { pillar?: Pillar }) {
   const { featured, services, studio } = CONTENT
   const { allWork } = studio
+  const selected = pillar ? featured.filter(f => services.some(s => s.id === f.item.practices[0] && s.pillar === pillar)) : featured
+  const label = pillar === 'content' ? 'Productions' : pillar === 'interactive' ? 'Experiences' : 'Featured work'
   const serviceTitle = (id: string) => services.find((s) => s.id === id)?.title ?? ''
   return (
-    <section className={styles.works}>
+    <section className={styles.works} id={pillar === 'content' ? 'productions' : pillar === 'interactive' ? 'experiences' : undefined}>
       <div className={styles.head}>
-        <h2>
-          Featured
-          <br />
-          work
-        </h2>
+        <h2>{label}</h2>
         <div className={styles.metaHint}>{'// hover for a preview · click for the full case'}</div>
       </div>
       <div className={styles.bands}>
-        {featured.map((f) => (
+        {selected.map((f) => (
           <Band
             key={f.item.slug}
             to={`/work/${f.item.slug}`}
@@ -115,9 +114,9 @@ export function FeaturedBands() {
         ))}
         {/* v1's home "explore work" CTA lives on as this band */}
         <Band
-          to="/work"
+          to={pillar ? `/work?pillar=${pillar}` : '/work'}
           onClick={() => trackCta('explore_work')}
-          title={allWork.title}
+          title={pillar ? `Explore ${label}` : allWork.title}
           poster={allWork.poster}
           clip={allWork.clip}
           focus={allWork.focus}

@@ -57,7 +57,7 @@ const state = (pg) =>
       videos: hero.querySelectorAll('video').length,
       src: v?.getAttribute('src') ?? null,
       playing: Boolean(v && !v.paused),
-      on: [...hero.querySelectorAll('button')].findIndex((d) => d.getAttribute('aria-current') === 'true'),
+      on: Number(hero.querySelector('output').textContent.split('/')[0].trim()) - 1,
       progress: fill ? Number(new DOMMatrix(getComputedStyle(fill).transform).a.toFixed(3)) : null,
       poster: Boolean(hero.querySelector('img')),
     }
@@ -65,7 +65,7 @@ const state = (pg) =>
 const setHidden = (pg, h) => pg.evaluate((h) => window.__setHidden(h), h)
 const maxVideos = (pg) => pg.evaluate(() => window.__maxVideos)
 
-// desktop: one keyed <video>, progress, dots, 'ended', hidden tab
+// desktop: one keyed <video>, progress, arrows, 'ended', hidden tab
 {
   const pg = await open()
   await sleep(2500)
@@ -79,14 +79,17 @@ const maxVideos = (pg) => pg.evaluate(() => window.__maxVideos)
   await sleep(800)
   check('visible tab resumes the video', (await state(pg)).playing)
   const before = s
-  await pg.click(`${HERO} button:nth-of-type(3)`)
+  await pg.click(`${HERO} button[aria-label="Next film"]`)
+  await pg.click(`${HERO} button[aria-label="Next film"]`)
   await sleep(800)
   s = await state(pg)
-  check('dot switches footage via keyed <video> (B5)', s.on === 2 && s.src !== before.src && s.videos === 1, `${before.src} → ${s.src}`)
+  check('next arrow switches footage via keyed <video> (B5)', s.on === 2 && s.src !== before.src && s.videos === 1, `${before.src} → ${s.src}`)
   await pg.evaluate((HERO) => document.querySelector(`${HERO} video`).dispatchEvent(new Event('ended')), HERO)
   await sleep(500)
   const after = await state(pg)
   check("'ended' advances to the next clip", after.on === 3 && after.src !== s.src)
+  await pg.click(`${HERO} button[aria-label="Previous film"]`)
+  check('previous arrow returns to the preceding clip', (await state(pg)).on === 2)
   check('never more than one <video> (V29)', (await maxVideos(pg)) === 1)
   if (process.argv[2]) await pg.screenshot({ path: process.argv[2] })
   await pg.close()

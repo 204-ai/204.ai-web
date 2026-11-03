@@ -10,7 +10,7 @@ import styles from './HeroRotator.module.css'
 const STILL_MS = 6000 // prototype offline mode: 25 ticks × 240ms per poster
 
 /**
- * Prototype hero rotator: one clip at a time with caption, dots and progress.
+ * Prototype hero rotator: one clip at a time with caption, arrows and progress.
  * Phones, reduced motion and Save-Data get posters instead of video (SPEC V29); posters
  * advance on a timer except under reduced motion (V7). Video and timers pause while
  * the tab is hidden (V24). The <video> is keyed by its source (B5).
@@ -110,20 +110,32 @@ export function HeroRotator() {
             || {[clip.item.year, clip.kind, clip.place].filter(Boolean).join(' · ')}
           </span>
         </div>
-        <div className={styles.dots}>
-          {heroClips.map((c, n) => (
-            <button
-              key={c.item.slug}
-              type="button"
-              className={n === i ? styles.on : undefined}
-              aria-label={c.title ?? c.item.title}
-              aria-current={n === i ? 'true' : undefined}
-              onClick={() => {
-                setI(n)
-                trackChapterSelect(c.item.title)
-              }}
-            />
-          ))}
+        <div className={styles.controls}>
+          <button
+            type="button"
+            aria-label="Previous film"
+            onClick={() => {
+              const n = (i - 1 + heroClips.length) % heroClips.length
+              setI(n)
+              trackChapterSelect(heroClips[n].item.title)
+            }}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 6-6 6 6 6" /></svg>
+          </button>
+          <output className={styles.count} aria-label="Current film" aria-live="off">
+            {String(i + 1).padStart(2, '0')} / {String(heroClips.length).padStart(2, '0')}
+          </output>
+          <button
+            type="button"
+            aria-label="Next film"
+            onClick={() => {
+              const n = (i + 1) % heroClips.length
+              setI(n)
+              trackChapterSelect(heroClips[n].item.title)
+            }}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 6 6 6-6 6" /></svg>
+          </button>
         </div>
         {!reduced && (
           <div className={styles.progress} aria-hidden="true">

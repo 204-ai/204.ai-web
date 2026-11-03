@@ -6,9 +6,9 @@ import { useHead } from '../hooks/useHead'
 import styles from './Services.module.css'
 
 // UI labels stay in page code (SPEC I.content)
-const PILLAR_LINES: Array<[Pillar, string]> = [
-  ['content', 'cinematic work: campaigns, film & image'],
-  ['interactive', 'installations, mirrors & responsive environments'],
+const PILLAR_LINES: Array<[Pillar, string, string]> = [
+  ['content', 'Productions', 'campaigns, film, imagery & projection content'],
+  ['interactive', 'Experiences', 'mirrors, portraits & responsive environments'],
 ]
 
 /** v2 services index (prototype ServicesPage): two pillar grids of service tiles. */
@@ -19,21 +19,22 @@ export function Services() {
     <div className="v2">
       <section className={styles.page}>
         <h1>
-          Two pillars.
+          Productions &
           <br />
-          One room.
+          Experiences.
         </h1>
-        {PILLAR_LINES.map(([pillar, line]) => (
-          <div key={pillar} className={styles.pillar}>
-            <h2 className={styles.pillarLab}>
-              <span className={styles.pl}>.{pillar}</span> <span className={styles.pd}>— {line}</span>
-            </h2>
+        {PILLAR_LINES.map(([pillar, title, line]) => (
+          <section key={pillar} className={styles.pillar} aria-labelledby={`${pillar}-title`}>
+            <div className={styles.pillarLab}>
+              <h2 id={`${pillar}-title`} className={styles.pl}>{title}</h2>
+              <span className={styles.pd}>{line}</span>
+            </div>
             <div className={styles.grid}>
               {pillars[pillar].map((s) => (
                 <ServiceTile key={s.id} service={s} className={styles.tile} />
               ))}
             </div>
-          </div>
+          </section>
         ))}
       </section>
       <ChatCloser copy={studio.copy.closer} />

@@ -74,7 +74,7 @@
     {
       "work": "motel-x",
       "title": "Motel X\nVinte Anos",
-      "label": "Magic Photo\nBooth",
+      "label": "Magic\nPhoto Booth",
       "poster": "/media/feat-motelx-0955fe.webp",
       "clip": "/media/feat-motelx-48007f.mp4"
     },
@@ -194,59 +194,111 @@
   "rnaStudioUrl": "https://www.rna-studio.com/",
   "trustedBy": [
     {
-      "name": "Lisbon Insiders",
-      "logo": "/media/logo-lisbon-faf67c.webp",
-      "url": "/work/lisbon-insiders"
+      "name": "Alan Watts Organization",
+      "logo": "/media/logo-alanwatts-b7a6d3.webp",
+      "url": "/work/alan-watts",
+      "tier": "lead"
+    },
+    {
+      "name": "KBC",
+      "logo": "/media/kbc-400-9e95b84803.webp",
+      "url": "/work/kbc",
+      "tier": "lead"
+    },
+    {
+      "name": "ZEB",
+      "logo": "/media/logo-zeb-35b6f4.webp",
+      "url": "/work/zeb",
+      "tier": "lead"
+    },
+    {
+      "name": "Standvirtual",
+      "logo": "/media/logo-standvirtual-clean-cd3dc8.webp",
+      "url": "/work/stand-virtual",
+      "tier": "lead"
+    },
+    {
+      "name": "Texas Eclipse",
+      "logo": "/media/logo-eclipse-0cccb8.webp",
+      "url": "/work/texas-eclipse",
+      "tier": "lead"
+    },
+    {
+      "name": "Snackshop",
+      "logo": "/media/logo-wall-snackshop-683c8d.webp",
+      "tier": "featured"
+    },
+    {
+      "name": "MOTELX",
+      "logo": "/media/logo-wall-motelx-430e4d.webp",
+      "url": "/work/motel-x",
+      "tier": "featured"
     },
     {
       "name": "NFC",
       "logo": "/media/logo-nfc-602094.webp",
-      "url": "/work/nfc"
+      "url": "/work/nfc",
+      "tier": "featured"
     },
     {
-      "name": "Wines From Another World",
-      "logo": "/media/logo-wines-1459fc.webp",
-      "url": "/work/wines-from-another-world"
+      "name": "BioXYZ",
+      "logo": "/media/logo-wall-bioxyz-f0063c.webp",
+      "url": "/work/bioxyz",
+      "tier": "featured"
+    },
+    {
+      "name": "Hulaween",
+      "logo": "/media/logo-wall-hulaween-4c1a09.webp",
+      "url": "/work/hulaween",
+      "tier": "featured"
+    },
+    {
+      "name": "Viva El Gonzo",
+      "logo": "/media/logo-wall-viva-el-gonzo-a3373a.webp",
+      "url": "https://www.vivaelgonzo.com/",
+      "tier": "featured"
     },
     {
       "name": "YARD",
       "logo": "/media/logo-yard-0b4004.webp",
-      "url": "/work/yard-episode"
+      "url": "/work/yard-episode",
+      "tier": "featured"
     },
     {
-      "name": "Alan Watts",
-      "logo": "/media/logo-alanwatts-b7a6d3.webp",
-      "url": "/work/alan-watts"
+      "name": "Lisbon Insiders",
+      "logo": "/media/logo-wall-lisbon-insiders-7a6df9.webp",
+      "url": "/work/lisbon-insiders",
+      "tier": "more"
     },
     {
-      "name": "Hulaween",
-      "logo": "/media/logo-hula-2a4079.webp",
-      "url": "/work/hulaween"
+      "name": "Wines From Another World",
+      "logo": "/media/logo-wall-wines-from-another-world-8bdab0.webp",
+      "url": "/work/wines-from-another-world",
+      "tier": "more"
     },
     {
       "name": "Vagabond",
-      "logo": "/media/logo-vagabond-c6eb7f.webp",
-      "url": "/work/vagabond"
+      "logo": "/media/logo-wall-vagabond-b8c020.webp",
+      "url": "/work/vagabond",
+      "tier": "more"
     },
     {
       "name": "Rare Effect",
-      "logo": "/media/logo-rareeffect-9afc9d.webp",
-      "url": "/work/rare-effect"
+      "logo": "/media/logo-wall-rare-effect-a74c15.webp",
+      "url": "/work/rare-effect",
+      "tier": "more"
     },
     {
       "name": "Portugal Tech Week",
       "logo": "/media/logo-techweek-9b34b3.webp",
-      "url": "/work/portugal-tech-week"
+      "url": "/work/portugal-tech-week",
+      "tier": "more"
     },
     {
       "name": "Studio 54b",
-      "logo": "/media/logo-studio54b-91fb67.webp",
-      "url": "/work/studio-54b"
-    },
-    {
-      "name": "BioXYZ",
-      "logo": "/media/logo-bioxyz-460ab9.webp",
-      "url": "/work/bioxyz"
+      "logo": "/media/logo-wall-studio-54b-412ce8.webp",
+      "url": "/work/studio-54b",
+      "tier": "more"
     },
     {
       "name": "Quincy Jones",
@@ -258,50 +310,42 @@
     },
     {
       "name": "Barbara Veiga",
-      "logo": "/media/logo-barbara-7cb5c2.webp",
-      "url": "/work/surrender-to-nature"
-    },
-    {
-      "name": "MOTELX",
-      "logo": "/media/logo-motelx-7c1cb2.webp",
-      "url": "/work/motel-x"
+      "logo": "/media/logo-wall-barbara-veiga-c99e37.webp",
+      "url": "/work/surrender-to-nature",
+      "tier": "more"
     },
     {
       "name": "Oddsgate",
       "logo": "/media/logo-oddsgate-231802.webp",
-      "url": "/work/oddsgate"
-    },
-    {
-      "name": "Standvirtual",
-      "logo": "/media/logo-standv-w-ee822f.webp",
-      "url": "/work/stand-virtual"
+      "url": "/work/oddsgate",
+      "tier": "more"
     },
     {
       "name": "Synesthesia",
       "logo": "/media/logo-synesthesia-bbad13.webp",
-      "url": "/work/synesthesia"
+      "url": "/work/synesthesia",
+      "tier": "more"
     },
     {
       "name": "Tkeshii",
-      "logo": "/media/logo-tkeshii-b0be0f.webp",
-      "url": "/work/tkeshii"
-    },
-    {
-      "name": "Texas Eclipse",
-      "logo": "/media/logo-eclipse-0cccb8.webp",
-      "url": "/work/texas-eclipse"
-    },
-    {
-      "name": "KBC",
-      "logo": "/media/kbc-400-9e95b84803.webp",
-      "url": "/work/kbc"
+      "logo": "/media/logo-wall-tkeshii-440505.webp",
+      "url": "/work/tkeshii",
+      "tier": "more"
     }
   ],
   "partners": [
     {
       "name": "Screenix",
-      "logo": "/media/logo-screenix-3d8dc8.webp",
-      "url": "https://screenix.io/"
+      "logo": "/media/logo-screenix-solid-8a1edd.webp",
+      "url": "https://screenix.io/",
+      "tier": "featured"
+    },
+    {
+      "name": "Samsung",
+      "logo": "/media/logo-wall-samsung-dcb194.webp",
+      "note": "Spatial signage with Screenix",
+      "url": "https://screenix.io/samsung-spatial-content",
+      "tier": "featured"
     },
     {
       "name": "Taste Labs",

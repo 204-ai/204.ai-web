@@ -1104,28 +1104,28 @@
     "logo-rareeffect-9afc9d-p-160.webp": 4960
    }
   },
-  "media-src/cinematic/logo-screenix.png": {
-   "sha1": "e52af8f51a54e3dfb4fcbf8e8a4193b67e0b8ed9",
+  "media-src/cinematic/logo-screenix-solid.png": {
+   "sha1": "2c00e01869ba151a1758eec503a01425b043162d",
    "role": "logo",
-   "path": "/media/logo-screenix-3d8dc8.webp",
-   "w": 300,
-   "h": 84,
+   "path": "/media/logo-screenix-solid-8a1edd.webp",
+   "w": 320,
+   "h": 71,
    "files": {
-    "logo-screenix-3d8dc8.webp": 8032,
-    "logo-screenix-3d8dc8-p-320.webp": 8032,
-    "logo-screenix-3d8dc8-p-160.webp": 4128
+    "logo-screenix-solid-8a1edd.webp": 13402,
+    "logo-screenix-solid-8a1edd-p-320.webp": 13402,
+    "logo-screenix-solid-8a1edd-p-160.webp": 4514
    }
   },
-  "media-src/cinematic/logo-standv-w.png": {
-   "sha1": "5e5a58ad46b983ade6db1410b07a05bfd4ac53a6",
+  "media-src/cinematic/logo-standvirtual-clean.png": {
+   "sha1": "effa0262ec1bbcb3fcf9dd2cb4dbc0bc1677ab02",
    "role": "logo",
-   "path": "/media/logo-standv-w-ee822f.webp",
+   "path": "/media/logo-standvirtual-clean-cd3dc8.webp",
    "w": 320,
-   "h": 56,
+   "h": 45,
    "files": {
-    "logo-standv-w-ee822f.webp": 7424,
-    "logo-standv-w-ee822f-p-320.webp": 7424,
-    "logo-standv-w-ee822f-p-160.webp": 2948
+    "logo-standvirtual-clean-cd3dc8.webp": 7388,
+    "logo-standvirtual-clean-cd3dc8-p-320.webp": 7388,
+    "logo-standvirtual-clean-cd3dc8-p-160.webp": 2946
    }
   },
   "media-src/cinematic/logo-studio54b.png": {
@@ -1212,6 +1212,162 @@
     "logo-vagabond-c6eb7f-p-160.webp": 4784
    }
   },
+  "media-src/cinematic/logo-wall-barbara-veiga.png": {
+   "sha1": "2ab9f50351960f8b06b4b65e113f09f69a41a902",
+   "role": "logo",
+   "path": "/media/logo-wall-barbara-veiga-c99e37.webp",
+   "w": 240,
+   "h": 81,
+   "files": {
+    "logo-wall-barbara-veiga-c99e37.webp": 9284,
+    "logo-wall-barbara-veiga-c99e37-p-320.webp": 9284,
+    "logo-wall-barbara-veiga-c99e37-p-160.webp": 6814
+   }
+  },
+  "media-src/cinematic/logo-wall-bioxyz.png": {
+   "sha1": "9b54696209cebfaf899de328d48b66ac8d952d33",
+   "role": "logo",
+   "path": "/media/logo-wall-bioxyz-f0063c.webp",
+   "w": 320,
+   "h": 92,
+   "files": {
+    "logo-wall-bioxyz-f0063c.webp": 11248,
+    "logo-wall-bioxyz-f0063c-p-320.webp": 11248,
+    "logo-wall-bioxyz-f0063c-p-160.webp": 4656
+   }
+  },
+  "media-src/cinematic/logo-wall-hulaween.png": {
+   "sha1": "0f9d670d03ba453cff3d00f89b12ed41851a3e78",
+   "role": "logo",
+   "path": "/media/logo-wall-hulaween-4c1a09.webp",
+   "w": 320,
+   "h": 49,
+   "files": {
+    "logo-wall-hulaween-4c1a09.webp": 7912,
+    "logo-wall-hulaween-4c1a09-p-320.webp": 7912,
+    "logo-wall-hulaween-4c1a09-p-160.webp": 3500
+   }
+  },
+  "media-src/cinematic/logo-wall-lisbon-insiders.png": {
+   "sha1": "fcc1b9f640d67e35fada360ee8f5485ad03b1888",
+   "role": "logo",
+   "path": "/media/logo-wall-lisbon-insiders-7a6df9.webp",
+   "w": 320,
+   "h": 124,
+   "files": {
+    "logo-wall-lisbon-insiders-7a6df9.webp": 9398,
+    "logo-wall-lisbon-insiders-7a6df9-p-320.webp": 9398,
+    "logo-wall-lisbon-insiders-7a6df9-p-160.webp": 4082
+   }
+  },
+  "media-src/cinematic/logo-wall-motelx.png": {
+   "sha1": "218de608f95f6e28a79bfd04ba7decb9dbca21fb",
+   "role": "logo",
+   "path": "/media/logo-wall-motelx-430e4d.webp",
+   "w": 288,
+   "h": 319,
+   "files": {
+    "logo-wall-motelx-430e4d.webp": 8696,
+    "logo-wall-motelx-430e4d-p-320.webp": 8696,
+    "logo-wall-motelx-430e4d-p-160.webp": 7340
+   }
+  },
+  "media-src/cinematic/logo-wall-rare-effect.png": {
+   "sha1": "1fe129b62203f0d6a466dff55197f93396e9ae45",
+   "role": "logo",
+   "path": "/media/logo-wall-rare-effect-a74c15.webp",
+   "w": 320,
+   "h": 131,
+   "files": {
+    "logo-wall-rare-effect-a74c15.webp": 17430,
+    "logo-wall-rare-effect-a74c15-p-320.webp": 17430,
+    "logo-wall-rare-effect-a74c15-p-160.webp": 5844
+   }
+  },
+  "media-src/cinematic/logo-wall-samsung.png": {
+   "sha1": "d15fdc04bb91bd7835fb7fae1370ecd08fc8d541",
+   "role": "logo",
+   "path": "/media/logo-wall-samsung-dcb194.webp",
+   "w": 320,
+   "h": 50,
+   "files": {
+    "logo-wall-samsung-dcb194.webp": 4814,
+    "logo-wall-samsung-dcb194-p-320.webp": 4814,
+    "logo-wall-samsung-dcb194-p-160.webp": 2288
+   }
+  },
+  "media-src/cinematic/logo-wall-snackshop.png": {
+   "sha1": "7cc44ba44d4ffc7f116aa7aaef520d2c98e6ba22",
+   "role": "logo",
+   "path": "/media/logo-wall-snackshop-683c8d.webp",
+   "w": 320,
+   "h": 55,
+   "files": {
+    "logo-wall-snackshop-683c8d.webp": 6310,
+    "logo-wall-snackshop-683c8d-p-320.webp": 6310,
+    "logo-wall-snackshop-683c8d-p-160.webp": 2676
+   }
+  },
+  "media-src/cinematic/logo-wall-studio-54b.png": {
+   "sha1": "d0a641566ee146ba6df96c8d44410064d1ade1ae",
+   "role": "logo",
+   "path": "/media/logo-wall-studio-54b-412ce8.webp",
+   "w": 320,
+   "h": 270,
+   "files": {
+    "logo-wall-studio-54b-412ce8.webp": 15014,
+    "logo-wall-studio-54b-412ce8-p-320.webp": 15014,
+    "logo-wall-studio-54b-412ce8-p-160.webp": 5766
+   }
+  },
+  "media-src/cinematic/logo-wall-tkeshii.png": {
+   "sha1": "e0587683e026be250cc99432cf877ffc2d870fac",
+   "role": "logo",
+   "path": "/media/logo-wall-tkeshii-440505.webp",
+   "w": 320,
+   "h": 56,
+   "files": {
+    "logo-wall-tkeshii-440505.webp": 5986,
+    "logo-wall-tkeshii-440505-p-320.webp": 5986,
+    "logo-wall-tkeshii-440505-p-160.webp": 2760
+   }
+  },
+  "media-src/cinematic/logo-wall-vagabond.png": {
+   "sha1": "142ff8485f830358c0e7a8cea025eb107558590f",
+   "role": "logo",
+   "path": "/media/logo-wall-vagabond-b8c020.webp",
+   "w": 320,
+   "h": 107,
+   "files": {
+    "logo-wall-vagabond-b8c020.webp": 12860,
+    "logo-wall-vagabond-b8c020-p-320.webp": 12860,
+    "logo-wall-vagabond-b8c020-p-160.webp": 4980
+   }
+  },
+  "media-src/cinematic/logo-wall-viva-el-gonzo.png": {
+   "sha1": "3e37694bee4e86c304338b1128e3bf9a08026490",
+   "role": "logo",
+   "path": "/media/logo-wall-viva-el-gonzo-a3373a.webp",
+   "w": 320,
+   "h": 158,
+   "files": {
+    "logo-wall-viva-el-gonzo-a3373a.webp": 42440,
+    "logo-wall-viva-el-gonzo-a3373a-p-320.webp": 42440,
+    "logo-wall-viva-el-gonzo-a3373a-p-160.webp": 13322
+   }
+  },
+  "media-src/cinematic/logo-wall-wines-from-another-world.png": {
+   "sha1": "9900caeb01ddb0bd19456cbc6ec6ec2039c5bb12",
+   "role": "logo",
+   "path": "/media/logo-wall-wines-from-another-world-8bdab0.webp",
+   "w": 320,
+   "h": 245,
+   "files": {
+    "logo-wall-wines-from-another-world-8bdab0.webp": 19184,
+    "logo-wall-wines-from-another-world-8bdab0-p-320.webp": 19184,
+    "logo-wall-wines-from-another-world-8bdab0-p-160.webp": 8678
+   }
+  },
   "media-src/cinematic/logo-wines.png": {
    "sha1": "6042d103fc9eaff20ca02bf57bb82f96e9ba1d4f",
    "role": "logo",
@@ -1234,6 +1390,18 @@
     "logo-yard-0b4004.webp": 6464,
     "logo-yard-0b4004-p-320.webp": 6464,
     "logo-yard-0b4004-p-160.webp": 3144
+   }
+  },
+  "media-src/cinematic/logo-zeb.png": {
+   "sha1": "ec43ebfbbc82241e44cd948fb625c82af92c7ae8",
+   "role": "logo",
+   "path": "/media/logo-zeb-35b6f4.webp",
+   "w": 320,
+   "h": 127,
+   "files": {
+    "logo-zeb-35b6f4.webp": 5482,
+    "logo-zeb-35b6f4-p-320.webp": 5482,
+    "logo-zeb-35b6f4-p-160.webp": 3060
    }
   },
   "media-src/cinematic/maz-01.jpg": {

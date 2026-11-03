@@ -1,0 +1,630 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sentient Space</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+
+
+<style>
+/* Layout: one dark scroll story; a 1120px column; the studio's own floorplan is the centrepiece and carries the escape route at the end. */
+:root {
+  --ink: #0B0E12;
+  --panel: #121820;
+  --line: #232C38;
+  --text: #F1ECE4;
+  --muted: #98A1AD;
+  --amber: #F0A443;
+  --cyan: #4CB8C8;
+  --display: 'Anton SC', Impact, 'Arial Narrow', sans-serif;
+  --body: 'Poppins', 'Helvetica Neue', Arial, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--ink); color: var(--text); font: 17px/1.55 var(--body); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 1120px; margin-inline: auto; }
+h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: .95; letter-spacing: .01em; text-wrap: balance; margin: 0; }
+p { margin: 0; }
+a { color: var(--cyan); }
+.eyebrow { font: 500 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--amber); }
+.eyebrow.mind { color: var(--cyan); }
+.lede { color: var(--muted); max-width: 60ch; font-size: 18px; }
+.cap { font: 12px/1.4 var(--mono); color: var(--muted); }
+:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+
+/* nav */
+nav.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: color-mix(in srgb, var(--ink) 88%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); padding: 10px max(16px, env(safe-area-inset-left, 0px)); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--ink); }
+nav.top .wrap { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+nav.top b { font: 400 17px var(--display); letter-spacing: .04em; margin-right: auto; }
+nav.top a { font: 12px var(--mono); color: var(--muted); text-decoration: none; letter-spacing: .08em; text-transform: uppercase; }
+nav.top a:hover { color: var(--text); }
+
+section { padding-block: 72px; border-bottom: 1px solid var(--line); }
+section .head { display: grid; gap: 14px; margin-bottom: 32px; }
+section h2 { font-size: clamp(36px, 5.6vw, 64px); }
+
+/* hero */
+.hero { display: grid; grid-template-columns: 1fr 300px; gap: 56px; align-items: center; padding-block: 56px 72px; }
+.hero > div { min-width: 0; display: grid; gap: 22px; }
+.hero h1 { font-size: clamp(64px, 11.5vw, 168px); line-height: .88; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+/* the title in ANSI Shadow letters: every glyph column is a span, so the face ripples like a flag
+   while a warm tint sweeps across; the box-drawing shadow stays dim */
+.ascii { container-type: inline-size; overflow: hidden; padding-block: .2em; }
+.ascii > div { font: 400 calc(100cqi / 40.5) / 1 Menlo, Consolas, 'DejaVu Sans Mono', 'Liberation Mono', monospace; letter-spacing: 0; white-space: nowrap; user-select: none; }
+.ascii > div + div { margin-top: .45em; }
+.ascii .c { display: inline-block; white-space: pre; color: var(--text);
+  animation: ripple 3.6s ease-in-out infinite, tint 7s linear infinite;
+  animation-delay: calc(var(--x) * 55ms - 8s), calc(var(--x) * 38ms - 8s); }
+.ascii .c b { font-weight: inherit; color: color-mix(in srgb, var(--cyan) 40%, var(--ink)); }
+@keyframes ripple { 0%, 100% { transform: translateY(-.14em); } 50% { transform: translateY(.14em); } }
+@keyframes tint { 0%, 72%, 100% { color: var(--text); } 81% { color: var(--amber); } 90% { color: var(--cyan); } }
+.phone { position: relative; border-radius: 28px; overflow: hidden; border: 1px solid var(--line); background: var(--panel); aspect-ratio: 464 / 848; max-width: 100%; }
+.phone video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.phone .cap { position: absolute; left: 12px; right: 12px; bottom: 12px; background: rgba(11,14,18,.8); padding: 6px 10px; border-radius: 8px; color: var(--text); }
+
+/* the loop */
+.loop { display: flex; align-items: center; gap: 0; max-width: 560px; }
+.loop span { font: 500 13px var(--mono); letter-spacing: .1em; text-transform: uppercase; padding: 8px 14px; border: 1px solid var(--line); border-radius: 999px; white-space: nowrap; }
+.loop span:nth-child(1) { color: var(--amber); border-color: color-mix(in srgb, var(--amber) 50%, transparent); }
+.loop span:nth-child(3) { color: var(--cyan); border-color: color-mix(in srgb, var(--cyan) 50%, transparent); }
+.loop i { position: relative; flex: 1; height: 1px; background: var(--line); min-width: 24px; }
+.loop i::after { content: ""; position: absolute; top: -3px; left: 0; width: 7px; height: 7px; border-radius: 50%; background: var(--text); animation: travel 2.4s linear infinite; }
+.loop i:nth-of-type(2)::after { animation-delay: 1.2s; }
+@keyframes travel { from { left: 0; opacity: 0 } 15% { opacity: 1 } 85% { opacity: 1 } to { left: calc(100% - 7px); opacity: 0 } }
+
+/* video tiles */
+.grid { display: grid; gap: 14px; grid-template-columns: repeat(12, 1fr); }
+figure { margin: 0; display: grid; gap: 8px; min-width: 0; }
+.tile { position: relative; border-radius: 14px; overflow: hidden; background: var(--panel); border: 1px solid var(--line); }
+.tile video, .tile img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.s-track { grid-column: span 7; } .s-track .tile { aspect-ratio: 1200 / 692; }
+.s-depth { grid-column: span 5; } .s-depth .tile { aspect-ratio: 1200 / 692; }
+.s-ir { grid-column: span 5; } .s-ir .tile { aspect-ratio: 1200 / 692; }
+.s-lever { grid-column: span 7; } .s-lever .tile { aspect-ratio: 1200 / 692; }
+.s-mirror { grid-column: span 5; } .s-mirror .tile { aspect-ratio: 1 / 1; }
+.s-flux { grid-column: span 7; } .s-flux .tile { aspect-ratio: 960 / 534; }
+.s-canvas { grid-column: span 7; align-self: end; } .s-canvas .tile { aspect-ratio: 1280 / 630; }
+.facts { grid-column: span 7; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; align-self: start; }
+.fact { border-top: 1px solid var(--line); padding-top: 12px; display: grid; gap: 4px; }
+.fact b { font: 400 44px/1 var(--display); color: var(--cyan); font-variant-numeric: tabular-nums; }
+.fact span { color: var(--muted); font-size: 14px; }
+
+/* floorplan */
+.plan { position: relative; border-radius: 16px; overflow: hidden; }
+.plan svg { display: block; width: 100%; height: auto; }
+.spot { position: absolute; transform: translate(-50%, -50%); display: flex; align-items: center; gap: 8px; background: none; border: 0; padding: 6px; cursor: pointer; color: var(--text); font: 500 12px var(--mono); letter-spacing: .04em; }
+.spot::before { content: ""; width: 14px; height: 14px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 0 0 color-mix(in srgb, var(--amber) 60%, transparent); animation: ping 2.2s ease-out infinite; flex: none; }
+.spot[aria-pressed="true"]::before { background: var(--cyan); box-shadow: 0 0 0 6px color-mix(in srgb, var(--cyan) 30%, transparent); animation: none; }
+.spot em { font-style: normal; background: rgba(11,14,18,.82); padding: 3px 7px; border-radius: 6px; white-space: nowrap; }
+@keyframes ping { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--amber) 55%, transparent) } 100% { box-shadow: 0 0 0 16px transparent } }
+.rooms { display: grid; grid-template-columns: 1fr 380px; gap: 20px; align-items: start; }
+.rooms > * { min-width: 0; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.chips button { font: 500 12px var(--mono); letter-spacing: .04em; color: var(--muted); background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 7px 12px; cursor: pointer; }
+.chips button[aria-pressed="true"] { color: var(--ink); background: var(--cyan); border-color: var(--cyan); }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; display: grid; }
+.card .media { aspect-ratio: 4 / 3; background: #000; }
+.card .media video, .card .media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.card .body { padding: 18px 20px 20px; display: grid; gap: 10px; }
+.card h3 { font-size: 28px; }
+.card ul { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 6px; }
+.card li { font: 13px/1.4 var(--mono); color: var(--muted); padding-left: 16px; position: relative; }
+.card li::before { content: ""; position: absolute; left: 0; top: 7px; width: 6px; height: 6px; border-radius: 1px; background: var(--amber); }
+
+/* control */
+.shot { border-radius: 14px; overflow: hidden; border: 1px solid var(--line); }
+.shot img { display: block; width: 100%; height: auto; }
+.fleet { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 16px; }
+details { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+details[open] { border-color: color-mix(in srgb, var(--cyan) 55%, var(--line)); }
+summary { cursor: pointer; list-style: none; display: grid; gap: 2px; }
+summary::-webkit-details-marker { display: none; }
+summary b { font: 400 19px var(--display); letter-spacing: .02em; }
+summary span { font: 12px var(--mono); color: var(--muted); }
+details p { margin-top: 10px; font-size: 14px; color: var(--muted); }
+.steps { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 22px; font: 500 13px var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+.steps span { padding: 8px 14px; border-radius: 999px; background: var(--amber); color: var(--ink); }
+.steps i { color: var(--muted); font-style: normal; }
+
+
+.bio { display: grid; grid-template-columns: 180px 1fr 410px; gap: 32px; align-items: center; }
+.proj { font-weight: 600; color: var(--text); background: linear-gradient(transparent 60%, color-mix(in srgb, var(--cyan) 32%, transparent) 0); padding-inline: 1px; cursor: default; transition: background-color .2s; }
+.proj.lit { background-color: color-mix(in srgb, var(--cyan) 22%, transparent); }
+.spool { margin: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; display: grid; transition: border-color .2s; }
+.spool figcaption { display: flex; justify-content: space-between; gap: 12px; padding: 8px 14px; border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--line) 45%, var(--panel)); }
+.spool pre { margin: 0; padding: 14px 16px 16px; font: 12.5px/1.6 var(--mono); color: var(--muted); white-space: pre-wrap; overflow-x: auto; }
+.spool .k { color: var(--text); }
+.spool mark { background: none; color: var(--amber); font-weight: 500; }
+.spool.lit, .creds figure.lit { border-color: var(--cyan); }
+.creds figure { transition: transform .2s, filter .2s; }
+.creds figure.lit { transform: translateY(-3px); filter: drop-shadow(0 0 10px color-mix(in srgb, var(--cyan) 55%, transparent)); }
+.creds figure[data-p] { cursor: default; }
+.bio > div { min-width: 0; display: grid; gap: 14px; }
+.bio > img { width: 180px; height: 180px; object-fit: cover; border-radius: 20px; border: 1px solid var(--line); }
+.bio h2 { font-size: clamp(32px, 4.6vw, 48px); }
+.bio p.text { max-width: 62ch; color: var(--muted); }
+.creds { grid-column: 1 / -1; display: grid; grid-template-columns: auto auto auto; justify-content: start; gap: 24px 48px; align-items: end; border-top: 1px solid var(--line); padding-block-start: 24px; }
+.creds > * { min-width: 0; }
+.creds figure { display: grid; gap: 8px; justify-items: center; }
+.creds .phd img { width: 96px; height: auto; border-radius: 4px; border: 1px solid var(--line); }
+.creds .group { display: grid; gap: 12px; }
+.marks { display: flex; flex-wrap: wrap; gap: 18px 26px; align-items: flex-end; }
+.marks img { height: 40px; width: auto; max-width: 140px; object-fit: contain; }
+.marks img[alt="Nevermined"] { height: 24px; max-width: 210px; }
+footer { padding-block: 40px 0; display: grid; gap: 8px; }
+
+/* coda: Dimination, full bleed */
+.coda { position: relative; min-height: 78vh; display: flex; align-items: flex-end; overflow: hidden; border-bottom: 0; }
+.coda > video.bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.coda::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(11,14,18,.94) 0%, rgba(11,14,18,.45) 50%, rgba(11,14,18,.08) 100%); }
+.coda-in { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 380px; gap: 32px; align-items: end; }
+.coda-in > * { min-width: 0; }
+.coda-text { display: grid; gap: 14px; }
+.coda h2 { font-size: clamp(64px, 11vw, 150px); line-height: .88; }
+.coda .lede { color: var(--text); }
+.wake .tile { aspect-ratio: 960 / 360; }
+
+/* presentation mode: one section per screen */
+.present-btn { font: 500 12px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink); background: var(--amber); border: 0; border-radius: 999px; padding: 7px 14px; cursor: pointer; }
+section { scroll-margin-top: 52px; }
+.intro { padding-block: 0; }
+html.present { scroll-snap-type: y mandatory; }
+.present nav.top { display: none; }
+.present main > section { min-height: 100dvh; display: flex; flex-direction: column; justify-content: center; padding-block: 28px 64px; scroll-snap-align: start; scroll-margin-top: 0; border-bottom: 0; }
+.present .bio > img { width: 140px; height: 140px; }
+.present main > section.coda { justify-content: flex-end; }
+.present footer { padding-block-start: 20px; }
+.present main > section > .wrap { width: 100%; }
+.present .tile { max-height: 30dvh; }
+.present .card .media { max-height: 32dvh; }
+.present .shot img { max-height: 38dvh; object-fit: contain; }
+.present .hero .phone { max-height: 78dvh; width: auto; }
+.present section .head { margin-bottom: 22px; }
+.hud { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 40; display: flex; align-items: center; gap: 6px; background: color-mix(in srgb, var(--panel) 92%, transparent); border: 1px solid var(--line); border-radius: 999px; padding: 6px; backdrop-filter: blur(8px); }
+.hud button { font: 500 14px var(--mono); color: var(--text); background: none; border: 0; border-radius: 999px; padding: 6px 12px; cursor: pointer; }
+.hud button:hover { background: var(--line); }
+.hud #count { font: 12px var(--mono); color: var(--muted); min-width: 52px; text-align: center; font-variant-numeric: tabular-nums; }
+footer p { color: var(--muted); font-size: 14px; }
+
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; }
+  .hero .phone { max-width: 280px; }
+  .rooms { grid-template-columns: 1fr; }
+  .grid > * { grid-column: span 12; }
+  .facts { grid-template-columns: repeat(3, 1fr); }
+  .fleet { grid-template-columns: repeat(2, 1fr); }
+  .bio { grid-template-columns: 140px 1fr; }
+  .coda-in { grid-template-columns: 1fr; }
+  .wake { max-width: 420px; }
+  .bio > img { width: 140px; height: 140px; }
+  .spool { grid-column: 1 / -1; min-width: 0; }
+}
+@media (max-width: 640px) {
+  .spot em { display: none; }
+  .fleet { grid-template-columns: 1fr; }
+  .fact b { font-size: 30px; }
+  .bio { grid-template-columns: 1fr; gap: 20px; }
+  .creds { grid-template-columns: 1fr; }
+  .creds .phd { justify-items: start; }
+  .bio > img { width: 120px; height: 120px; }
+  section { padding-block: 52px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .loop i::after, .spot::before, .ascii .c { animation: none; }
+}
+</style>
+
+<nav class="top" aria-label="Sections">
+  <div class="wrap">
+    <b>Sentient Space</b>
+    <a href="#senses">Senses</a>
+    <a href="#rooms">Rooms</a>
+    <a href="#react">React</a>
+    <a href="#control">Control</a>
+    <a href="#maker">Maker</a>
+    <a href="#dimination">Dimination</a>
+    <button class="present-btn" id="present" type="button">▶ Present</button>
+  </div>
+</nav>
+
+<main>
+  <section id="intro" class="intro">
+  <div class="wrap hero">
+    <div>
+      <p class="eyebrow">204.ai · studio at RnA in Lisbon</p>
+      <h1 id="title">Sentient Space</h1>
+      <div class="ascii" id="ascii-title" aria-hidden="true" hidden></div>
+      <p class="lede">A 230 m² studio that notices who walks in, thinks with live AI engines, and reacts with light on every wall.</p>
+      <div class="loop" aria-label="The loop: sense, think, react">
+        <span>Sense</span><i></i><span>Think</span><i></i><span>React</span>
+      </div>
+    </div>
+    <figure class="phone">
+      <video src="media/walkthrough.mp4" poster="media/walkthrough.jpg" muted loop playsinline autoplay aria-label="Walking through the studio as each projector shows its name"></video>
+      <figcaption class="cap">Walkthrough · every projector shows its name</figcaption>
+    </figure>
+  </div>
+  </section>
+
+  <section id="senses">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow">Senses</p>
+        <h2>It sees who is in the room</h2>
+        <p class="lede">Depth cameras on the ceiling put every visitor on a live floorplan. Only positions and events travel on, never the video.</p>
+      </div>
+      <div class="grid">
+        <figure class="s-track"><div class="tile"><video src="media/tracking.mp4" poster="media/tracking.jpg" muted loop playsinline autoplay aria-label="Visitors drawn as dots on the live floorplan, with a trail"></video></div><figcaption class="cap">Visitors on the live floorplan</figcaption></figure>
+        <figure class="s-depth"><div class="tile"><video src="media/depth.mp4" poster="media/depth.jpg" muted loop playsinline autoplay aria-label="A live depth point cloud of the couch corner"></video></div><figcaption class="cap">Depth point cloud</figcaption></figure>
+        <figure class="s-ir"><div class="tile"><video src="media/infrared.mp4" poster="media/infrared.jpg" muted loop playsinline autoplay aria-label="The same corner in infrared, seen from above"></video></div><figcaption class="cap">Infrared, from above</figcaption></figure>
+        <figure class="s-lever"><div class="tile"><video src="media/lever.mp4" poster="media/lever.jpg" muted loop playsinline autoplay aria-label="The photobooth lever console counting presses"></video></div><figcaption class="cap">Touch · every pull of the lever, counted</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="rooms">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow">Space</p>
+        <h2>Six spots, one nervous system</h2>
+        <p class="lede">Pick a spot on the plan to see what lives there.</p>
+      </div>
+      <div class="rooms">
+        <div>
+          <div class="plan" id="plan">
+            <svg role="img" aria-label="Floorplan of RnA Studio, 28.9 by 10.5 metres, with projectors, art frames and depth cameras in place" width="1664" height="613" viewBox="0 0 1664 613" xmlns="http://www.w3.org/2000/svg">
+<rect x="0" y="0" width="1664" height="613" rx="18" fill="#121820"/>
+<polygon points="761.8,411.0 761.8,594.3 1082.6,594.3 1082.6,411.0" fill="#222B36"/>
+<polygon points="673.3,423.8 673.3,527.1 764.4,527.1 764.4,423.8" fill="#222B36"/>
+<polygon points="764.7,219.1 764.7,229.1 1042.5,229.1 1042.5,219.1" fill="#222B36"/>
+<polygon points="353.7,17.2 353.7,401.0 358.0,401.0 358.0,17.2" fill="#222B36"/>
+<polygon points="353.7,191.6 353.7,260.9 358.0,260.9 358.0,191.6" fill="#222B36"/>
+<polygon points="965.2,330.8 965.2,358.0 1086.9,358.0 1086.9,330.8" fill="#222B36"/>
+<polygon points="103.1,255.2 103.1,257.8 306.5,257.8 306.5,255.2" fill="#222B36"/>
+<polygon points="103.1,433.8 103.1,436.9 306.5,436.9 306.5,433.8" fill="#222B36"/>
+<polygon points="100.2,257.8 100.2,438.2 103.1,438.2 103.1,257.8" fill="#222B36"/>
+<polygon points="817.8,228.7 817.8,233.0 958.0,233.0 958.0,228.7" fill="#222B36"/>
+<polygon points="1295.7,226.1 1295.7,229.2 1339.6,229.2 1339.6,226.1" fill="#222B36"/>
+<polygon points="438.5,347.3 438.5,398.9 598.3,398.9 598.3,347.3" fill="#222B36"/>
+<polygon points="186.2,380.9 186.2,423.9 274.9,423.9 274.9,380.9" fill="#222B36"/>
+<polygon points="790.3,369.6 931.5,369.6 931.5,410.2 790.3,410.2" fill="#222B36"/>
+<polygon points="718.9,80.2 718.9,191.9 750.4,191.9 750.4,80.2" fill="#222B36"/>
+<polygon points="766.9,5.7 766.9,229.1 1141.3,229.1 1141.3,5.7" fill="#222B36"/>
+<polygon points="766.1,406.7 766.1,492.6 958.0,492.6 958.0,406.7" fill="#222B36"/>
+<polygon points="607.2,405.9 607.2,430.3 704.6,430.3 704.6,405.9" fill="#222B36"/>
+<polygon points="372.3,37.2 429.8,399.5 606.8,399.5" fill="#F0A443" fill-opacity="0.13" stroke="#F0A443" stroke-opacity="0.45" stroke-width="1.5"/>
+<polygon points="206.8,443.9 305.9,257.8 103.1,258.0" fill="#F0A443" fill-opacity="0.13" stroke="#F0A443" stroke-opacity="0.45" stroke-width="1.5"/>
+<polygon points="123.2,126.0 354.3,17.2 353.7,192.1" fill="#F0A443" fill-opacity="0.13" stroke="#F0A443" stroke-opacity="0.45" stroke-width="1.5"/>
+<polygon points="936.5,430.1 816.0,229.1 957.7,233.0" fill="#F0A443" fill-opacity="0.13" stroke="#F0A443" stroke-opacity="0.45" stroke-width="1.5"/>
+<polygon points="1324.3,401.0 1292.5,226.3 1341.9,226.3" fill="#F0A443" fill-opacity="0.13" stroke="#F0A443" stroke-opacity="0.45" stroke-width="1.5"/>
+<polygon points="388.0,483.3 598.1,582.8 599.4,406.7" fill="#F0A443" fill-opacity="0.13" stroke="#F0A443" stroke-opacity="0.45" stroke-width="1.5"/>
+<polygon points="684.5,443.9 382.5,24.4 718.9,19.6" fill="#F0A443" fill-opacity="0.13" stroke="#F0A443" stroke-opacity="0.45" stroke-width="1.5"/>
+<path d="M837.1,226.4 L896.8,564.8 A343.7,343.7 0 0 1 539.5,398.2 Z" fill="#C9CED6" fill-opacity="0.08" stroke="#C9CED6" stroke-opacity="0.5" stroke-width="1.5"/>
+<path d="M347.4,140.3 L529.2,0.9 A229.1,229.1 0 0 1 529.2,279.8 Z" fill="#4CB8C8" fill-opacity="0.16" stroke="#4CB8C8" stroke-opacity="0.5" stroke-width="1.5"/>
+<path d="M362.7,465.6 L544.5,326.2 A229.1,229.1 0 0 1 544.5,605.1 Z" fill="#4CB8C8" fill-opacity="0.16" stroke="#4CB8C8" stroke-opacity="0.5" stroke-width="1.5"/>
+<polygon points="17.2,190.5 24.3,189.0 25.8,180.4 97.4,180.4 97.4,170.4 17.2,170.4" fill="#8A93A0"/>
+<polygon points="1658.3,124.6 1622.5,124.6 1622.5,136.0 1366.1,136.0 1364.7,213.4 1141.3,213.4 1141.3,229.1 1178.5,229.1 1180.0,226.3 1349.0,226.3 1349.0,229.1 1387.6,229.1 1387.6,151.8 1658.3,151.8" fill="#8A93A0"/>
+<polygon points="1608.2,242.0 1654.0,242.0 1655.4,239.1 1658.3,239.1 1658.3,219.1 1631.1,219.1 1631.1,237.7 1608.2,237.7" fill="#8A93A0"/>
+<polygon points="1608.2,327.9 1608.2,330.8 1658.3,330.8 1658.3,327.9" fill="#8A93A0"/>
+<polygon points="766.1,411.0 764.7,403.8 704.6,403.8 704.6,423.9 764.7,423.9" fill="#8A93A0"/>
+<polygon points="958.0,411.0 959.4,418.1 1086.9,418.1 1086.9,425.3 1632.5,425.3 1632.5,438.2 1658.3,438.2 1658.3,376.6 1631.1,376.6 1629.6,413.9 1296.0,413.9 1294.5,403.8 959.4,403.8" fill="#8A93A0"/>
+<polygon points="429.6,399.5 429.6,406.7 607.2,406.7 607.2,399.5" fill="#8A93A0"/>
+<polygon points="1005.3,484.0 1005.3,489.7 1098.4,489.7 1098.4,484.0" fill="#8A93A0"/>
+<polygon points="5.7,5.7 5.7,607.2 1658.3,607.2 1658.3,588.6 1632.5,590.0 1632.5,595.7 1099.8,595.7 1099.8,425.3 1294.5,425.3 1294.5,403.8 959.4,403.8 959.4,489.7 963.7,489.7 965.2,418.1 1002.4,418.1 1002.4,438.2 1008.1,438.2 1008.1,418.1 1086.9,419.6 1086.9,594.3 608.6,594.3 607.2,399.5 601.4,399.5 600.0,582.8 542.7,582.8 541.3,594.3 426.7,594.3 425.3,587.1 368.0,587.1 368.0,594.3 360.9,594.3 360.9,401.0 353.7,401.0 353.7,594.3 227.7,594.3 226.3,582.8 159.0,582.8 157.5,594.3 17.2,594.3 17.2,419.6 25.8,418.1 25.8,390.9 17.2,390.9 17.2,320.8 31.5,320.8 31.5,256.3 17.2,254.9 17.2,190.5 24.3,189.0 24.3,170.4 17.2,170.4 17.2,25.8 91.6,25.8 91.6,126.0 97.4,126.0 97.4,17.2 214.8,17.2 216.2,25.8 290.7,25.8 290.7,17.2 386.6,17.2 386.6,25.8 426.7,25.8 426.7,17.2 544.2,17.2 544.2,25.8 617.2,25.8 618.6,17.2 718.9,17.2 718.9,25.8 781.9,25.8 783.3,17.2 866.4,17.2 867.8,25.8 899.3,25.8 899.3,17.2 1142.7,17.2 1142.7,88.8 1141.3,90.2 1141.3,108.8 1142.7,110.3 1142.7,209.1 1141.3,209.1 1141.3,229.1 1178.5,229.1 1178.5,213.4 1148.5,213.4 1149.9,25.8 1364.7,25.8 1366.1,37.2 1379.0,37.2 1379.0,25.8 1622.5,25.8 1622.5,45.8 1658.3,45.8 1658.3,5.7" fill="#8A93A0"/>
+<polygon points="1658.3,438.2 1658.3,326.5 1654.0,327.9 1654.0,375.2 1631.1,376.6 1631.1,425.3 1632.5,425.3 1632.5,438.2" fill="#8A93A0"/>
+<polygon points="1658.3,240.6 1658.3,45.8 1656.8,124.6 1622.5,124.6 1622.5,136.0 1379.0,136.0 1379.0,123.2 1366.1,123.2 1366.1,213.4 1349.0,213.4 1349.0,229.1 1387.6,229.1 1387.6,151.8 1654.0,153.2 1654.0,217.7 1631.1,219.1 1631.1,242.0 1654.0,242.0 1655.4,239.1" fill="#8A93A0"/>
+<polygon points="704.6,403.8 704.6,423.9 764.7,423.9 764.7,403.8" fill="#8A93A0"/>
+<line x1="355.1" y1="14.3" x2="355.1" y2="192.8" stroke="#F7D9A8" stroke-width="6" stroke-linecap="round"/>
+<line x1="930.8" y1="218.0" x2="993.8" y2="218.0" stroke="#4CB8C8" stroke-width="8" stroke-linecap="round"/>
+<line x1="807.7" y1="217.7" x2="870.7" y2="217.7" stroke="#4CB8C8" stroke-width="8" stroke-linecap="round"/>
+<line x1="827.7" y1="25.8" x2="764.7" y2="25.8" stroke="#4CB8C8" stroke-width="8" stroke-linecap="round"/>
+<line x1="1062.6" y1="25.8" x2="999.5" y2="25.8" stroke="#4CB8C8" stroke-width="8" stroke-linecap="round"/>
+<line x1="936.5" y1="25.8" x2="873.5" y2="25.8" stroke="#4CB8C8" stroke-width="8" stroke-linecap="round"/>
+<line x1="1139.9" y1="100.2" x2="1139.9" y2="37.2" stroke="#4CB8C8" stroke-width="8" stroke-linecap="round"/>
+<line x1="1139.9" y1="203.3" x2="1139.9" y2="140.3" stroke="#4CB8C8" stroke-width="8" stroke-linecap="round"/>
+<circle cx="372.3" cy="37.2" r="9" fill="#F0A443" stroke="#121820" stroke-width="3"/>
+<circle cx="206.8" cy="443.9" r="9" fill="#F0A443" stroke="#121820" stroke-width="3"/>
+<circle cx="123.2" cy="126.0" r="9" fill="#F0A443" stroke="#121820" stroke-width="3"/>
+<circle cx="936.5" cy="430.1" r="9" fill="#F0A443" stroke="#121820" stroke-width="3"/>
+<circle cx="1324.3" cy="401.0" r="9" fill="#F0A443" stroke="#121820" stroke-width="3"/>
+<circle cx="388.0" cy="483.3" r="9" fill="#F0A443" stroke="#121820" stroke-width="3"/>
+<circle cx="684.5" cy="443.9" r="9" fill="#F0A443" stroke="#121820" stroke-width="3"/>
+<circle cx="837.1" cy="226.4" r="8" fill="#F3EEE6" stroke="#121820" stroke-width="3"/>
+<polygon points="347.4,129.3 358.4,140.3 347.4,151.3 336.4,140.3" fill="#4CB8C8" stroke="#121820" stroke-width="3"/>
+<polygon points="362.7,454.6 373.7,465.6 362.7,476.6 351.7,465.6" fill="#4CB8C8" stroke="#121820" stroke-width="3"/>
+<rect x="703.8" y="439.7" width="20" height="20" rx="3" fill="#9AA3AF" stroke="#121820" stroke-width="3"/>
+</svg>
+            <button class="spot" data-room="mirror" style="left:14.4%;top:17.1%" aria-pressed="true"><em>Magic Mirror</em></button>
+            <button class="spot" data-room="bigwall" style="left:33%;top:19.6%" aria-pressed="false"><em>Big wall</em></button>
+            <button class="spot" data-room="gallery" style="left:57.1%;top:17.9%" aria-pressed="false"><em>Art gallery</em></button>
+            <button class="spot" data-room="cinema" style="left:12.3%;top:55.5%" aria-pressed="false"><em>Cinema</em></button>
+            <button class="spot" data-room="book" style="left:53.5%;top:48.9%" aria-pressed="false"><em>Photobooth &amp; book</em></button>
+            <button class="spot" data-room="immersive" style="left:28.2%;top:84.8%" aria-pressed="false"><em>Immersive Room</em></button>
+          </div>
+          <div class="chips" role="group" aria-label="Rooms">
+            <button data-room="mirror" aria-pressed="true">Magic Mirror</button>
+            <button data-room="bigwall" aria-pressed="false">Big wall</button>
+            <button data-room="gallery" aria-pressed="false">Art gallery</button>
+            <button data-room="cinema" aria-pressed="false">Cinema</button>
+            <button data-room="book" aria-pressed="false">Photobooth &amp; book</button>
+            <button data-room="immersive" aria-pressed="false">Immersive Room</button>
+          </div>
+          <p class="cap" style="margin-top:12px">28.9 × 10.5 m, drawn to scale from studio-manager’s room model · amber fans: projector throws · cyan: art frames and depth-camera fields</p>
+        </div>
+        <article class="card" id="card" aria-live="polite">
+          <div class="media" id="card-media"><video src="media/mirror.mp4" poster="media/mirror.jpg" muted loop playsinline autoplay aria-label="A visitor rendered as a glowing body, hands raised"></video></div>
+          <div class="body">
+            <h3 id="card-name">Magic Mirror</h3>
+            <p id="card-line">Stand in front of it and it restyles you, live.</p>
+            <ul id="card-gear"><li>Femto Bolt depth camera</li><li>Rear projector</li><li>windows-monster · RTX 4090</li></ul>
+            <p class="cap" id="card-credit">Mirror session, Oct 2025 · 204.ai</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="react">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow mind">Mind &amp; body</p>
+        <h2>It reacts in light</h2>
+        <p class="lede">Live AI engines restyle what the cameras see. One canvas is cut into slices, and every projector, frame and mirror plays its slice.</p>
+      </div>
+      <div class="grid">
+        <figure class="s-flux"><div class="tile"><video src="media/fluxrt.mp4" poster="media/fluxrt.jpg" muted loop playsinline autoplay aria-label="Two people restyled live as an oil painting, clay figures, a pencil drawing, stained glass and line art"></video></div><figcaption class="cap">FluxRT restyling people live: oil paint, clay, pencil, stained glass, line art</figcaption></figure>
+        <div class="facts s-facts" style="grid-column:span 5">
+          <div class="fact"><b>3</b><span>engines: FluxRT, StreamDiffusion, ComfyUI</span></div>
+          <div class="fact"><b>7</b><span>projector positions in the room model</span></div>
+          <div class="fact"><b>8</b><span>networked art frames</span></div>
+          <figure class="s-canvas" style="grid-column:1 / -1"><div class="tile"><video src="media/canvas.mp4" poster="media/canvas.jpg" muted loop playsinline autoplay aria-label="A monitor of every camera feed and every canvas slice"></video></div><figcaption class="cap">One canvas, sliced to every surface</figcaption></figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="control">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow mind">Control</p>
+        <h2>One screen runs it all</h2>
+        <p class="lede">studio-manager puts an agent on every machine. One dashboard starts, watches and restores every service, and launches a whole experience in one click.</p>
+      </div>
+      <figure class="shot"><img src="media/control.jpg" alt="studio-manager's fleet dashboard beside the realtime engine composing one canvas for 13 devices" width="1280" height="453"></figure>
+      <div class="fleet">
+        <details open><summary><b>Hub</b><span>MacBook Pro · studio-manager</span></summary><p>Fleet dashboard, experiences, floorplan.</p></details>
+        <details><summary><b>windows-monster</b><span>RTX 4090 · site node</span></summary><p>Femto Bolt, Azure Kinect, Logitech C920, AIDA POV camera, mirror projector.</p></details>
+        <details><summary><b>linux-monster</b><span>RTX 4090 · render server</span></summary><p>ComfyUI, FluxRT and StreamDiffusion for the whole fleet.</p></details>
+        <details><summary><b>eeg-msi</b><span>RTX 5090 laptop · immersive room</span></summary><p>RealSense D435, Optoma projector, BenQ back-wall projector.</p></details>
+        <details><summary><b>msi</b><span>RTX 4090 laptop · big wall</span></summary><p>Wall projector, BenQ frame projector, laptop camera.</p></details>
+        <details><summary><b>morpheus</b><span>kiosk PC · photobooth</span></summary><p>Bluetooth lever, BenQ book projector.</p></details>
+      </div>
+      <div class="steps" aria-label="Experiences: snapshot, shape, launch, watch">
+        <span>Snapshot</span><i>→</i><span>Shape</span><i>→</i><span>Launch</span><i>→</i><span>Watch</span>
+      </div>
+    </div>
+  </section>
+
+
+  <section id="maker">
+    <div class="wrap bio">
+      <img src="media/dimitri.jpg" alt="Dimitri De Jonghe, grinning, with a diamond earring" width="640" height="640">
+      <div>
+        <p class="eyebrow mind">Maker</p>
+        <h2>Dimitri De Jonghe</h2>
+        <p class="text">Co-founder of <b class="proj" data-p="204">204.ai</b> with Cintia Aguiar Pinto, and a founder of <b class="proj" data-p="rna">RnA Studio</b> in Lisbon. He trained as an engineer, with a PhD in micro-electronics and machine learning at <b class="proj" data-p="phd">KU Leuven</b>. He then spent a decade building decentralised data and AI: <b class="proj" data-p="ascribe">Ascribe</b>, where he co-wrote SPOOL to register art ownership on the Bitcoin blockchain, then <b class="proj" data-p="bigchaindb">BigchainDB</b>, <b class="proj" data-p="ocean">Ocean Protocol</b> as Head of Research, <b class="proj" data-p="keyko">Keyko</b> and <b class="proj" data-p="nevermined">Nevermined</b>. Today he builds the studio’s brain, from the <b>FluxRT</b> live engine to the <b>studio-manager</b> control plane.</p>
+      </div>
+      <figure class="spool" data-p="ascribe">
+        <figcaption class="cap"><span>SPOOL/1.0 spec</span><span>ascribe · 2015 · excerpt</span></figcaption>
+<pre><span class="k">Title:</span> SPOOL Protocol (SPOOL/1.0)
+<span class="k">Author:</span> Dimitri de Jonghe and Trent McConaghy
+<span class="k">First public release:</span> 2015-03-14
+
+SPOOL = Secure Public Online Ownership Ledger
+· a protocol for documenting transactions relating
+  to ownership of digital property, i.e. copyright
+· an overlay of the bitcoin blockchain
+· register, transfer, consign: editions 1/10 … 10/10
+
+<mark>SPOOL + TOS = copyright on the blockchain.</mark></pre>
+      </figure>
+      <div class="creds">
+        <figure class="phd" data-p="phd"><img src="media/logos/phd-cover.jpg" alt="Cover of his PhD thesis, Compact Modeling of Performance and Reliability of Mixed-Signal Circuits, KU Leuven, 2013" width="360" height="540"><figcaption class="cap">PhD · KU Leuven · 2013</figcaption></figure>
+        <div class="group"><p class="cap">Decentralised data &amp; AI</p><div class="marks">
+          <figure data-p="ascribe"><img src="media/logos/ascribe.png" alt="Ascribe" width="158" height="160"><figcaption class="cap">Ascribe</figcaption></figure>
+          <figure data-p="bigchaindb"><img src="media/logos/bigchaindb.png" alt="BigchainDB" width="160" height="106"><figcaption class="cap">BigchainDB</figcaption></figure>
+          <figure data-p="ocean"><img src="media/logos/ocean.png" alt="Ocean Protocol" width="160" height="144"><figcaption class="cap">Ocean Protocol</figcaption></figure>
+          <figure data-p="keyko"><img src="media/logos/keyko.png" alt="Keyko" width="356" height="160"><figcaption class="cap">Keyko</figcaption></figure>
+          <figure data-p="nevermined"><img src="media/logos/nevermined.png" alt="Nevermined" width="998" height="118"><figcaption class="cap">Nevermined</figcaption></figure>
+        </div></div>
+        <div class="group"><p class="cap">Now</p><div class="marks">
+          <figure data-p="204"><img src="media/logos/204.png" alt="204.ai" width="324" height="160"><figcaption class="cap">204.ai</figcaption></figure>
+          <figure data-p="rna"><img src="media/logos/rna.png" alt="RnA Studio" width="260" height="160"><figcaption class="cap">RnA Studio</figcaption></figure>
+        </div></div>
+      </div>
+    </div>
+    <footer class="wrap">
+  <p>204.ai (Dao Llama Labs AG, Zug) · studio at RnA in Lisbon</p>
+  <p>Recordings: 204.ai, October 2025 – October 2026 · Photos: RnA Studio, Lisbon · Portrait supplied by Dimitri De Jonghe · Floorplan and fleet read from studio-manager, 27 October 2026 · Logos belong to their owners, shown as credits</p>
+    </footer>
+  </section>
+
+  <section id="dimination" class="coda">
+    <video class="bg" src="media/dimination.mp4" poster="media/dimination.jpg" muted loop playsinline autoplay aria-label="Excerpt from Dimination: a reporter in a small Scottish town, then townspeople who all share one face"></video>
+    <div class="wrap coda-in">
+      <div class="coda-text">
+        <p class="eyebrow">Coda</p>
+        <h2>Dimination</h2>
+        <p class="lede">A mockumentary by Jas Black with Dimitri De Jonghe. In a small town in southern Scotland, every man, woman and child woke up with the same face.</p>
+        <p class="cap">10:15 · 2026 · characters built from analogue photographs · muted excerpt</p>
+      </div>
+      <figure class="wake"><div class="tile"><video src="media/wake.mp4" poster="media/wake.jpg" muted loop playsinline autoplay aria-label="One Dimination shot rendered in six FluxRT styles side by side"></video></div><figcaption class="cap">One shot, six FluxRT styles: comic, oil paint, clay, thermal, glitch, point cloud</figcaption></figure>
+    </div>
+  </section>
+</main>
+
+<div class="hud" id="hud" hidden>
+  <button type="button" id="prev" aria-label="Previous slide">‹</button>
+  <span id="count" aria-live="polite">1 / 7</span>
+  <button type="button" id="next" aria-label="Next slide">›</button>
+  <button type="button" id="exit">Exit</button>
+</div>
+
+<script>
+(() => {
+  const ROOMS = {
+    mirror: { name: 'Magic Mirror', line: 'Stand in front of it and it restyles you, live.', video: 'mirror', alt: 'A visitor rendered as a glowing body, hands raised', gear: ['Femto Bolt depth camera', 'Rear projector', 'windows-monster · RTX 4090'], credit: 'Mirror session, Oct 2025 · 204.ai' },
+    bigwall: { name: 'Big wall', line: 'The main room’s long wall, where the biggest picture plays.', img: 'room-mainwall', alt: 'A projection filling the main wall, audience on couches', gear: ['Wall projector', 'msi · RTX 4090 laptop'], credit: 'Photo: RnA Studio, Lisbon' },
+    gallery: { name: 'Art gallery', line: 'Networked art frames that change with the show.', img: 'room-gallery', alt: 'The gallery under its grid ceiling, frames glowing on the walls', gear: ['Eight Android art frames', 'Their own 5 GHz Wi-Fi', 'frame-manager'], credit: 'Photo: RnA Studio, Lisbon' },
+    cinema: { name: 'Cinema', line: 'Screenings, talks and the finale of a show.', img: 'room-cinema', alt: 'A viewer seen from behind, watching a film of a desert road', gear: ['Projector and screen'], credit: 'Photo: RnA Studio, Lisbon' },
+    book: { name: 'Photobooth & book', line: 'Pull the lever for an AI portrait; beside it, a projected open book.', video: 'lever', alt: 'The lever console counting presses', gear: ['Bluetooth lever', 'BenQ book projector', 'morpheus · kiosk PC'], credit: 'Lever console, Oct 2026 · 204.ai' },
+    immersive: { name: 'Immersive Room', line: 'A projection room that reacts to who is in it.', img: 'room-immersive', alt: 'Visitors seated in a dark room under a large projection', gear: ['Azure Kinect overhead', 'Optoma projector', 'eeg-msi · RTX 5090 laptop'], credit: 'Photo: RnA Studio, Lisbon' },
+  };
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = (id) => document.getElementById(id);
+
+  function prepVideo(v) {
+    const src=v.dataset.src || v.getAttribute('src');
+    if(src)v.dataset.src=src;
+    v.removeAttribute('src');v.removeAttribute('autoplay');v.autoplay=false;v.controls=false;
+    const button=document.createElement('button');button.className='source-play';button.textContent='Play clip';
+    v.parentElement.style.position='relative';v.parentElement.append(button);
+    button.addEventListener('click',()=>{document.querySelectorAll('video').forEach(other=>{if(other!==v)other.pause()});v.src=v.dataset.src;v.controls=true;v.play().then(()=>button.hidden=true).catch(()=>button.textContent='Try again')});
+  }
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      const v = e.target;
+      if (!e.isIntersecting) v.pause();
+    }
+  }, { threshold: 0.2 });
+  document.querySelectorAll('video').forEach(prepVideo);
+
+  function show(id) {
+    const r = ROOMS[id]; if (!r) return;
+    document.querySelectorAll('[data-room]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.room === id)));
+    const box = $('card-media');
+    box.querySelectorAll('video').forEach((v) => io.unobserve(v));
+    box.replaceChildren();
+    if (r.video) {
+      const v = document.createElement('video');
+      Object.assign(v, { src: `media/${r.video}.mp4`, poster: `media/${r.video}.jpg`, muted: true, loop: true, playsInline: true, autoplay: !reduce });
+      v.setAttribute('aria-label', r.alt);
+      box.append(v); prepVideo(v);
+    } else {
+      const i = document.createElement('img');
+      i.src = `media/${r.img}.jpg`; i.alt = r.alt;
+      box.append(i);
+    }
+    $('card-name').textContent = r.name;
+    $('card-line').textContent = r.line;
+    $('card-gear').replaceChildren(...r.gear.map((g) => Object.assign(document.createElement('li'), { textContent: g })));
+    $('card-credit').textContent = r.credit;
+  }
+  document.querySelectorAll('[data-room]').forEach((b) => b.addEventListener('click', () => show(b.dataset.room)));
+
+  // Bio: a project name and its logo light up together.
+  const lit = (p, on) => document.querySelectorAll(`#maker [data-p="${p}"]`).forEach((el) => el.classList.toggle('lit', on));
+  document.querySelectorAll('#maker [data-p]').forEach((el) => {
+    el.addEventListener('mouseenter', () => lit(el.dataset.p, true));
+    el.addEventListener('mouseleave', () => lit(el.dataset.p, false));
+  });
+
+  // Presentation mode: each section is a slide.
+  const root = document.documentElement;
+  const slides = [...document.querySelectorAll('main > section')];
+  const hud = $('hud');
+  let presenting = false;
+  const at = () => {
+    const y = scrollY + innerHeight * 0.4;
+    let i = 0;
+    slides.forEach((s, k) => { if (s.offsetTop <= y) i = k; });
+    return i;
+  };
+  const count = () => { $('count').textContent = `${at() + 1} / ${slides.length}`; };
+  const go = (i) => {
+    const k = Math.max(0, Math.min(slides.length - 1, i));
+    slides[k].scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+  };
+  function setPresent(on, fromClick, startAt) {
+    const i = startAt ?? at();
+    presenting = on;
+    root.classList.toggle('present', on);
+    hud.hidden = !on;
+    if (on && fromClick && root.requestFullscreen && !document.fullscreenElement) {
+      try { root.requestFullscreen().catch(() => {}); } catch (e) {}
+    }
+    if (!on && document.fullscreenElement && document.exitFullscreen) {
+      try { document.exitFullscreen().catch(() => {}); } catch (e) {}
+    }
+    requestAnimationFrame(() => { go(i); count(); });
+  }
+  $('present').addEventListener('click', () => setPresent(true, true));
+  $('exit').addEventListener('click', () => setPresent(false));
+  $('prev').addEventListener('click', () => go(at() - 1));
+  $('next').addEventListener('click', () => go(at() + 1));
+  addEventListener('scroll', () => { if (presenting) requestAnimationFrame(count); }, { passive: true });
+  document.addEventListener('keydown', (e) => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    const onControl = e.target.closest && e.target.closest('button, summary, a, video');
+    if (!presenting) {
+      if (e.key === 'p' || e.key === 'P') setPresent(true, true);
+      return;
+    }
+    const next = ['ArrowRight', 'ArrowDown', 'PageDown'].includes(e.key) || ((e.key === ' ' || e.key === 'Enter') && !onControl);
+    const prev = ['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key);
+    if (next) { e.preventDefault(); go(at() + 1); }
+    else if (prev) { e.preventDefault(); go(at() - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); go(0); }
+    else if (e.key === 'End') { e.preventDefault(); go(slides.length - 1); }
+    else if (e.key === 'Escape') setPresent(false);
+    else if ((e.key === 'f' || e.key === 'F') && root.requestFullscreen) {
+      try { (document.fullscreenElement ? document.exitFullscreen() : root.requestFullscreen()).catch(() => {}); } catch (err) {}
+    }
+  });
+  document.addEventListener('click', (e) => {
+    if (!presenting) return;
+    if (e.target.closest('a, button, video, summary, details, .plan, .chips, .card, .hud, img')) return;
+    go(at() + 1);
+  });
+  if (location.hash === '#present') {
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    setPresent(true, false, 0);
+  }
+  addEventListener('hashchange', () => { if (location.hash === '#present' && !presenting) setPresent(true, false, 0); });
+})();
+
+// Title in ANSI Shadow letters. Each glyph column becomes its own span (--x = its position) so
+// CSS can ripple the face like a flag and sweep a tint across it. The <h1> stays for readers.
+(() => {
+  const title = document.getElementById('title');
+  const box = document.getElementById('ascii-title');
+  if (!title || !box) return;
+  const FONT = {
+    S: ['███████╗', '██╔════╝', '███████╗', '╚════██║', '███████║', '╚══════╝'],
+    E: ['███████╗', '██╔════╝', '█████╗  ', '██╔══╝  ', '███████╗', '╚══════╝'],
+    N: ['███╗   ██╗', '████╗  ██║', '██╔██╗ ██║', '██║╚██╗██║', '██║ ╚████║', '╚═╝  ╚═══╝'],
+    T: ['████████╗', '╚══██╔══╝', '   ██║   ', '   ██║   ', '   ██║   ', '   ╚═╝   '],
+    I: ['██╗', '██║', '██║', '██║', '██║', '╚═╝'],
+    Y: ['██╗   ██╗', '╚██╗ ██╔╝', ' ╚████╔╝ ', '  ╚██╔╝  ', '   ██║   ', '   ╚═╝   '],
+    M: ['███╗   ███╗', '████╗ ████║', '██╔████╔██║', '██║╚██╔╝██║', '██║ ╚═╝ ██║', '╚═╝     ╚═╝'],
+    B: ['██████╗ ', '██╔══██╗', '██████╔╝', '██╔══██╗', '██████╔╝', '╚═════╝ '],
+    U: ['██╗   ██╗', '██║   ██║', '██║   ██║', '██║   ██║', '╚██████╔╝', ' ╚═════╝ '],
+    D: ['██████╗ ', '██╔══██╗', '██║  ██║', '██║  ██║', '██████╔╝', '╚═════╝ '],
+    O: [' ██████╗ ', '██╔═══██╗', '██║   ██║', '██║   ██║', '╚██████╔╝', ' ╚═════╝ '],
+  };
+  const words = title.textContent.trim().toUpperCase().split(/\s+/);
+  if (!words.every((w) => [...w].every((ch) => FONT[ch]))) return;
+  box.innerHTML = words.map((word, wi) => {
+    const rows = FONT.S.map((_, r) => [...word].map((ch) => FONT[ch][r]).join(''));
+    let cols = '';
+    for (let x = 0; x < rows[0].length; x++) {
+      const col = rows.map((row) => (row[x] === '█' || row[x] === ' ' ? row[x] : `<b>${row[x]}</b>`)).join('\n');
+      cols += `<span class="c" style="--x:${x + wi * 6}">${col}</span>`;
+    }
+    return `<div>${cols}</div>`;
+  }).join('');
+  box.hidden = false;
+  title.classList.add('sr-only');
+})();
+</script>

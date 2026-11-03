@@ -1,5 +1,5 @@
 import { ChatCloser } from '../components/ui/ChatCloser'
-import { LogoLoop } from '../components/ui/LogoLoop'
+import { TrustedBy } from '../components/home/TrustedBy'
 import { Marquee } from '../components/ui/Marquee'
 import { Pill } from '../components/ui/Pill'
 import { Rich } from '../components/ui/Rich'
@@ -28,9 +28,10 @@ export function Home() {
         </p>
         <Pill to="/contact" onClick={() => trackCta('work_with_us')}>Work with us</Pill>
       </section>
+      <FeaturedBands pillar="content" />
+      <FeaturedBands pillar="interactive" />
       <ServiceLoop />
-      <FeaturedBands />
-      <CreativeProcess />
+      <section id="technology"><CreativeProcess /></section>
       <section
         className={styles.logoLoops}
         data-organism-obstacle
@@ -38,8 +39,7 @@ export function Home() {
         data-organism-weight="0.6"
         data-organism-allow-tendrils="true"
       >
-        <LogoLoop title="Trusted by" items={studio.trustedBy} />
-        <LogoLoop title="Partners" items={studio.partners} fixed />
+        <TrustedBy items={[...studio.trustedBy, ...studio.partners]} />
       </section>
       <ChatCloser copy={studio.copy.closer} />
     </div>
