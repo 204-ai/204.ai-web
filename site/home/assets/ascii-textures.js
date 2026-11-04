@@ -1,4 +1,4 @@
-const textures = document.querySelectorAll('[data-ascii]')
+const textures = document.querySelectorAll('[data-ascii], [data-ascii-motion], [data-studio-art]')
 if ('IntersectionObserver' in window) {
   const observer = new IntersectionObserver(entries => {
     for (const { target, isIntersecting } of entries) {

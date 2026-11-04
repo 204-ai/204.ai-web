@@ -50,11 +50,13 @@ function transform(text,file){
 const bridge=urls.get(join(source,'home/assets/review-navigation.js'))
 const headingInkCss=urls.get(join(source,'home/assets/heading-ink.css'))
 const headingInkJs=urls.get(join(source,'home/assets/heading-ink.js'))
-const headingInk=`<link rel="stylesheet" href="${headingInkCss}"><script defer src="${headingInkJs}"></script>`
+const headerScroll=urls.get(join(source,'home/assets/site-header-scroll.js'))
+const headingEffects=`<link rel="stylesheet" href="${headingInkCss}"><script defer src="${headingInkJs}"></script>`
+const siteEffects=headingEffects+`<script defer src="${headerScroll}"></script>`
 for(const file of walk(dist).filter(f=>f.endsWith('.html'))){
  let html=readFileSync(file,'utf8');if(html.includes('http-equiv="refresh"'))continue
- const ink=html.includes('id="root"')?headingInk:''
- html=html.replace('</head>',`<meta name="204-site-base" content="${base}"><script src="${bridge}"></script>${ink}</head>`)
+ const effects=html.includes('id="root"')?headingEffects:''
+ html=html.replace('</head>',`<meta name="204-site-base" content="${base}"><script src="${bridge}"></script>${effects}</head>`)
  writeFileSync(file,html)
 }
 copyFileSync(join(dist,'index.html'),join(dist,'app-shell.html'))
@@ -68,6 +70,7 @@ for(const file of files){
    if(route!==undefined){
     const navigationRoute=route.startsWith('artworks/')?'services/':route==='archives/'||route.startsWith('work/')?'productions/':route
     text=text.replace('<!-- site:header -->',siteHeader(base,content.studio.logoUrl,navigationRoute)).replace('<!-- site:footer -->',siteFooter(base,content.studio))
+    if(route==='')text=text.replace('<!-- site:mission -->',escape(content.studio.copy.home.who))
     text=text.replace(/<!-- site:services:(content|interactive) -->/g,(_,pillar)=>{
      const title=pillar==='content'?'Production services':'Experience services'
      const heading=route==='services/'?'h3':'h2'
@@ -86,7 +89,7 @@ for(const file of files){
     text=text.replace('</head>',`<link rel="stylesheet" href="${urls.get(join(source,'home/assets/site-shell.css'))}"></head>`)
    }
    if(route!==undefined||rel==='sentient-studio/index.html'){
-    text=text.replace('</head>',headingInk+'</head>')
+    text=text.replace('</head>',siteEffects+'</head>')
     const title=text.match(/<title>([\s\S]*?)<\/title>/)[1],desc=text.match(/<meta name="description" content="([^"]*)"/)[1]
     const canonical=siteUrl+'/'+(route??'sentient-studio/')
     const image=siteUrl+'/media/204white-p-800.jpg'

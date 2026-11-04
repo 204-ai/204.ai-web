@@ -1,8 +1,8 @@
-// Editorial headings use the Living Archive's staggered ink reveal.
+// Editorial headings use the Living Archive's scattered ink reveal.
 ;(() => {
-  const motion = matchMedia('(prefers-reduced-motion: no-preference)')
+  const motion = matchMedia('(prefers-reduced-motion: no-preference) and (min-width: 701px)')
   const catalog = document.querySelector('#root')
-  const headings = 'main h1, main h2:not(.label), main .featured-panel-head h3, main .section-head h3, main .story-copy h3, main .experience-title h3, main .dome-heading h3, main .sentient-discover h3'
+  const headings = 'main h1, main h2:not(.label), main h3[data-ascii-title], main .featured-panel-head h3, main .section-head h3, main .story-copy h3, main .experience-title h3, main .dome-heading h3, main .sentient-discover h3'
   const seen = new WeakSet()
 
   function inkLetters(heading) {
@@ -22,10 +22,12 @@
       const other = seed % (index + 1)
       ;[order[index], order[other]] = [order[other], order[index]]
     }
-    const pace = heading.tagName === 'H1' ? 1 : .52
-    const interval = Math.min(36, 500 / Math.max(1, letterCount - 1)) * pace
+
+    const interval = 400 / Math.max(1, letterCount - 1)
+    if (!heading.matches('[data-ascii-title]') && !heading.querySelector('[data-ascii-title]')) {
+      heading.classList.add('ink-ascii-reveal')
+    }
     if (!heading.hasAttribute('aria-label')) heading.setAttribute('aria-label', heading.innerText.trim().replace(/\s+/g, ' '))
-    heading.style.setProperty('--ink-duration', `${1800 * pace}ms`)
     let index = 0
     for (const node of nodes) {
       const fragment = document.createDocumentFragment()
@@ -56,7 +58,7 @@
       if (!motion.matches) continue
       // Leave React-owned text nodes alone so client-side route changes can update them.
       if (catalog) target.classList.add('ink-heading')
-      else if (!target.querySelector('a, button, input, svg, [role="img"]')) inkLetters(target)
+      else if (!target.querySelector('a:not([data-ink-link]), button, input, svg, [role="img"]')) inkLetters(target)
     }
   }, {threshold:.18})
 

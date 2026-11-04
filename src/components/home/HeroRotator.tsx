@@ -65,9 +65,8 @@ export function HeroRotator() {
     >
       <div className={styles.head}>
         <h1>
-          We build <em>worlds,</em>
-          <br />
-          on screen and in the room
+          We build <em>worlds</em>
+          <span className={styles.secondary}>with pixels, code and light</span>
         </h1>
       </div>
       <div className={styles.stage}>

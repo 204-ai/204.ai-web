@@ -1,25 +1,38 @@
 .ink-word { display: inline-block; white-space: nowrap; }
 .ink-word > span { display: inline-block; }
 
-@media (prefers-reduced-motion: no-preference) {
+:is([data-ascii-title], .ink-ascii-reveal) {
+  mask-image: linear-gradient(to right, #000 22%, rgb(0 0 0 / var(--ascii-title-edge,.5)));
+}
+
+@supports (mask-composite: intersect) {
+  :is([data-ascii-title], .ink-ascii-reveal) {
+    /* Retain base ink at the edge and let the texture bring back detail in the fade. */
+    mask-image: linear-gradient(to right, #000 22%, rgb(0 0 0 / var(--ascii-title-edge,.5))),
+      linear-gradient(to right, transparent 34%, #000 95%), var(--ascii-title-image, url("ascii/type-grain.svg"));
+    mask-size: 100% 100%, 100% 100%, var(--ascii-title-tile, 108px 54px);
+    mask-repeat: no-repeat, no-repeat, repeat;
+    mask-composite: add, intersect, add;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) and (min-width: 701px) {
   .ink-word > span {
-    --ink-start: translateY(.04em) scale(1.05);
-    animation: heading-ink-in var(--ink-duration, 1s) cubic-bezier(.2, 0, 0, 1) backwards;
+    animation: heading-ink-in 1150ms cubic-bezier(.2, 0, 0, 1) backwards;
     animation-delay: var(--ink-delay, 0ms);
   }
-  .ink-heading { animation: heading-ink-in 1s cubic-bezier(.2, 0, 0, 1); }
+  .ink-heading { animation: heading-ink-in 1550ms cubic-bezier(.2, 0, 0, 1); }
 }
 
 @keyframes heading-ink-in {
-  0% { opacity: 0; filter: blur(.18em); transform: var(--ink-start, none); }
-  55% { opacity: .9; filter: blur(.03em); }
-  100% { opacity: 1; filter: none; transform: none; }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 /* A low, wide shadow marks chapter boundaries while leaving control and card borders intact. */
 :is(.featured-panel + .featured-panel, .home-introduction, .trust-wall, .closer,
     #productions > .story, #productions > .selected, #experiences > .main-experience,
-    #experiences > .experience-chapter, #experiences > .dome-experience,
+    #experiences > .dome-chapter,
     #experiences > .sentient-discover, .services-overview > .service-offerings,
     .archive-section, .archive-case-chapter, .living-archive-case > .dome-experience,
     .ciur-case > .ciur-section) {

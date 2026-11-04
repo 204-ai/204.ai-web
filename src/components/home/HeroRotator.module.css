@@ -28,6 +28,11 @@
   -webkit-text-stroke: 1.5px var(--paper);
 }
 
+.secondary {
+  display: block;
+  font-size: .65em;
+}
+
 .stage {
   position: relative;
   width: 100%;

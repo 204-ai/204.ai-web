@@ -5,35 +5,51 @@
 .dream-slide .section-head h2{font-size:clamp(36px,4.3vw,66px)}
 .dream-slide .films-line{margin-top:9px;font:italic 300 clamp(20px,2.2vw,30px)/1.25 Newsreader,Georgia,serif;color:var(--film-ink)}
 .dream-slide{--dream-side:minmax(230px,24%);--dream-gap:clamp(24px,3vw,48px)}
-.dream-layout{display:grid;grid-template-columns:minmax(0,1fr) var(--dream-side);gap:var(--dream-gap);align-items:end}
-.dream-heading-copy { container-type: inline-size; }
-.dream-slide .dream-heading-copy .films-line { font-size: clamp(14px, 1.15vw, 18px); }
-/* At this size the Anton SC title spans the same grid column as the film. */
-#awatts-title { font-size: 15.8cqi; line-height: .95; white-space: nowrap; }
-.dream-partner{display:grid;justify-items:start;gap:8px}
-.dream-partner img{width:min(100%,260px);height:auto}
-@media (min-width:621px) {
-  .dream-overview {
-    display: grid;
-    grid-template-columns: minmax(0,1fr) var(--dream-side);
-    grid-template-rows: auto min-content auto;
-    column-gap: var(--dream-gap);
-  }
-  .dream-overview > .section-head { grid-area: 1 / 1; display: block; }
-  .dream-overview > .dream-layout { display: contents; }
-  .dream-overview .dream-player { grid-area: 2 / 1 / 4; align-self: start; }
-  .dream-overview > .dream-partner { grid-area: 2 / 2; align-self: start; }
-  .dream-overview .dream-meta { grid-area: 3 / 2; align-self: start; margin-top: clamp(20px,2vw,32px); }
-  .dream-overview > :is(.dream-timeline,.more-films-label,.film-tabs) { grid-column: 1 / -1; }
+.dream-layout{display:grid;gap:clamp(20px,3vw,32px)}
+.dream-viewer,.dream-playlist{min-width:0}
+.dream-masthead {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) var(--dream-side);
+  align-items:end;
+  gap:12px var(--dream-gap);
+  margin-bottom:clamp(24px,3vw,42px);
 }
+.dream-partner-logo {
+  display:block;
+  width:clamp(144px,17vw,232px);
+  max-width:100%;
+  height:auto;
+  margin-bottom:clamp(14px,1.6vw,22px);
+}
+.dream-masthead #awatts-title {
+  margin:0;
+  font:clamp(37px,6.1vw,92px)/1 var(--display);
+  color:var(--film-ink);
+  text-transform:uppercase;
+}
+.dream-project-deck {
+  max-width:52ch;
+  margin:10px 0 0;
+  font:clamp(13px,1.15vw,16px)/1.55 var(--body);
+  color:var(--film-ink);
+}
+.dream-masthead > .text-link {justify-self:start;margin:0}
+.dream-overview[data-ascii] {--ascii-opacity:.08}
+.dream-overview .dream-meta {
+  padding:clamp(14px,2vw,26px);
+  background:#201d19;
+  border-radius:5px;
+}
+.dream-overview .dream-meta>p:not(.dream-sub) {font-size:12px}
 @media (max-width:620px) {
-  .dream-overview > .dream-partner { margin-bottom: 20px; }
-  .dream-partner img { width: min(100%,185px); }
+  .dream-masthead {grid-template-columns:1fr}
+  .dream-masthead #awatts-title {font-size:clamp(35px,9.7vw,60px)}
 }
 .dream-slide .dream-player{aspect-ratio:16/9;border-radius:0;background:transparent}
 .dream-slide .dream-player>img{object-fit:contain}
 .dream-slide .dream-player:after{display:none}
-.dream-meta{display:grid;gap:12px;padding-bottom:7px}
+.dream-meta{display:grid;gap:12px;margin-top:clamp(16px,2vw,24px);padding-bottom:7px}
+.dream-meta>p:not(.dream-sub){max-width:60ch}
 .dream-meta h3{font:400 clamp(23px,2.3vw,35px)/1.05 var(--display);color:var(--film-ink);text-transform:uppercase}
 .dream-meta .dream-sub{font:11px/1.6 var(--mono);letter-spacing:.04em;text-transform:uppercase;color:var(--film-muted)}
 .dream-meta .dream-credit,.dream-meta>p:not(.dream-sub){font:11px/1.7 var(--body);color:var(--film-muted)}
@@ -48,10 +64,10 @@
 .tl-time{position:absolute;left:5px;bottom:3px;font:10px/1 var(--mono);color:var(--film-ink);text-shadow:0 1px 4px #000;opacity:0}
 .tl-frames li.on .tl-time,.tl-frames button:hover .tl-time,.tl-frames button:focus-visible .tl-time{opacity:1}
 .timeline-caption{display:flex;justify-content:space-between;gap:12px;font:10px/1.5 var(--mono);color:var(--film-muted)}
-.more-films-label{margin-top:27px;margin-bottom:10px;font:11px/1.5 var(--mono);color:var(--film-muted)}
+.more-films-label{margin-bottom:10px;font:11px/1.5 var(--mono);color:var(--film-muted)}
 @media(max-width:900px){.dream-slide{--dream-side:minmax(190px,27%);--dream-gap:22px}.dream-meta h3{font-size:24px}.dream-meta{gap:9px}.dream-meta>p:not(.dream-sub){font-size:10px}}
-@media(max-width:620px){.dream-layout{grid-template-columns:minmax(0,1fr);gap:20px}.dream-slide .section-head{display:block}.dream-slide .section-head>a{display:inline-block;max-width:none;margin-top:14px}.dream-slide .films-line{font-size:22px}.dream-meta h3{font-size:29px;max-width:24ch}.dream-meta{gap:10px}.dream-meta>p:not(.dream-sub){font-size:12px;max-width:48ch}.tl-frames{grid-template-columns:repeat(6,minmax(0,1fr));gap:4px}.dream-timeline{margin-top:20px}.timeline-caption{font-size:9px}.dream-slide .section-head h2{font-size:40px}}
-.youtube-screen iframe,.dream-player iframe{position:absolute;inset:0;width:100%;height:100%;border:0;z-index:4}.youtube-screen.has-youtube::after{display:none}.youtube-screen>[hidden]{display:none}.dream-slide .film-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}.dream-slide .film-tab{display:block}.dream-slide .film-tab img{width:100%;height:auto;aspect-ratio:1.8;margin-bottom:10px}.youtube-timeline .tl-frames{margin-bottom:10px}.youtube-timeline .tl-frames img{opacity:.75}.work-film .screen{aspect-ratio:16/9}.work-film .screen>img{aspect-ratio:auto;height:100%;border-radius:0}.work-film-link{display:inline-block;margin-top:12px;font:10px/1.5 var(--mono);border-bottom:1px solid var(--line);padding-bottom:5px}@media(max-width:620px){.dream-slide .film-tabs{grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 16px}}
+@media(max-width:620px){.dream-slide .section-head{display:block}.dream-slide .section-head>a{display:inline-block;max-width:none;margin-top:14px}.dream-slide .films-line{font-size:22px}.dream-meta h3{font-size:29px;max-width:24ch}.dream-meta{gap:10px}.dream-meta>p:not(.dream-sub){font-size:12px;max-width:48ch}.tl-frames{grid-template-columns:repeat(6,minmax(0,1fr));gap:4px}.dream-timeline{margin-top:20px}.timeline-caption{font-size:9px}.dream-slide .section-head h2{font-size:40px}}
+.youtube-screen iframe,.dream-player iframe{position:absolute;inset:0;width:100%;height:100%;border:0;z-index:4}.youtube-screen.has-youtube::after{display:none}.youtube-screen>[hidden]{display:none}.youtube-timeline .tl-frames{margin-bottom:10px}.youtube-timeline .tl-frames img{opacity:.75}.work-film .screen{aspect-ratio:16/9}.work-film .screen>img{aspect-ratio:auto;height:100%;border-radius:0}.work-film-link{display:inline-block;margin-top:12px;font:10px/1.5 var(--mono);border-bottom:1px solid var(--line);padding-bottom:5px}
 
 .film-stills-controls{position:absolute;z-index:2;left:50%;bottom:8px;transform:translateX(-50%);display:flex;align-items:center;gap:8px;padding:3px 5px;border-radius:28px;background:#151515dd;color:var(--paper)}
 .film-stills-controls button{width:44px;height:44px;border:1px solid var(--line);border-radius:50%;background:transparent;color:inherit;font:20px/1 var(--body);cursor:pointer}
@@ -63,3 +79,44 @@
 .film-waveform input{position:absolute;inset:0;width:100%;height:100%;margin:0;appearance:none;background:transparent;cursor:pointer}
 .film-waveform input::-webkit-slider-thumb{appearance:none;width:2px;height:30px;background:var(--film-ink)}
 .film-waveform input::-moz-range-thumb{width:2px;height:30px;border:0;background:var(--film-ink)}
+
+.dream-playlist .film-tabs {
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:clamp(12px,1.5vw,20px);
+}
+.dream-playlist .film-tab { display:block; }
+.dream-playlist .film-tab img {
+  width:100%;
+  height:auto;
+  aspect-ratio:16/9;
+  object-fit:cover;
+  margin-bottom:8px;
+}
+@media (max-width:620px) {
+  .dream-playlist .film-tabs { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media (min-width:1000px) {
+  .dream-layout {
+    grid-template-columns:minmax(0,1fr) var(--dream-side);
+    gap:var(--dream-gap);
+    align-items:start;
+  }
+  .dream-playlist .film-tabs {
+    grid-template-columns:minmax(0,1fr);
+    gap:6px;
+    padding:0;
+    border:0;
+  }
+  .dream-playlist .film-tab {
+    display:grid;
+    grid-template-columns:40% minmax(0,1fr);
+    align-items:center;
+    gap:10px;
+    padding:6px;
+    border-radius:5px;
+    background:#ffffff08;
+  }
+  .dream-playlist .film-tab:is(:hover,[aria-pressed="true"]) { background:#ffffff12; }
+  .dream-playlist .film-tab img { margin:0; }
+}

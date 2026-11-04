@@ -1,43 +1,48 @@
-const preview = document.querySelector('.ciur-preview')
+const card = document.querySelector('.ciur-preview .featured-card')
 
-if (preview) {
-  const frames = [...preview.querySelectorAll('[data-caption]')]
-  const controls = preview.querySelector('.ciur-preview-controls')
-  const caption = preview.querySelector('.ciur-preview-caption')
-  let current = 0
+if (card) {
+  const clip = card.querySelector('[data-ciur-motion]')
+  const motion = matchMedia('(hover: hover) and (pointer: fine) and (min-width: 701px) and (prefers-reduced-motion: no-preference)')
 
-  for (const button of controls.querySelectorAll('[data-ciur-preview-step]')) {
-    button.addEventListener('click', () => {
-      frames[current].hidden = true
-      current = (current + Number(button.dataset.ciurPreviewStep) + frames.length) % frames.length
-      frames[current].hidden = false
-      caption.textContent = `${frames[current].dataset.caption} · ${current + 1} / ${frames.length}`
-    })
+  function stop() {
+    clip.pause()
+    clip.classList.remove('is-playing')
   }
-  controls.hidden = false
-}
 
-const clip = document.querySelector('[data-ciur-motion]')
-
-if (clip) {
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)')
-  let visible = false
-
-  function syncPlayback() {
-    if (!visible || document.hidden || reduced.matches) {
-      clip.pause()
-      return
-    }
-    if (clip.ended) return
+  function play() {
+    if (!motion.matches || document.hidden) return
     if (!clip.hasAttribute('src')) clip.src = clip.dataset.src
     clip.play().catch(() => {})
   }
 
-  clip.addEventListener('playing', () => clip.classList.add('is-playing'), {once: true})
+  card.addEventListener('pointerenter', play)
+  card.addEventListener('pointerleave', stop)
+  clip.addEventListener('playing', () => {
+    if (!clip.paused) clip.classList.add('is-playing')
+  })
+  motion.addEventListener('change', stop)
+  document.addEventListener('visibilitychange', stop)
+}
+
+// The Productions panel is an in-view preview, separate from the homepage card.
+const productionClip = document.querySelector('.production-ciurlionis-image [data-ciur-motion]')
+if (productionClip) {
+  const motion = matchMedia('(min-width: 701px) and (prefers-reduced-motion: no-preference)')
+  let inView = false
+  function syncProductionClip() {
+    if (!inView || !motion.matches || document.hidden) {
+      productionClip.pause()
+      return
+    }
+    if (productionClip.ended) return
+    if (!productionClip.hasAttribute('src')) productionClip.src = productionClip.dataset.src
+    productionClip.play().catch(() => {})
+  }
+  productionClip.addEventListener('playing', () => productionClip.classList.add('is-playing'), {once: true})
   new IntersectionObserver(([entry]) => {
-    visible = entry.isIntersecting
-    syncPlayback()
-  }, {threshold: 0.25}).observe(clip)
-  reduced.addEventListener('change', syncPlayback)
-  document.addEventListener('visibilitychange', syncPlayback)
+    inView = entry.isIntersecting
+    syncProductionClip()
+  }, {threshold: .25}).observe(productionClip)
+  motion.addEventListener('change', syncProductionClip)
+  document.addEventListener('visibilitychange', syncProductionClip)
 }
