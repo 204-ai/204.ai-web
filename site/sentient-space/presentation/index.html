@@ -241,7 +241,7 @@ footer p { color: var(--muted); font-size: 14px; }
       </div>
     </div>
     <figure class="phone">
-      <video src="media/walkthrough.mp4" poster="media/walkthrough.jpg" muted loop playsinline autoplay aria-label="Walking through the studio as each projector shows its name"></video>
+      <video data-src="media/walkthrough.mp4" poster="media/walkthrough.jpg" muted loop playsinline preload="none" aria-label="Walking through the studio as each projector shows its name"></video>
       <figcaption class="cap">Walkthrough · every projector shows its name</figcaption>
     </figure>
   </div>
@@ -255,10 +255,10 @@ footer p { color: var(--muted); font-size: 14px; }
         <p class="lede">Depth cameras on the ceiling put every visitor on a live floorplan. Only positions and events travel on, never the video.</p>
       </div>
       <div class="grid">
-        <figure class="s-track"><div class="tile"><video src="media/tracking.mp4" poster="media/tracking.jpg" muted loop playsinline autoplay aria-label="Visitors drawn as dots on the live floorplan, with a trail"></video></div><figcaption class="cap">Visitors on the live floorplan</figcaption></figure>
-        <figure class="s-depth"><div class="tile"><video src="media/depth.mp4" poster="media/depth.jpg" muted loop playsinline autoplay aria-label="A live depth point cloud of the couch corner"></video></div><figcaption class="cap">Depth point cloud</figcaption></figure>
-        <figure class="s-ir"><div class="tile"><video src="media/infrared.mp4" poster="media/infrared.jpg" muted loop playsinline autoplay aria-label="The same corner in infrared, seen from above"></video></div><figcaption class="cap">Infrared, from above</figcaption></figure>
-        <figure class="s-lever"><div class="tile"><video src="media/lever.mp4" poster="media/lever.jpg" muted loop playsinline autoplay aria-label="The photobooth lever console counting presses"></video></div><figcaption class="cap">Touch · every pull of the lever, counted</figcaption></figure>
+        <figure class="s-track"><div class="tile"><video data-src="media/tracking.mp4" poster="media/tracking.jpg" muted loop playsinline preload="none" aria-label="Visitors drawn as dots on the live floorplan, with a trail"></video></div><figcaption class="cap">Visitors on the live floorplan</figcaption></figure>
+        <figure class="s-depth"><div class="tile"><video data-src="media/depth.mp4" poster="media/depth.jpg" muted loop playsinline preload="none" aria-label="A live depth point cloud of the couch corner"></video></div><figcaption class="cap">Depth point cloud</figcaption></figure>
+        <figure class="s-ir"><div class="tile"><video data-src="media/infrared.mp4" poster="media/infrared.jpg" muted loop playsinline preload="none" aria-label="The same corner in infrared, seen from above"></video></div><figcaption class="cap">Infrared, from above</figcaption></figure>
+        <figure class="s-lever"><div class="tile"><video data-src="media/lever.mp4" poster="media/lever.jpg" muted loop playsinline preload="none" aria-label="The photobooth lever console counting presses"></video></div><figcaption class="cap">Touch · every pull of the lever, counted</figcaption></figure>
       </div>
     </div>
   </section>
@@ -353,7 +353,7 @@ footer p { color: var(--muted); font-size: 14px; }
           <p class="cap" style="margin-top:12px">28.9 × 10.5 m, drawn to scale from studio-manager’s room model · amber fans: projector throws · cyan: art frames and depth-camera fields</p>
         </div>
         <article class="card" id="card" aria-live="polite">
-          <div class="media" id="card-media"><video src="media/mirror.mp4" poster="media/mirror.jpg" muted loop playsinline autoplay aria-label="A visitor rendered as a glowing body, hands raised"></video></div>
+          <div class="media" id="card-media"><video data-src="media/mirror.mp4" poster="media/mirror.jpg" muted loop playsinline preload="none" aria-label="A visitor rendered as a glowing body, hands raised"></video></div>
           <div class="body">
             <h3 id="card-name">Magic Mirror</h3>
             <p id="card-line">Stand in front of it and it restyles you, live.</p>
@@ -373,12 +373,12 @@ footer p { color: var(--muted); font-size: 14px; }
         <p class="lede">Live AI engines restyle what the cameras see. One canvas is cut into slices, and every projector, frame and mirror plays its slice.</p>
       </div>
       <div class="grid">
-        <figure class="s-flux"><div class="tile"><video src="media/fluxrt.mp4" poster="media/fluxrt.jpg" muted loop playsinline autoplay aria-label="Two people restyled live as an oil painting, clay figures, a pencil drawing, stained glass and line art"></video></div><figcaption class="cap">FluxRT restyling people live: oil paint, clay, pencil, stained glass, line art</figcaption></figure>
+        <figure class="s-flux"><div class="tile"><video data-src="media/fluxrt.mp4" poster="media/fluxrt.jpg" muted loop playsinline preload="none" aria-label="Two people restyled live as an oil painting, clay figures, a pencil drawing, stained glass and line art"></video></div><figcaption class="cap">FluxRT restyling people live: oil paint, clay, pencil, stained glass, line art</figcaption></figure>
         <div class="facts s-facts" style="grid-column:span 5">
           <div class="fact"><b>3</b><span>engines: FluxRT, StreamDiffusion, ComfyUI</span></div>
           <div class="fact"><b>7</b><span>projector positions in the room model</span></div>
           <div class="fact"><b>8</b><span>networked art frames</span></div>
-          <figure class="s-canvas" style="grid-column:1 / -1"><div class="tile"><video src="media/canvas.mp4" poster="media/canvas.jpg" muted loop playsinline autoplay aria-label="A monitor of every camera feed and every canvas slice"></video></div><figcaption class="cap">One canvas, sliced to every surface</figcaption></figure>
+          <figure class="s-canvas" style="grid-column:1 / -1"><div class="tile"><video data-src="media/canvas.mp4" poster="media/canvas.jpg" muted loop playsinline preload="none" aria-label="A monitor of every camera feed and every canvas slice"></video></div><figcaption class="cap">One canvas, sliced to every surface</figcaption></figure>
         </div>
       </div>
     </div>
@@ -451,7 +451,7 @@ SPOOL = Secure Public Online Ownership Ledger
   </section>
 
   <section id="dimination" class="coda">
-    <video class="bg" src="media/dimination.mp4" poster="media/dimination.jpg" muted loop playsinline autoplay aria-label="Excerpt from Dimination: a reporter in a small Scottish town, then townspeople who all share one face"></video>
+    <video class="bg" data-src="media/dimination.mp4" poster="media/dimination.jpg" muted loop playsinline preload="none" aria-label="Excerpt from Dimination: a reporter in a small Scottish town, then townspeople who all share one face"></video>
     <div class="wrap coda-in">
       <div class="coda-text">
         <p class="eyebrow">Coda</p>
@@ -459,7 +459,7 @@ SPOOL = Secure Public Online Ownership Ledger
         <p class="lede">A mockumentary by Jas Black with Dimitri De Jonghe. In a small town in southern Scotland, every man, woman and child woke up with the same face.</p>
         <p class="cap">10:15 · 2026 · characters built from analogue photographs · muted excerpt</p>
       </div>
-      <figure class="wake"><div class="tile"><video src="media/wake.mp4" poster="media/wake.jpg" muted loop playsinline autoplay aria-label="One Dimination shot rendered in six FluxRT styles side by side"></video></div><figcaption class="cap">One shot, six FluxRT styles: comic, oil paint, clay, thermal, glitch, point cloud</figcaption></figure>
+      <figure class="wake"><div class="tile"><video data-src="media/wake.mp4" poster="media/wake.jpg" muted loop playsinline preload="none" aria-label="One Dimination shot rendered in six FluxRT styles side by side"></video></div><figcaption class="cap">One shot, six FluxRT styles: comic, oil paint, clay, thermal, glitch, point cloud</figcaption></figure>
     </div>
   </section>
 </main>
@@ -474,23 +474,20 @@ SPOOL = Secure Public Online Ownership Ledger
 <script>
 (() => {
   const ROOMS = {
-    mirror: { name: 'Magic Mirror', line: 'Stand in front of it and it restyles you, live.', video: 'mirror', alt: 'A visitor rendered as a glowing body, hands raised', gear: ['Femto Bolt depth camera', 'Rear projector', 'windows-monster · RTX 4090'], credit: 'Mirror session, Oct 2025 · 204.ai' },
-    bigwall: { name: 'Big wall', line: 'The main room’s long wall, where the biggest picture plays.', img: 'room-mainwall', alt: 'A projection filling the main wall, audience on couches', gear: ['Wall projector', 'msi · RTX 4090 laptop'], credit: 'Photo: RnA Studio, Lisbon' },
-    gallery: { name: 'Art gallery', line: 'Networked art frames that change with the show.', img: 'room-gallery', alt: 'The gallery under its grid ceiling, frames glowing on the walls', gear: ['Eight Android art frames', 'Their own 5 GHz Wi-Fi', 'frame-manager'], credit: 'Photo: RnA Studio, Lisbon' },
-    cinema: { name: 'Cinema', line: 'Screenings, talks and the finale of a show.', img: 'room-cinema', alt: 'A viewer seen from behind, watching a film of a desert road', gear: ['Projector and screen'], credit: 'Photo: RnA Studio, Lisbon' },
-    book: { name: 'Photobooth & book', line: 'Pull the lever for an AI portrait; beside it, a projected open book.', video: 'lever', alt: 'The lever console counting presses', gear: ['Bluetooth lever', 'BenQ book projector', 'morpheus · kiosk PC'], credit: 'Lever console, Oct 2026 · 204.ai' },
-    immersive: { name: 'Immersive Room', line: 'A projection room that reacts to who is in it.', img: 'room-immersive', alt: 'Visitors seated in a dark room under a large projection', gear: ['Azure Kinect overhead', 'Optoma projector', 'eeg-msi · RTX 5090 laptop'], credit: 'Photo: RnA Studio, Lisbon' },
+    mirror: { name: 'Magic Mirror', line: 'Stand in front of it and it restyles you, live.', video: 'media/mirror.mp4', poster: 'media/mirror.jpg', alt: 'A visitor rendered as a glowing body, hands raised', gear: ['Femto Bolt depth camera', 'Rear projector', 'windows-monster · RTX 4090'], credit: 'Mirror session, Oct 2025 · 204.ai' },
+    bigwall: { name: 'Big wall', line: 'The main room’s long wall, where the biggest picture plays.', img: 'media/room-mainwall.jpg', alt: 'A projection filling the main wall, audience on couches', gear: ['Wall projector', 'msi · RTX 4090 laptop'], credit: 'Photo: RnA Studio, Lisbon' },
+    gallery: { name: 'Art gallery', line: 'Networked art frames that change with the show.', img: 'media/room-gallery.jpg', alt: 'The gallery under its grid ceiling, frames glowing on the walls', gear: ['Eight Android art frames', 'Their own 5 GHz Wi-Fi', 'frame-manager'], credit: 'Photo: RnA Studio, Lisbon' },
+    cinema: { name: 'Cinema', line: 'Screenings, talks and the finale of a show.', img: 'media/room-cinema.jpg', alt: 'A viewer seen from behind, watching a film of a desert road', gear: ['Projector and screen'], credit: 'Photo: RnA Studio, Lisbon' },
+    book: { name: 'Photobooth & book', line: 'Pull the lever for an AI portrait; beside it, a projected open book.', video: 'media/lever.mp4', poster: 'media/lever.jpg', alt: 'The lever console counting presses', gear: ['Bluetooth lever', 'BenQ book projector', 'morpheus · kiosk PC'], credit: 'Lever console, Oct 2026 · 204.ai' },
+    immersive: { name: 'Immersive Room', line: 'A projection room that reacts to who is in it.', img: 'media/room-immersive.jpg', alt: 'Visitors seated in a dark room under a large projection', gear: ['Azure Kinect overhead', 'Optoma projector', 'eeg-msi · RTX 5090 laptop'], credit: 'Photo: RnA Studio, Lisbon' },
   };
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const $ = (id) => document.getElementById(id);
 
   function prepVideo(v) {
-    const src=v.dataset.src || v.getAttribute('src');
-    if(src)v.dataset.src=src;
-    v.removeAttribute('src');v.removeAttribute('autoplay');v.autoplay=false;v.controls=false;
+    io.observe(v);
     const button=document.createElement('button');button.className='source-play';button.textContent='Play clip';
     v.parentElement.style.position='relative';v.parentElement.append(button);
-    button.addEventListener('click',()=>{document.querySelectorAll('video').forEach(other=>{if(other!==v)other.pause()});v.src=v.dataset.src;v.controls=true;v.play().then(()=>button.hidden=true).catch(()=>button.textContent='Try again')});
+    button.addEventListener('click',()=>{document.querySelectorAll('video').forEach(other=>{if(other!==v)other.pause()});if(!v.hasAttribute('src'))v.src=v.dataset.src;v.controls=true;v.play().then(()=>button.hidden=true).catch(()=>button.textContent='Try again')});
   }
   const io = new IntersectionObserver((entries) => {
     for (const e of entries) {
@@ -499,6 +496,9 @@ SPOOL = Secure Public Online Ownership Ledger
     }
   }, { threshold: 0.2 });
   document.querySelectorAll('video').forEach(prepVideo);
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) document.querySelectorAll('video').forEach(v => v.pause());
+  });
 
   function show(id) {
     const r = ROOMS[id]; if (!r) return;
@@ -508,12 +508,13 @@ SPOOL = Secure Public Online Ownership Ledger
     box.replaceChildren();
     if (r.video) {
       const v = document.createElement('video');
-      Object.assign(v, { src: `media/${r.video}.mp4`, poster: `media/${r.video}.jpg`, muted: true, loop: true, playsInline: true, autoplay: !reduce });
+      Object.assign(v, { poster: r.poster, muted: true, loop: true, playsInline: true, preload: 'none' });
+      v.dataset.src = r.video;
       v.setAttribute('aria-label', r.alt);
       box.append(v); prepVideo(v);
     } else {
       const i = document.createElement('img');
-      i.src = `media/${r.img}.jpg`; i.alt = r.alt;
+      i.src = r.img; i.alt = r.alt;
       box.append(i);
     }
     $('card-name').textContent = r.name;
