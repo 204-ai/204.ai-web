@@ -1,9 +1,16 @@
 const siteHome=document.querySelector('meta[name="204-site-base"]')?.content||'/'
-// A full document load returns from the React detail shell to the curated review homepage.
+const editorialPaths=['','productions/','experiences/','services/','technology/','archives/','sentient-studio/','work/alan-watts/','work/m-k-ciurlionis-trail-of-angels/'].map(path=>siteHome+path)
+const isEditorial=path=>editorialPaths.includes(path.endsWith('/')?path:path+'/')
+// Editorial pages use full documents; do not let the catalog router replace them.
 document.addEventListener('click',event=>{
  if(event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return
  const link=event.target.closest('a[href]');if(!link||link.target==='_blank')return
  const url=new URL(link.href,location.href)
- if(url.origin===location.origin&&url.pathname===siteHome){event.preventDefault();event.stopPropagation();location.assign(url.href)}
+ if(url.pathname===location.pathname&&url.hash)return
+ if(url.origin===location.origin&&isEditorial(url.pathname)){
+  event.preventDefault();event.stopPropagation()
+  if(!url.pathname.endsWith('/'))url.pathname+='/'
+  location.assign(url.href)
+ }
 },true)
-addEventListener('popstate',()=>{if(location.pathname===siteHome)location.reload()})
+addEventListener('popstate',()=>{if(isEditorial(location.pathname))location.reload()})

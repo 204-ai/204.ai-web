@@ -282,6 +282,7 @@ export function slugify(text: string): string {
 const pad2 = (n: number) => String(n).padStart(2, '0')
 const workSlug = (w: RawWork) => w.slug ?? slugify(w.title)
 const serviceSlug = (s: RawService) => s.slug ?? slugify(s.label)
+export const servicePath = (s: RawService) => s.id === 'archival' ? '/archives' : `/services/${serviceSlug(s)}`
 
 interface Redirect {
   from: string
@@ -296,7 +297,10 @@ function redirectList(raw: RawContent): Redirect[] {
   })
   for (const pillar of PILLARS) {
     ;(raw.services?.[pillar] ?? []).forEach((s, i) => {
-      for (const a of s.aliases ?? []) out.push({ from: `/services/${a}`, to: `/services/${serviceSlug(s)}`, origin: `services.${pillar}[${i}] alias "${a}"` })
+      const to = servicePath(s)
+      const legacy = `/services/${serviceSlug(s)}`
+      if (legacy !== to) out.push({ from: legacy, to, origin: `services.${pillar}[${i}] legacy route` })
+      for (const a of s.aliases ?? []) out.push({ from: `/services/${a}`, to, origin: `services.${pillar}[${i}] alias "${a}"` })
     })
   }
   for (const [from, to] of Object.entries(raw.redirects ?? {})) out.push({ from, to, origin: `redirects.json "${from}"` })
@@ -307,8 +311,9 @@ function redirectList(raw: RawContent): Redirect[] {
 export function liveRoutes(raw: RawContent): Set<string> {
   return new Set([
     '/', '/work', '/services', '/about', '/contact',
+    '/sentient-studio', '/sentient-studio/presentation',
     ...(raw.works ?? []).map((w) => `/work/${workSlug(w)}`),
-    ...PILLARS.flatMap((p) => (raw.services?.[p] ?? []).map((s) => `/services/${serviceSlug(s)}`)),
+    ...PILLARS.flatMap((p) => (raw.services?.[p] ?? []).map(servicePath)),
     ...(raw.people ?? []).map((p) => `/makers/${slugify(p.name)}`),
   ])
 }

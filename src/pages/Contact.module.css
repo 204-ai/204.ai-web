@@ -1,9 +1,14 @@
 /* prototype .contact2 / .c-* / .intake (final values incl. "contact details — Poppins, larger") */
 .contact {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  padding: calc(130 * var(--px)) 0 calc(110 * var(--px));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding: 64px 0 calc(110 * var(--px));
   background: var(--ink);
+}
+
+.left,
+.right {
+  min-width: 0;
 }
 
 .left {
@@ -215,6 +220,13 @@ a.lbl:focus-visible {
   margin-bottom: calc(12 * var(--px));
 }
 
+.fld input,
+.fld textarea {
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
 .fld input {
   padding: 10px 2px;
   border: 0;
@@ -341,7 +353,7 @@ a.lbl:focus-visible {
 
 @media (max-width: 1040px) {
   .contact {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 70px;
   }
 
@@ -353,4 +365,10 @@ a.lbl:focus-visible {
   .row {
     grid-template-columns: 1fr;
   }
+}
+
+@media (max-width: 620px) {
+  .contact { padding-top: 40px; }
+  .intake { padding: 28px 20px; }
+  .fine, .v { overflow-wrap: anywhere; }
 }

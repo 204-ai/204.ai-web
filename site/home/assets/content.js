@@ -1,113 +1,119 @@
 const frameList=(name,ext)=>Array.from({length:12},(_,i)=>`assets/${name}-frame-${String(i+1).padStart(2,'0')}.${ext}`)
 const pieces={
-  dream:{title:'What If You Could Dream Any Dream You Wanted?',poster:'assets/dream-slide-poster.webp',playable:true,duration:124.905,frames:frameList('dream','webp'),wave:'assets/dream-wave.webp',status:'2026 · 2:05 · Animated short',credit:'Jas Black, 204 production, AWO words',description:"What if you could dream any dream you wanted? An animated world built around Alan Watts' recorded voice.",youtubeId:'M585jPAbVKw',youtube:'https://www.youtube.com/watch?v=M585jPAbVKw'},
-  satori:{title:'Satori',poster:'assets/satori.jpg',status:'2026 · Selected film still',credit:'Alan Watts animation series',description:'A different visual world from the Alan Watts animation series. Selected frame from Satori.'},
-  confucius:{title:'Confucius',poster:'assets/confucius-poster.webp',video:'assets/confucius-web.mp4',duration:65.279,frames:frameList('confucius','webp'),wave:'assets/confucius-wave.webp',status:'Animated short · 1:05 · Archive preview',credit:'Alan Watts animation series · 204 × Jas Black',description:'Confucius at the river, animated over Alan Watts’ recorded voice.'},
-  maybe:{title:'The Great Maybe',poster:'assets/maybe.jpg',playable:true,duration:99,frames:frameList('maybe','jpg'),wave:'assets/maybe-wave.webp',status:'2026 · 1:39 · Animated short',credit:'Jas Black, 204 production, AWO words',description:"The story of the farmer, animated over Alan Watts' recorded voice. Another way into the archive, with a character and visual language of its own.",youtubeId:'BFemz-ur0_0',youtube:'https://www.youtube.com/watch?v=BFemz-ur0_0'}
+  dream:{title:'What If You Could Dream Any Dream You Wanted?',poster:'assets/dream-slide-poster.webp',duration:124.905,waveform:'assets/dream-wave.webp',frames:frameList('dream','webp'),status:'2026 · 2:05 · Animated short',credit:'Jas Black, 204 production, AWO words',description:"What if you could dream any dream you wanted? An animated world built around Alan Watts' recorded voice.",youtubeId:'M585jPAbVKw',youtube:'https://www.youtube.com/watch?v=M585jPAbVKw'},
+  satori:{
+    title:'Satori',status:'Selected artwork · YouTube release pending',credit:'Alan Watts animation series',
+    description:'Four frames from Satori, from the forest clearing to the woodcutter.',
+    stills:[
+      ['assets/satori-still-1.webp','A blue and orange creature peers out of a forest clearing'],
+      ['assets/satori-still-2.webp','A woodcutter faces the creature among blue leaves'],
+      ['assets/satori-still-3.webp','Close-up of the creature’s orange face'],
+      ['assets/satori-still-4.webp','The woodcutter lifts his axe beside a stack of logs'],
+    ],
+  },
+  confucius:{
+    title:'Confucius',status:'Selected artwork · YouTube release pending',credit:'Alan Watts animation series · 204 × Jas Black',
+    description:'Four frames from the animated story of Confucius at the river.',
+    stills:[
+      ['assets/confucius-still-1.webp','Confucius strokes his beard beside a river'],
+      ['assets/confucius-still-2.webp','Travelers cross a field below mountains and a winding river'],
+      ['assets/confucius-still-3.webp','A man floats on his back in shallow water'],
+      ['assets/confucius-still-4.webp','Two men speak at the riverbank'],
+    ],
+  },
+  maybe:{title:'The Great Maybe',poster:'assets/maybe.jpg',duration:99,waveform:'assets/maybe-wave.webp',frames:frameList('maybe','jpg'),status:'2026 · 1:39 · Animated short',credit:'Jas Black, 204 production, AWO words',description:"The story of the farmer, animated over Alan Watts' recorded voice. Another way into the archive, with a character and visual language of its own.",youtubeId:'BFemz-ur0_0',youtube:'https://www.youtube.com/watch?v=BFemz-ur0_0'}
 }
-const $=s=>document.querySelector(s)
-const video=$('#featured-video'),poster=$('#featured-poster'),play=$('#featured-play'),still=$('#still-note')
-const timeline=$('#film-timeline'),frames=$('#timeline-frames'),seekBar=$('#timeline-seek')
-let selected='dream'
-let loadedPiece=null
-let pendingSeek=null
-const fmt=t=>`${Math.floor(t/60)}:${String(Math.floor(t%60)).padStart(2,'0')}`
-function videoSurface(button,clip,title){
-  const screen=button.closest('.screen'),icon=document.createElement('span')
-  icon.className='video-toggle-icon';icon.setAttribute('aria-hidden','true');button.replaceChildren(icon)
-  button.classList.add('video-surface-toggle');button.type='button'
-  const sync=()=>{
-    const playing=!clip.paused
-    icon.textContent=playing?'Ⅱ':'▶'
-    button.classList.toggle('is-playing',playing)
-    screen.classList.toggle('has-video',!clip.hidden)
-    button.setAttribute('aria-label',`${playing?'Pause':'Play'} ${title()}`)
-  }
-  for(const event of ['play','pause','ended','emptied'])clip.addEventListener(event,sync)
-  sync();return sync
+const $ = selector => document.querySelector(selector)
+const screen = $('#featured-screen')
+const poster = $('#featured-poster')
+const play = $('#featured-play')
+const stillControls = $('#film-stills-controls')
+const timeline = $('#film-timeline')
+const frames = $('#timeline-frames')
+const waveform = $('#film-waveform')
+const seek = $('#film-waveform-seek')
+const youtube = $('#featured-youtube')
+const buttons = document.querySelectorAll('[data-piece]')
+let selected = pieces.dream
+let stillIndex = 0
+
+const fmt = time => Math.floor(time / 60) + ':' + String(Math.floor(time % 60)).padStart(2, '0')
+
+function showStill(index) {
+  const stills = selected.stills
+  stillIndex = (index + stills.length) % stills.length
+  const [src, description] = stills[stillIndex]
+  poster.src = src
+  poster.alt = description
+  $('#film-still-count').textContent = (stillIndex + 1) + ' / ' + stills.length
 }
-function updateTime(){
-  const piece=pieces[selected]
-  if(!piece.video||piece.youtubeId)return
-  const t=loadedPiece===selected?video.currentTime:0,duration=piece.duration
-  timeline.style.setProperty('--progress',Math.min(1,t/duration))
-  seekBar.value=String(t)
-  seekBar.setAttribute('aria-valuetext',`${fmt(t)} of ${fmt(Math.round(duration))}`)
-  $('#timeline-time').textContent=`${fmt(t)} / ${fmt(Math.round(duration))}`
-  const current=Math.min(11,Math.floor(t/duration*12))
-  ;[...frames.children].forEach((li,i)=>{li.className=i===current?'on':i<current?'past':''})
+
+function startFilm(at) {
+  youtubePlayers.mount(screen, selected.youtubeId, selected.title, at)
 }
-function drawTimeline(){
-  const piece=pieces[selected]
-  timeline.hidden=!piece.video&&!piece.youtubeId
+
+function drawTimeline() {
+  timeline.hidden = !selected.youtubeId
   frames.replaceChildren()
-  if(!piece.video&&!piece.youtubeId)return
-  timeline.classList.toggle('youtube-timeline',Boolean(piece.youtubeId))
-  timeline.querySelector('.timeline-caption>span').textContent=piece.youtubeId?'Preview frames · Select to jump':'Recorded talk, AWO archive'
-  if(piece.youtubeId)$('#timeline-time').textContent=fmt(Math.round(piece.duration))+' · YouTube'
-  seekBar.max=String(piece.duration)
-  $('#timeline-wave').src=piece.wave
-  piece.frames.forEach((src,i)=>{
-    const li=document.createElement('li'),button=document.createElement('button'),image=document.createElement('img'),time=document.createElement('span')
-    const at=i*piece.duration/12
-    button.type='button';button.setAttribute('aria-label',`Jump to ${fmt(at)}`)
-    image.src=src;image.alt='';image.draggable=false
-    time.className='tl-time';time.textContent=fmt(at)
-    button.append(image,time);button.addEventListener('click',()=>startFilm(at));li.append(button);frames.append(li)
+  if (!selected.youtubeId) return
+
+  waveform.src = selected.waveform
+  seek.max = String(Math.floor(selected.duration))
+  seek.value = '0'
+  seek.setAttribute('aria-valuetext', '0:00')
+  $('#timeline-time').textContent = fmt(Math.round(selected.duration)) + ' · YouTube'
+  selected.frames.forEach((src, index) => {
+    const at = index * selected.duration / selected.frames.length
+    const item = document.createElement('li')
+    const button = document.createElement('button')
+    const image = document.createElement('img')
+    const time = document.createElement('span')
+    button.type = 'button'
+    button.setAttribute('aria-label', 'Jump to ' + fmt(at))
+    image.src = src
+    image.alt = ''
+    image.draggable = false
+    time.className = 'tl-time'
+    time.textContent = fmt(at)
+    button.append(image, time)
+    button.addEventListener('click', () => startFilm(at))
+    item.append(button)
+    frames.append(item)
   })
-  updateTime()
 }
-async function startFilm(at){
-  const pieceId=selected
-  const piece=pieces[selected]
-  if(!piece.video&&!piece.youtubeId)return
-  if(piece.youtubeId){youtubePlayers.mount($('#featured-screen'),piece.youtubeId,piece.title,at);return}
-  document.querySelectorAll('video').forEach(v=>{if(v!==video)v.pause()})
-  video.muted=false
-  if(loadedPiece!==selected){loadedPiece=selected;pendingSeek=null;video.src=piece.video;video.load()}
-  video.hidden=false;poster.hidden=true;syncFeatured()
-  if(at!==undefined){
-    const target=Math.max(0,Math.min(piece.duration-.1,at))
-    if(video.readyState>=1)video.currentTime=target
-    else pendingSeek=target
+
+buttons.forEach(button => button.addEventListener('click', () => {
+  youtubePlayers.remove(screen)
+  selected = pieces[button.dataset.piece]
+  const hasFilm = Boolean(selected.youtubeId)
+  poster.hidden = false
+  play.hidden = !hasFilm
+  youtube.hidden = !hasFilm
+  stillControls.hidden = hasFilm
+  if (hasFilm) {
+    poster.src = selected.poster
+    poster.alt = 'A frame from ' + selected.title
+    play.setAttribute('aria-label', 'Play ' + selected.title)
+    youtube.href = selected.youtube
+  } else {
+    showStill(0)
   }
-  try{await video.play()}catch(error){if(error.name==='AbortError')return;if(selected===pieceId&&loadedPiece===pieceId){video.hidden=true;poster.hidden=false;play.hidden=false;syncFeatured()}}
-  updateTime()
-}
-document.querySelectorAll('[data-piece]').forEach(button=>button.addEventListener('click',()=>{
-  youtubePlayers.remove($('#featured-screen'))
-  video.pause();video.hidden=true;video.removeAttribute('src');video.load();loadedPiece=null;pendingSeek=null;selected=button.dataset.piece
-  const piece=pieces[selected]
-  poster.hidden=false;poster.src=piece.poster;poster.alt='A frame from '+piece.title
-  video.setAttribute('aria-label',piece.title)
-  play.hidden=!piece.video&&!piece.youtubeId;still.hidden=Boolean(piece.video||piece.youtubeId)
-  $('#featured-title').textContent=piece.title;$('#featured-status').textContent=piece.status
-  $('#featured-credit').textContent=piece.credit;$('#featured-description').textContent=piece.description
-  $('#featured-youtube').hidden=!piece.youtube
-  if(piece.youtube)$('#featured-youtube').href=piece.youtube
-  document.querySelectorAll('[data-piece]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)))
+  $('#featured-title').textContent = selected.title
+  $('#featured-status').textContent = selected.status
+  $('#featured-credit').textContent = selected.credit
+  $('#featured-description').textContent = selected.description
+  buttons.forEach(item => item.setAttribute('aria-pressed', String(item === button)))
   drawTimeline()
-  syncFeatured()
 }))
-const syncFeatured=videoSurface(play,video,()=>pieces[selected].title)
-play.addEventListener('click',()=>video.paused?startFilm():video.pause())
-seekBar.addEventListener('input',()=>startFilm(Number(seekBar.value)))
-video.addEventListener('timeupdate',updateTime)
-video.addEventListener('seeked',updateTime)
-video.addEventListener('loadedmetadata',()=>{
-  if(loadedPiece===selected&&pendingSeek!==null){video.currentTime=pendingSeek;pendingSeek=null;updateTime()}
+
+$('#film-still-prev').addEventListener('click', () => showStill(stillIndex - 1))
+$('#film-still-next').addEventListener('click', () => showStill(stillIndex + 1))
+stillControls.addEventListener('keydown', event => {
+  if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return
+  event.preventDefault()
+  showStill(stillIndex + (event.key === 'ArrowRight' ? 1 : -1))
 })
-document.querySelectorAll('[data-play]').forEach(button=>{
-  const screen=button.closest('.screen'),clip=screen.querySelector('video')
-  const title=clip.getAttribute('aria-label')||button.textContent.replace('▶','').trim().replace(/^Play (the )?/,'')
-  const sync=videoSurface(button,clip,()=>clip.getAttribute('aria-label')||title)
-  button.addEventListener('click',()=>{
-    if(!clip.paused){clip.pause();return}
-    document.querySelectorAll('video').forEach(v=>{if(v!==clip)v.pause()})
-    if(clip.dataset.src&&!clip.getAttribute('src'))clip.src=clip.dataset.src
-    clip.hidden=false;screen.querySelector('img').hidden=true;sync()
-    clip.play().catch(error=>{if(error.name==='AbortError')return;clip.hidden=true;screen.querySelector('img').hidden=false;sync()})
-  })
-})
-document.addEventListener('visibilitychange',()=>{if(document.hidden)document.querySelectorAll('video').forEach(v=>v.pause())})
+seek.addEventListener('input', () => seek.setAttribute('aria-valuetext', fmt(Number(seek.value))))
+seek.addEventListener('change', () => startFilm(Number(seek.value)))
+play.addEventListener('click', () => startFilm())
 drawTimeline()

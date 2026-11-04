@@ -9,7 +9,10 @@
  const video=document.querySelector('#magic-mirror-video'),screen=document.querySelector('#mirror-player'),poster=screen.querySelector('img'),button=screen.querySelector('[data-play]')
  let current='overview'
  document.querySelectorAll('[data-mirror-piece]').forEach(tab=>tab.addEventListener('click',()=>{
-  if(tab.dataset.mirrorPiece===current)return
+  if(tab.dataset.mirrorPiece===current){
+   if(video.paused)button.click()
+   return
+  }
   current=tab.dataset.mirrorPiece
   const piece=pieces[current]
   video.pause();video.hidden=true;video.removeAttribute('src');video.dataset.src=piece.video;video.loop=Boolean(piece.loop);video.muted=false
@@ -20,7 +23,7 @@
   document.querySelector('#mirror-piece-label').textContent=piece.title
   document.querySelector('#mirror-piece-description').textContent=piece.description
   document.querySelectorAll('[data-mirror-piece]').forEach(item=>item.setAttribute('aria-pressed',String(item===tab)))
-  video.load()
+  button.click()
  }))
  for(const clip of document.querySelectorAll('.main-experience video'))new IntersectionObserver(entries=>{if(!entries[0].isIntersecting)clip.pause()},{threshold:.01}).observe(clip.closest('.screen'))
 })()

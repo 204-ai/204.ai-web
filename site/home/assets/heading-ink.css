@@ -1,0 +1,31 @@
+.ink-word { display: inline-block; white-space: nowrap; }
+.ink-word > span { display: inline-block; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .ink-word > span {
+    --ink-start: translateY(.04em) scale(1.05);
+    animation: heading-ink-in var(--ink-duration, 1s) cubic-bezier(.2, 0, 0, 1) backwards;
+    animation-delay: var(--ink-delay, 0ms);
+  }
+  .ink-heading { animation: heading-ink-in 1s cubic-bezier(.2, 0, 0, 1); }
+}
+
+@keyframes heading-ink-in {
+  0% { opacity: 0; filter: blur(.18em); transform: var(--ink-start, none); }
+  55% { opacity: .9; filter: blur(.03em); }
+  100% { opacity: 1; filter: none; transform: none; }
+}
+
+/* A low, wide shadow marks chapter boundaries while leaving control and card borders intact. */
+:is(.featured-panel + .featured-panel, .home-introduction, .trust-wall, .closer,
+    #productions > .story, #productions > .selected, #experiences > .main-experience,
+    #experiences > .experience-chapter, #experiences > .dome-experience,
+    #experiences > .sentient-discover, .services-overview > .service-offerings,
+    .archive-section, .archive-case-chapter, .living-archive-case > .dome-experience,
+    .ciur-case > .ciur-section) {
+  border-top: 0;
+  background-image: radial-gradient(ellipse 72% 100% at 50% 0, #0007 0, #0003 45%, transparent 77%);
+  background-size: 100% clamp(20px, 3vw, 48px);
+  background-position: top center;
+  background-repeat: no-repeat;
+}

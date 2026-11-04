@@ -18,7 +18,7 @@
   "heroClips": [
     {
       "work": "alan-watts",
-      "clip": "/media/feat-alanwatts-8d126c.mp4",
+      "clip": "/media/feat-alanwatts-b75ac0.mp4",
       "poster": "/media/feat-alanwatts-c79fdb.webp",
       "kind": "Archival Restoration",
       "place": "Alan Watts Organization"
@@ -33,7 +33,7 @@
     },
     {
       "work": "stand-virtual",
-      "clip": "/media/hero-standv-70227b.mp4",
+      "clip": "/media/hero-standv-9e091a.mp4",
       "poster": "/media/w-standv-30a07c.webp",
       "title": "Stand Virtual — Fast & Furious Through Lisbon",
       "kind": "Branded Campaign",
@@ -83,7 +83,7 @@
       "title": "Alan\nWatts",
       "label": "Archival\nRestoration",
       "poster": "/media/feat-alanwatts-c79fdb.webp",
-      "clip": "/media/feat-alanwatts-8d126c.mp4",
+      "clip": "/media/feat-alanwatts-b75ac0.mp4",
       "focus": "50% 30%"
     }
   ],

@@ -655,11 +655,11 @@
   "media-src/cinematic/feat-alanwatts.mp4": {
    "sha1": "428d3bf163eb1e6cfa48ef5a7de5cf05bd5a50aa",
    "role": "hero",
-   "path": "/media/feat-alanwatts-8d126c.mp4",
-   "w": 1920,
-   "h": 1080,
+   "path": "/media/feat-alanwatts-b75ac0.mp4",
+   "w": 1280,
+   "h": 720,
    "files": {
-    "feat-alanwatts-8d126c.mp4": 8726323
+    "feat-alanwatts-b75ac0.mp4": 3366512
    }
   },
   "media-src/cinematic/feat-alanwatts.png": {
@@ -741,11 +741,11 @@
   "media-src/cinematic/hero-standv.mp4": {
    "sha1": "ff4781e1ab9825831a5d0848a5ca611c9d3d1935",
    "role": "hero",
-   "path": "/media/hero-standv-70227b.mp4",
-   "w": 1920,
-   "h": 1080,
+   "path": "/media/hero-standv-9e091a.mp4",
+   "w": 1280,
+   "h": 720,
    "files": {
-    "hero-standv-70227b.mp4": 7872957
+    "hero-standv-9e091a.mp4": 2787931
    }
   },
   "media-src/cinematic/hul-01.jpg": {
@@ -2472,11 +2472,11 @@
   "media-src/cinematic/sd-mirror-5.mp4": {
    "sha1": "d05808d1316f8dc4536c5e49b7935c259eca62a2",
    "role": "clip",
-   "path": "/media/sd-mirror-5-a846f6.mp4",
+   "path": "/media/sd-mirror-5-b7df68.mp4",
    "w": 1280,
    "h": 720,
    "files": {
-    "sd-mirror-5-a846f6.mp4": 4399425
+    "sd-mirror-5-b7df68.mp4": 2442754
    }
   },
   "media-src/cinematic/sd-vfx-1.mp4": {

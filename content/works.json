@@ -124,7 +124,7 @@
     "media": {
       "still": "/media/w-standv-30a07c.webp",
       "video": {
-        "mp4": "/media/hero-standv-70227b.mp4"
+        "mp4": "/media/hero-standv-9e091a.mp4"
       }
     },
     "date": "05.02.2026",
@@ -288,7 +288,7 @@
     "media": {
       "still": "/media/feat-alanwatts-c79fdb.webp",
       "video": {
-        "mp4": "/media/feat-alanwatts-8d126c.mp4"
+        "mp4": "/media/feat-alanwatts-b75ac0.mp4"
       },
       "focus": "50% 30%"
     },
@@ -714,13 +714,18 @@
       "custom"
     ],
     "year": "2024",
-    "note": "Custom content installation",
+    "note": "Gate to 2050",
     "media": {
-      "still": "/media/w-oddsgate-90db5e.webp"
+      "still": "/media/w-oddsgate-90db5e.webp",
+      "video": { "mp4": "/media/sd-custom-1-aeb70c.mp4" }
     },
     "date": "24–26.09.2024",
-    "products": "Custom content · neurofeedback installation",
-    "body": "With four emotions and eight possible futures, each journey was shaped by neurofeedback. In this interactive experience, visitors traveled to the year 2050, where their emotional state during peak focus determined the path ahead.",
+    "place": "SBC Summit · Feira Internacional de Lisboa",
+    "products": "Projection mapping · custom visual content · neurofeedback",
+    "body": [
+      "Oddsgate wanted its conference booth to take visitors into the year 2050. At SBC Summit in Lisbon, the booth became a projection room where each guest could sit inside a different version of the future.",
+      "Working with MuLabs, we paired projected visual worlds with a neurofeedback headset. A reading taken during the visit helped select one of eight paths through the experience."
+    ],
     "youtube": [
       "6fQRxHev1CA"
     ],
@@ -850,7 +855,8 @@
     "title": "Texas Eclipse",
     "client": "Texas Eclipse Festival",
     "practices": [
-      "visuals"
+      "visuals",
+      "immersive"
     ],
     "year": "2024",
     "note": "Dome visuals — Android Jones",

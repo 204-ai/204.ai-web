@@ -14,8 +14,23 @@
     ],
     "redirects": [
       {
+        "regex": "^/sentient-space/?$",
+        "destination": "/sentient-studio",
+        "type": 301
+      },
+      {
+        "regex": "^/sentient-space/presentation/?$",
+        "destination": "/sentient-studio/presentation",
+        "type": 301
+      },
+      {
         "regex": "^/services/ai-photo-booth/?$",
         "destination": "/services/magic-photo-booth",
+        "type": 301
+      },
+      {
+        "regex": "^/services/archival-preservation/?$",
+        "destination": "/archives",
         "type": 301
       },
       {
@@ -30,12 +45,17 @@
       },
       {
         "regex": "^/services/digital-archival-preservation/?$",
-        "destination": "/services/archival-preservation",
+        "destination": "/archives",
         "type": 301
       },
       {
         "regex": "^/services/immersive-mapping/?$",
         "destination": "/services/vfx-mapping",
+        "type": 301
+      },
+      {
+        "regex": "^/technology/?$",
+        "destination": "/services",
         "type": 301
       },
       {

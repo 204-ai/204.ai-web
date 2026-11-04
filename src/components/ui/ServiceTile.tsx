@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import type { Service } from '../../data/content'
+import { servicePath, type Service } from '../../data/content'
 import { rendition } from '../../lib/media'
 import { Rich } from './Rich'
 import styles from './ServiceTile.module.css'
@@ -18,7 +18,7 @@ interface ServiceTileProps {
 export function ServiceTile({ service: s, side, className, decorative }: ServiceTileProps) {
   return (
     <Link
-      to={`/services/${s.slug}`}
+      to={servicePath(s)}
       className={className ? `${styles.tile} ${className}` : styles.tile}
       aria-hidden={decorative || undefined}
       tabIndex={decorative ? -1 : undefined}

@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { Pill } from '../components/ui/Pill'
 import { CONTENT } from '../data/studio'
@@ -9,9 +10,14 @@ import styles from './NotFound.module.css'
  * (aliases ∪ redirects.json, SPEC C20/V3), everything else is a v2 404.
  */
 export function NotFound() {
-  const { pathname } = useLocation()
+  const { pathname, search, hash } = useLocation()
   const target = CONTENT.redirects[pathname.replace(/\/+$/, '') || '/']
   useHead(target ? '' : '404', 'Page not found. Which is on-brand, but not on purpose this time.')
+  const archiveRedirect = target === '/archives'
+  useEffect(() => {
+    if (archiveRedirect) window.location.replace(`${import.meta.env.BASE_URL}archives/${search}${hash}`)
+  }, [archiveRedirect, search, hash])
+  if (archiveRedirect) return null
   if (target) return <Navigate to={target} replace />
   return (
     <div className={`v2 ${styles.root}`}>
