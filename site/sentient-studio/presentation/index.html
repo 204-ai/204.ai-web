@@ -213,7 +213,8 @@ footer p { color: var(--muted); font-size: 14px; }
   .bio > img { width: 120px; height: 120px; }
   section { padding-block: 52px; }
 }
-@media (prefers-reduced-motion: reduce) {
+@media (max-width: 700px), (prefers-reduced-motion: reduce) {
+  nav.top { backdrop-filter: none; }
   .loop i::after, .spot::before, .ascii .c { animation: none; }
 }
 </style>
@@ -381,7 +382,7 @@ footer p { color: var(--muted); font-size: 14px; }
           <div class="fact"><b>3</b><span>engines: FluxRT, StreamDiffusion, ComfyUI</span></div>
           <div class="fact"><b>7</b><span>projector positions in the room model</span></div>
           <div class="fact"><b>8</b><span>networked art frames</span></div>
-          <figure class="s-canvas" style="grid-column:1 / -1"><div class="tile"><video data-src="media/canvas.mp4" preload="none" poster="media/canvas.jpg" muted loop playsinline aria-label="A monitor of every camera feed and every canvas slice"></video></div><figcaption class="cap">One canvas, sliced to every surface</figcaption></figure>
+          <figure class="s-canvas" style="grid-column:1 / -1"><div class="tile"><video data-src="media/canvas.mp4" preload="none" poster="media/canvas.jpg" muted loop playsinline aria-label="A monitor showing the canvas split across projection surfaces"></video></div><figcaption class="cap">One canvas, sliced to every surface</figcaption></figure>
         </div>
       </div>
     </div>
