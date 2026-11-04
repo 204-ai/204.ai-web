@@ -1,6 +1,6 @@
 /* prototype .mk-page / .mk-* (sec-lab margins from the late mk-page rules) */
 .page {
-  padding: calc(140 * var(--px)) var(--side-pad) 0;
+  padding: 64px var(--side-pad) 0;
 }
 
 .back {
@@ -197,3 +197,5 @@
     text-align: left;
   }
 }
+
+@media (max-width: 700px) { .page { padding-top: 40px; } }

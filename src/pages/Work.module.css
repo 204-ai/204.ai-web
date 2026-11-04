@@ -4,7 +4,7 @@
   grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
   gap: calc(48 * var(--px));
   align-items: end;
-  padding: calc(160 * var(--px)) var(--side-pad) calc(80 * var(--px));
+  padding: 64px var(--side-pad) calc(80 * var(--px));
 }
 
 .head h1 {
@@ -86,3 +86,5 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 700px) { .head { padding-top: 40px; } }
