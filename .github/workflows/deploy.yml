@@ -7,8 +7,6 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: pages
@@ -46,51 +44,3 @@ jobs:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_STUDIO204_WEB }}
           channelId: live
           projectId: studio204-web
-
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      # SITE_URL stays the Firebase host: the secondary GH Pages deploy
-      # canonicalizes to the primary (SPEC V16) instead of competing with it
-      - name: Build
-        run: npm run build
-        env:
-          VITE_BASE: /204.ai-web/
-          SITE_URL: https://studio204-web.web.app
-          VITE_ORGANISM: off  # experiment gated until explicit go (user 2026-07-21)
-          VITE_FORM_ENDPOINT: https://europe-west1-studio204-web.cloudfunctions.net/brief
-          VITE_RECAPTCHA_SITE_KEY: 6LcYjl8tAAAAAKJYjGwaDw_-g7mKbDUzxqrFmsVR
-
-      - name: SPA fallback (404.html)
-        run: cp dist/app-shell.html dist/404.html
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
