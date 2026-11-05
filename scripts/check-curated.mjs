@@ -29,7 +29,7 @@ if(!/<h3 id="featured-technology-title">[^]*?Art &amp; Tech\.[^]*?<\/h3>/.test(h
 for(const id of ['studio-artworks','technology','services','content-services','interactive-services']){
  if(!services.includes(`id="${id}"`))errors.push(`Missing Art & Tech section ${id}`)
 }
-if((services.match(/class="capability"/g)||[]).length!==3)errors.push('Expected three workflow examples')
+if((services.match(/class="capability"/g)||[]).length!==4)errors.push('Expected four workflow examples')
 if(services.includes('prompin-walkthrough'))errors.push('Prompin walkthrough is still on Services')
 for(const id of ['production-showreel','magic-mirror','dome-player','featured-screen'])if(home.includes(`id="${id}"`))errors.push(`Homepage still contains full chapter ${id}`)
 const productions=readFileSync(join(dist,'productions/index.html'),'utf8'),experiences=readFileSync(join(dist,'experiences/index.html'),'utf8')
