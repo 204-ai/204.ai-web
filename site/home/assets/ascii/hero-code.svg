@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="156" height="64" viewBox="0 0 156 64">
+  <style>
+    text { animation: compile 360ms ease-out both; }
+    text:nth-child(2) { animation-delay: 45ms; }
+    text:nth-child(3) { animation-delay: 90ms; }
+    text:nth-child(4) { animation-delay: 135ms; }
+    text:nth-child(5) { animation-delay: 180ms; }
+    @keyframes compile { from { opacity: 0; transform: translateX(-6px); } }
+    @media (prefers-reduced-motion: reduce) { text { animation: none; } }
+  </style>
+  <rect width="156" height="64" fill="#173448"/>
+  <g font-family="monospace" font-size="11" font-weight="bold">
+    <text x="0" y="11" fill="#c4fbf4">const world = {</text>
+    <text x="5" y="24" fill="#fff">  frame: 204,</text>
+    <text x="0" y="37" fill="#92d9ff">  light: true</text>
+    <text x="10" y="50" fill="#fff">}; render(world);</text>
+    <text x="1" y="62" fill="#c4fbf4">await nextFrame();</text>
+  </g>
+</svg>

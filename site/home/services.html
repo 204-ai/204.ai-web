@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Creative Technology — 204 · NO-CONTENT</title>
-  <meta name="description" content="Film and animation, interactive experiences, archive research and visual effects. See the work and the tools behind 204’s services.">
+  <title>Art & Tech — 204 · NO-CONTENT</title>
+  <meta name="description" content="Studio artworks, production workflows, installation technology and creative services from 204 at RnA Studio in Lisbon.">
   <link rel="icon" href="/favicon.svg">
   <link rel="stylesheet" href="assets/chapter.css">
   <link rel="stylesheet" href="assets/video-toggle.css">
@@ -18,26 +18,48 @@
       gtag('js', new Date());
       gtag('config', 'G-E2HCBBXBVP', { send_page_view: false });
     </script>
+<link rel="stylesheet" href="assets/ascii-textures.css"><script type="module" src="assets/ascii-textures.js"></script>
 </head>
 <body data-page="services">
 <!-- site:header -->
 <main class="shell services-overview">
-  <div class="site-page-heading">
-    <h1>Creative<br>Technology.</h1>
-    <p>Explore the tools and research behind our films, archives and installations, and find the services you can commission from 204. We prototype and show the work at RnA Studio in Lisbon.</p>
+  <div class="site-page-heading" data-ascii="signal">
+    <h1 data-ascii-title>Art &amp; Tech.</h1>
+    <p>Explore artworks made at RnA Studio in Lisbon, the tools and workflows behind our films and installations, and the services you can commission from 204.</p>
   </div>
   <nav class="site-section-links" id="technology-services" aria-label="On this page">
-    <a href="#technology">Tools &amp; Research</a>
+    <a href="#studio-artworks">Studio Artworks</a>
+    <a href="#technology">Technology &amp; Workflows</a>
     <a href="#services">Services</a>
   </nav>
-  <section class="capabilities" id="technology" aria-labelledby="creative-process">
+  <section class="capabilities studio-artworks" id="studio-artworks" data-ascii="portrait" aria-labelledby="studio-artworks-title">
+    <div class="studio-artworks-copy">
+      <p class="label">From the studio and its residencies</p>
+      <h2 id="studio-artworks-title" data-ascii-title>Studio Artworks.</h2>
+      <p>Digital work, physical pieces and augmented paintings from 204 and the artists we work with at RnA Studio in Lisbon.</p>
+      <button class="pill studio-artworks-toggle" type="button" aria-controls="studio-artworks-grid" aria-expanded="false" hidden><span data-gallery-label>Browse artworks</span></button>
+    </div>
+    <figure class="studio-artworks-gallery">
+      <div class="studio-artworks-stage">
+        <img class="studio-artworks-room" src="../sentient-studio/presentation/media/room-gallery.jpg" width="939" height="626" alt="Framed digital displays in the RnA Studio gallery" loading="lazy" decoding="async">
+        <ul class="studio-artworks-grid" id="studio-artworks-grid" aria-label="Selected studio artworks">
+          <li><a href="/artworks/code-painter/"><img src="assets/artworks/code-painter-thumb.webp" width="440" height="280" alt="" loading="lazy" decoding="async"><span><strong>Code Painter Study</strong><small>Digital · Jas Black</small></span></a></li>
+          <li><a href="/artworks/burst-physical-works/"><img src="assets/artworks/burst-physical-thumb.webp" width="440" height="280" alt="" loading="lazy" decoding="async"><span><strong>BURST_ Physical Works</strong><small>Physical · BURST_</small></span></a></li>
+          <li><a href="/artworks/rainbow-portal/"><img src="assets/artworks/rainbow-portal-thumb.webp" width="440" height="280" alt="" loading="lazy" decoding="async"><span><strong>Rainbow Portal</strong><small>Mixed media · BURST_</small></span></a></li>
+          <li><a href="/artworks/ciurlionis-living-painting/"><img class="studio-artworks-painting" src="assets/ciurlionis/living-painting.webp" width="472" height="720" alt="" loading="lazy" decoding="async"><span><strong>Čiurlionis Living Painting</strong><small>Interactive · 204</small></span></a></li>
+        </ul>
+      </div>
+      <figcaption>RnA Studio gallery · Lisbon</figcaption>
+    </figure>
+  </section>
+  <section class="capabilities" id="technology" data-ascii="signal" aria-labelledby="creative-process">
     <div class="capabilities-intro">
-      <h2 id="creative-process">Tools &amp; Research</h2>
-      <p>Four short examples from projects and development studies.</p>
+      <h2 id="creative-process" data-ascii-title>Technology &amp; Workflows</h2>
+      <p>See the pipelines, tools and installation systems behind the work.</p>
     </div>
     <div class="capabilities-grid">
       <article class="capability">
-        <h3>Film &amp; animation</h3>
+        <h3>Film &amp; animation pipelines</h3>
         <div class="screen capability-screen">
           <img src="assets/services-film.webp" alt="A Clarissa sketch beside the animated character and scene" width="1280" height="720" loading="lazy">
           <video controls playsinline preload="none" hidden data-src="assets/services-film.mp4" aria-label="Clarissa · Working Title Animation"></video>
@@ -48,31 +70,23 @@
         <a class="text-link" href="/services/animation-film/">Explore animation &amp; film ↗</a>
       </article>
       <article class="capability">
-        <h3>Live experiences</h3>
+        <h3>Installation technology</h3>
         <div class="screen capability-screen">
-          <img src="assets/services-live.webp" alt="An embroidered treatment of the Snackshop and 204 sizzle reel" width="1280" height="720" loading="lazy">
-          <video controls playsinline preload="none" hidden data-src="assets/services-live.mp4" aria-label="Snackshop × 204 sizzle · FluxRT capture"></video>
-          <button class="play" type="button" data-play><span aria-hidden="true">▶</span>Play Snackshop × 204 sizzle · FluxRT capture</button>
+          <img src="assets/services-live.webp" alt="Two people restyled as painted portraits during a FluxRT capture" width="960" height="540" loading="lazy">
+          <video controls playsinline preload="none" hidden data-src="assets/services-live.mp4" aria-label="Live transformations · FluxRT and Magic Mirror reel"></video>
+          <button class="play" type="button" data-play><span aria-hidden="true">▶</span>Play the live transformations reel</button>
         </div>
-        <div class="caption">Snackshop × 204 sizzle · FluxRT capture · 10 sec</div>
+        <div class="caption">Live transformations · FluxRT, Magic Mirror &amp; SD WebRTC · 24 sec</div>
         <p>Change how a moving image looks in real time. We build visual systems for installations, performances and experiences shaped by the people in the room.</p>
-        <a class="text-link" href="/experiences/#magic-mirror">Explore interactive work ↗</a>
-      </article>
-      <article class="capability">
-        <h3>Archives &amp; research</h3>
-        <div class="screen capability-screen">
-          <img src="assets/archive-mosaic.webp" alt="A mosaic of photographs, tape and calligraphy from the Alan Watts archive" width="1280" height="720" loading="lazy">
-          <video controls playsinline preload="none" hidden data-src="assets/archive-mosaic.mp4" aria-label="Alan Watts Organization × 204.ai · A Living Archive"></video>
-          <button class="play" type="button" data-play><span aria-hidden="true">▶</span>Play Alan Watts Organization × 204.ai · A Living Archive</button>
+        <div class="capability-links">
+          <a class="text-link" href="/experiences/#magic-mirror">Magic Mirror ↗</a>
+          <a class="text-link" href="/experiences/#texas-eclipse-reel">Dome &amp; 360° ↗</a>
         </div>
-        <div class="caption">Alan Watts Organization × 204.ai · A Living Archive · 5 sec</div>
-        <p>Restore fragile material and trace new work back to its source. We help archive holders explore their collections and turn recordings and images into new work.</p>
-        <a class="text-link" href="/archives/">Explore archival intelligence ↗</a>
       </article>
       <article class="capability">
-        <h3>Character &amp; visual effects</h3>
+        <h3>Character &amp; VFX workflows</h3>
         <div class="screen capability-screen">
-          <img src="assets/services-effects.webp" alt="Reference imagery and finished shots of the characters in Dimination" width="1280" height="720" loading="lazy">
+          <img src="assets/services-effects.webp" alt="Three Dunbrae residents gather around a paper map in Dimination" width="1280" height="720" loading="lazy">
           <video controls playsinline preload="none" hidden data-src="assets/services-effects.mp4" aria-label="Dimination · process study"></video>
           <button class="play" type="button" data-play><span aria-hidden="true">▶</span>Play Dimination · process study</button>
         </div>
@@ -80,11 +94,21 @@
         <p>Carry a character through different shots and settings. We use reference imagery and shot tests to keep faces, environments and visual details consistent.</p>
         <a class="text-link" href="/productions/#dunbrae-making-of">See the Dimination process ↗</a>
       </article>
+      <article class="capability">
+        <h3>How it’s made: Space Trash</h3>
+        <div class="screen capability-screen youtube-screen" data-youtube="Uq4LEpnRMIk" data-youtube-title="Space Trash — behind the scenes by Jas Black">
+          <img src="assets/services-space-trash.webp" alt="A green skeleton on the Space Trash behind-the-scenes poster" width="960" height="540" loading="lazy" decoding="async">
+          <button class="play video-surface-toggle" type="button" aria-label="Play Space Trash behind the scenes" data-youtube-play><span class="video-toggle-icon" aria-hidden="true">▶</span></button>
+        </div>
+        <div class="caption capability-credit">Behind the scenes by <img src="assets/jas-black-credit.webp" alt="Jas Black" width="600" height="132" loading="lazy" decoding="async"></div>
+        <p>Jas Black takes you behind the scenes of <em>Space Trash</em> and shows how the film came together.</p>
+        <a class="text-link" href="https://youtu.be/Uq4LEpnRMIk" target="_blank" rel="noopener noreferrer">Watch on YouTube ↗</a>
+      </article>
     </div>
   </section>
-  <section class="capabilities service-offerings" id="services" aria-labelledby="services-title">
+  <section class="capabilities service-offerings" id="services" data-ascii="film" aria-labelledby="services-title">
     <div class="capabilities-intro">
-      <h2 id="services-title">Services</h2>
+      <h2 id="services-title" data-ascii-title>Services</h2>
       <p>Find a production or experience service for your project.</p>
     </div>
     <div class="chapter-services" id="content-services">
@@ -101,6 +125,8 @@
 </main>
 <!-- site:footer -->
 <script src="assets/media-controls.js"></script>
+<script src="assets/youtube-players.js"></script>
+<script src="assets/studio-artworks.js" defer></script>
 <script src="assets/site-shell.js"></script>
 </body>
 </html>

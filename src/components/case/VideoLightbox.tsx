@@ -5,7 +5,7 @@ import styles from './VideoLightbox.module.css'
 interface VideoLightboxProps {
   youtubeId: string
   title: string
-  /** top-right line, e.g. "2026 · Magic Photo Booth" */
+  /** top-right line, e.g. "2026 · Magic Booth" */
   meta: string
   onClose: () => void
 }

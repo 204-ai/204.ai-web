@@ -8,5 +8,5 @@ export function Nav() {
     if (event.key !== 'Escape') return
     const menu = event.currentTarget.querySelector<HTMLDetailsElement>('.site-menu[open]')
     if (menu) { menu.open = false; menu.querySelector('summary')?.focus() }
-  }} dangerouslySetInnerHTML={{ __html: siteHeader(import.meta.env.BASE_URL, CONTENT.studio.logoUrl, pathname) }} />
+  }} dangerouslySetInnerHTML={{ __html: siteHeader(import.meta.env.BASE_URL, CONTENT.studio, pathname) }} />
 }

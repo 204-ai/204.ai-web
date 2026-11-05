@@ -1,20 +1,52 @@
-.wta-section{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr)}
-.wta-section .screen{aspect-ratio:16/9}
-.wta-section .screen>img,.wta-section .screen>video{object-fit:contain}
-.wta-film-info{padding-top:20px;min-height:118px}
-.wta-film-info h4{font:18px/1.4 var(--body);margin:0}
-.wta-film-info p{font-size:12px;margin:7px 0 0;max-width:60ch}
-.wta-film-info .caption{margin-top:7px}
-.wta-films{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;padding-block:18px;border-block:1px solid var(--line)}
-.wta-films button{min-width:0;background:transparent;text-align:left;padding:0;color:var(--paper)}
-.wta-films img{width:100%;height:auto;aspect-ratio:16/9;object-fit:contain;background:var(--ink);border:2px solid transparent;border-radius:4px;opacity:.65}
-.wta-films strong{display:block;font:12px/1.5 var(--body);margin-top:8px}
-.wta-films small{display:block;font:11px/1.5 var(--mono);color:var(--dim);margin-top:3px}
-.wta-films [aria-pressed=true] img{border-color:var(--signal);opacity:1}
-.wta-films [aria-pressed=true] strong{color:var(--signal)}
-.wta-projects{border-top:1px solid var(--line);margin-top:28px}
-.wta-projects>div{padding-top:18px}
-.wta-projects h4{font:18px/1.5 var(--body);margin:0 0 7px}
-.wta-section .wta-credit{font:11px/1.7 var(--mono);margin-top:25px}
-@media(max-width:900px){.wta-films{gap:9px}.wta-films small{font-size:10px}}
-@media(max-width:620px){.wta-section{grid-template-columns:minmax(0,1fr)}.wta-films{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 14px}.wta-film-info{min-height:0;padding-bottom:20px}}
+#working-title { scroll-margin-top: calc(var(--chrome-h) + 8px); }
+#working-title .wta-intro h3 {
+  font-size: clamp(36px, 4.3vw, 72px);
+  line-height: 1.02;
+  margin: 8px 0 0;
+  text-wrap: balance;
+}
+#working-title .label { font-size: 10px; }
+#working-title .wta-intro p.label { margin: 0; }
+#working-title .wta-intro { align-items:center; }
+#working-title[data-ascii] { --ascii-opacity:.13; }
+.wta-artist {
+  display:grid;
+  max-width:640px;
+  grid-template-columns:minmax(0,1fr) clamp(88px,12vw,164px);
+  align-items:center;
+  gap:clamp(14px,2.6vw,36px);
+}
+.wta-artist h4 { margin:0 0 7px; font:500 clamp(20px,2.3vw,32px)/1.2 var(--body); }
+#working-title .wta-artist p { margin:0; max-width:44ch; font-size:clamp(13px,1.1vw,16px); line-height:1.6; }
+.wta-artist-links { display:flex; flex-wrap:wrap; gap:4px 18px; margin-top:8px; }
+.wta-artist .text-link { padding-block:5px 2px; }
+.wta-artist-portrait {
+  display:block;
+  width:100%;
+  height:auto;
+  border-radius:5px;
+}
+@media (max-width:740px) {
+  .wta-artist { grid-template-columns:minmax(0,1fr) clamp(88px,25vw,136px); }
+}
+
+#working-title .wta-panel-label { margin: 0 0 13px; }
+.wta-section .screen { aspect-ratio: 16/9; }
+.wta-section .screen > img, .wta-section .screen > video { object-fit: contain; }
+.wta-film-info { padding-top: 11px; }
+.wta-film-info h4 { font: 17px/1.35 var(--body); margin: 0; }
+#working-title .wta-film-info p { font-size: 12px; margin: 4px 0 0; max-width: 60ch; }
+.wta-film-info .caption { margin-top: 4px; }
+.wta-films { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+.wta-films button { min-width: 0; background: transparent; text-align: left; padding: 0; color: var(--paper); }
+.wta-films img { width: 100%; height: auto; aspect-ratio: 16/9; object-fit: cover; border: 2px solid transparent; border-radius: 4px; opacity: .76; }
+.wta-films strong { display: block; font: 12px/1.4 var(--body); margin-top: 4px; }
+.wta-films small { display: block; font: 10px/1.35 var(--mono); color: var(--dim); }
+.wta-films [aria-pressed=true] img { border-color: var(--signal); opacity: 1; }
+.wta-films [aria-pressed=true] strong, .wta-blame-reference:hover strong { color: var(--signal); }
+
+.wta-blame-reference { display: grid; grid-template-columns: 57px minmax(0,1fr); align-items: center; gap: 11px; margin-top: 13px; }
+.wta-blame-reference img { width: 57px; height: 51px; object-fit: cover; border-radius: 4px; }
+.wta-blame-reference strong { display: block; font: 13px/1.4 var(--body); }
+.wta-blame-reference small { display: block; margin-top: 3px; color: var(--dim); font: 10px/1.35 var(--mono); }
+#working-title .wta-credit { font: 10px/1.4 var(--mono); margin: 7px 0 0; }

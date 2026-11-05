@@ -10,8 +10,9 @@
 .full-hero-bottom>a{max-width:calc(100% - 260px)}
 .dunbrae-actions{display:flex;flex-wrap:wrap;gap:12px}
 .dunbrae-actions [hidden]{display:none}
-.dunbrae-compare.is-video #dunbrae-reveal{pointer-events:none}
-.dunbrae-compare.is-video .compare-divider{display:none}
-.dunbrae-compare.is-video video{cursor:pointer}
 @media(max-width:620px){.screen>.play.video-surface-toggle>.video-toggle-icon{width:46px;height:46px;font-size:16px}.full-hero-bottom>a{max-width:none}}
 @media(hover:none){.screen>.play.video-surface-toggle.is-playing:hover>.video-toggle-icon{opacity:0}}
+
+.youtube-screen iframe,.dream-player iframe{position:absolute;inset:0;width:100%;height:100%;border:0;z-index:4}
+.youtube-screen.has-youtube::after{display:none}
+.youtube-screen>[hidden]{display:none}

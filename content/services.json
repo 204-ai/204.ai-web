@@ -62,9 +62,10 @@
     },
     {
       "id": "archival",
-      "label": "Archival Preservation",
-      "title": "Archival\nPreservation",
-      "desc": "Restoration & enhancement\nof historical media",
+      "label": "Archive Activation",
+      "slug": "archival-preservation",
+      "title": "Archive\nActivation",
+      "desc": "Research, restoration & new work\nfrom archival material",
       "img": "/media/svc-archival2-216f60.webp",
       "lead": "Restoration and enhancement of archival photos or footage through advanced AI methods — handled with the same care as the original.",
       "modes": [
@@ -94,9 +95,9 @@
       "id": "immersive",
       "label": "VFX & Mapping",
       "title": "VFX &\nMapping",
-      "desc": "Produced visuals for stages,\nfacades & multi-screen",
+      "desc": "Screen-ready content for domes,\nfacades & multi-screen venues",
       "img": "/media/svc-vfx-53a701.webp",
-      "lead": "Custom visual content for stages, buildings and multi-screen environments — designed for the surfaces and screens it plays on.",
+      "lead": "We create visuals for 360° dome projections, stages, buildings and multi-screen venues, shaped to fit the surfaces they play on.",
       "modes": [
         {
           "n": "01",
@@ -112,6 +113,11 @@
           "n": "03",
           "label": "Environmental theming",
           "body": "A single visual world extended across a whole venue"
+        },
+        {
+          "n": "04",
+          "label": "360° dome content",
+          "body": "Full-dome animation and immersive visuals designed for projection inside domes and planetariums"
         }
       ],
       "included": "On-site technical scouting · custom visual content · projection/mapping hardware coordination · show programming",
@@ -160,7 +166,7 @@
       "id": "mirror",
       "label": "Magic Mirror",
       "title": "Magic\nMirror",
-      "desc": "Live portrait transformation\nfor events & venues",
+      "desc": "See yourself transform\nin a live, responsive reflection",
       "img": "/media/svc-mirror-b06889.webp",
       "lead": "A real-time interactive system that transforms and places your audience at the center of the experience. Touch prompting, custom-trained styles, custom frames — controlled from the Mirror app.",
       "modes": [
@@ -202,10 +208,10 @@
     },
     {
       "id": "booth",
-      "label": "Magic Photo Booth",
-      "title": "Magic\nPhoto Booth",
-      "slug": "magic-photo-booth",
-      "desc": "Live capture, on-brand\ngeneration, instant print",
+      "label": "Magic Booth",
+      "title": "Magic\nBooth",
+      "slug": "magic-booth",
+      "desc": "Pose for a branded portrait\nto print or share",
       "img": "/media/svc-booth-3dd88a.webp",
       "lead": "Instant branded portraits, directed by our visual system — print or digital, no app needed.",
       "modes": [
@@ -231,16 +237,17 @@
         "/media/sd-booth-1-278aa2.mp4"
       ],
       "aliases": [
-        "ai-photo-booth"
+        "ai-photo-booth",
+        "magic-photo-booth"
       ]
     },
     {
       "id": "augart",
       "label": "Augmented Art",
       "title": "Augmented\nArt",
-      "desc": "Paintings and objects\nthat move when you look",
+      "desc": "Custom animation mapped\nonto existing artworks",
       "img": "/media/svc-augart-540e1f.webp",
-      "lead": "Animated paintings and augmented artworks for museums, galleries and artist collaborations.",
+      "lead": "We work with artists and curators to animate existing paintings, murals and objects in place. The artwork sets the composition and the limits of the projection.",
       "modes": [
         {
           "n": "01",
@@ -254,8 +261,8 @@
         },
         {
           "n": "03",
-          "label": "Natural landscapes",
-          "body": "Projected environments across natural surfaces"
+          "label": "Site-specific surfaces",
+          "body": "Animate textures and forms already present in an outdoor artwork"
         },
         {
           "n": "04",
@@ -273,34 +280,24 @@
       "id": "visuals",
       "label": "Live Visuals",
       "title": "Live\nVisuals",
-      "desc": "Live-operated, reactive visuals\nfor stages & immersive spaces",
+      "desc": "Visuals performed live\nalongside music and movement",
       "img": "/media/svc-visuals-e6f8ea.webp",
-      "lead": "Live-operated visuals that respond to music, movement and performance — for stages, buildings and immersive spaces.",
+      "lead": "A visual set performed alongside the act. We cue and shape the imagery in the room as the music and movement unfold.",
       "modes": [
         {
           "n": "01",
-          "label": "Stage visuals",
-          "body": "Sets performed live alongside the act"
+          "label": "Live sets",
+          "body": "Visuals cued and performed alongside musicians, DJs or dancers"
         },
         {
           "n": "02",
-          "label": "Architectural mapping",
-          "body": "Content built to the geometry of the building"
+          "label": "Sound and movement response",
+          "body": "Audio, gestures or live camera input shape the image during the performance"
         },
         {
           "n": "03",
-          "label": "Landscape projections",
-          "body": "Large-scale outdoor and natural-surface work"
-        },
-        {
-          "n": "04",
-          "label": "Dome environments",
-          "body": "Full-surround content for domes and planetariums"
-        },
-        {
-          "n": "05",
-          "label": "Interactive systems",
-          "body": "Visuals that react to bodies, gestures and sound"
+          "label": "Show direction",
+          "body": "Develop the visual language with the performers and rehearse the cues in the venue"
         }
       ],
       "included": "Live operation (VJ) · audio/motion-reactive systems · custom visual content · on-site technical setup",
@@ -311,9 +308,9 @@
       "label": "Custom Installations",
       "title": "Custom\nInstallations",
       "slug": "custom-content",
-      "desc": "Bespoke builds shaped\naround your room and brief",
+      "desc": "Venue-specific commissions,\ndesigned and installed on site",
       "img": "/media/svc-custom-62ac82.webp",
-      "lead": "Bespoke builds shaped around your room and brief — when the idea does not fit any of the boxes above, we build the box.",
+      "lead": "We design and install a complete experience around your brief, venue and audience. The space, the visuals and the way people interact are developed together.",
       "modes": [
         {
           "n": "01",
@@ -332,10 +329,8 @@
         }
       ],
       "included": "Discovery & feasibility · concept design · build & testing · install, training and support",
-      "cta": "Tell us what you need",
-      "reels": [
-        "/media/sd-custom-1-aeb70c.mp4"
-      ]
+      "cta": "Plan a custom installation",
+      "still": "/media/nfc-01-3cfd1c.webp"
     }
   ]
 }

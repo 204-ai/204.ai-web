@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { describe, type Pillar } from '../data/content'
+import { describe, servicePath, type Pillar } from '../data/content'
 import { CONTENT } from '../data/studio'
 import { useHead } from '../hooks/useHead'
 import { imgDims } from '../lib/dims'
@@ -11,10 +11,10 @@ const FAMILIES: { pillar: Pillar; title: string; line: string; image: string; ro
 ]
 
 export function Services() {
-  useHead('Services', describe.services(CONTENT))
+  useHead('Art & Tech', describe.services(CONTENT))
   const base = import.meta.env.BASE_URL
   return <div className="v2">
-    <div className="site-page-heading"><h1>Services.</h1><p>Creative direction, production and interaction. Find what your project needs, then explore the work behind it.</p></div>
+    <div className="site-page-heading"><h1>Art &amp; Tech.</h1><p>Creative direction, production and interaction. Find what your project needs, then explore the work behind it.</p></div>
     <nav className="site-section-links" aria-label="On this page"><a href="#content-services">For Productions</a><a href="#interactive-services">For Experiences</a></nav>
     <div className={styles.page}>
       {FAMILIES.map(family => {
@@ -24,7 +24,7 @@ export function Services() {
             <a href={base + family.route}><img src={image} {...imgDims(family.image)} alt="" loading="lazy" /></a>
             <h2>{family.title}</h2><p>{family.line}</p><a className={styles.chapterLink} href={base + family.route}>Explore {family.pillar === 'content' ? 'Productions' : 'Experiences'} ↗</a>
           </div>
-          <div className={styles.list}>{CONTENT.pillars[family.pillar].map(service => <Link className={styles.service} key={service.id} to={`/services/${service.slug}`}><div><h3>{service.label}</h3><p>{service.desc.replace(/\n/g, ' ')}</p></div><span aria-hidden="true">↗</span></Link>)}</div>
+          <div className={styles.list}>{CONTENT.pillars[family.pillar].map(service => <Link className={styles.service} key={service.id} to={servicePath(service)}><div><h3>{service.label}</h3><p>{service.desc.replace(/\n/g, ' ')}</p></div><span aria-hidden="true">↗</span></Link>)}</div>
         </section>
       })}
       <section className={styles.closer}><h2>Let’s shape your project.</h2><Link to="/contact">Start a collaboration ↗</Link></section>

@@ -1,5 +1,5 @@
 const siteHome=document.querySelector('meta[name="204-site-base"]')?.content||'/'
-const editorialPaths=['','productions/','experiences/','services/','technology/','archives/','sentient-space/','work/alan-watts/'].map(path=>siteHome+path)
+const editorialPaths=['','productions/','experiences/','services/','technology/','archives/','sentient-studio/','work/alan-watts/','work/m-k-ciurlionis-trail-of-angels/'].map(path=>siteHome+path)
 const isEditorial=path=>editorialPaths.includes(path.endsWith('/')?path:path+'/')
 // Editorial pages use full documents; do not let the catalog router replace them.
 document.addEventListener('click',event=>{

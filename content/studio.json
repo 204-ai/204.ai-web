@@ -28,7 +28,7 @@
       "clip": "/media/feat-motelx-48007f.mp4",
       "poster": "/media/feat-motelx-0955fe.webp",
       "title": "Motel X — Vinte Anos",
-      "kind": "Magic Photo Booth",
+      "kind": "Magic Booth",
       "place": "Lisbon"
     },
     {
@@ -74,7 +74,7 @@
     {
       "work": "motel-x",
       "title": "Motel X\nVinte Anos",
-      "label": "Magic\nPhoto Booth",
+      "label": "Magic\nBooth",
       "poster": "/media/feat-motelx-0955fe.webp",
       "clip": "/media/feat-motelx-48007f.mp4"
     },
@@ -141,7 +141,7 @@
   ],
   "copy": {
     "home": {
-      "who": "204 is a creative studio working from RnA Studio in Lisbon. Every world starts with **human direction** — then becomes a film, a campaign, or something you interact with.",
+      "who": "204.ai is a creative agency working from Zug, Switzerland. We make films and experiences that begin with a human idea, and we collaborate with RnA Studio in Lisbon. We build the tools each story needs, from bringing original voices into new work to giving audiences a hand in what happens next.",
       "marquee": "Digital Content · Archival Animation · Magic Mirror · Virtual Outfitting"
     },
     "closer": {
@@ -150,7 +150,7 @@
       "cta": "Start your project"
     },
     "footer": {
-      "blurb": "A creative studio fusing human intention with AI-driven expression. Cinematic content & immersive worlds, built in Lisbon."
+      "blurb": "A creative agency in Zug, Switzerland. We make films, immersive experiences and the tools that bring them to life."
     },
     "about": {
       "lead": "Named after HTTP 204 — No Content: the visitor becomes the content. 204 is a human-first creative technology studio working at the intersection of AI, motion, identity and live environments — translating **human ideas** into responsive worlds."

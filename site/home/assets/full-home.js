@@ -29,6 +29,13 @@
  }
  document.querySelector('#home-hero-prev').addEventListener('click',()=>select(index-1))
  document.querySelector('#home-hero-next').addEventListener('click',()=>select(index+1))
+ const sound=stage.querySelector('.hero-audio-toggle')
+ sound.addEventListener('click',()=>{
+  video.muted=!video.muted
+  sound.setAttribute('aria-pressed',String(!video.muted))
+  sound.title=video.muted?'Turn sound on':'Turn sound off'
+  if(!video.muted&&video.paused){userPaused=false;userRequested=true;fallback=false;playback()}
+ })
  function toggleFilm(){
   if(video.paused){userPaused=false;userRequested=true;fallback=false;playback()}
   else{userPaused=true;video.pause();stopTimer()}
@@ -57,3 +64,60 @@
  for(const media of [small,reduced])media.addEventListener('change',()=>{video.pause();video.removeAttribute('src');video.load();video.hidden=true;playback()})
  playback()
 })().catch(()=>{})
+
+;(() => {
+ const title = document.querySelector('.full-hero-title')
+ const words = [...title.querySelectorAll('.hero-material')]
+ const motion = matchMedia('(min-width: 701px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)')
+ const light = title.querySelector('[data-material="light"]')
+ const vibration = document.createElement('span')
+ vibration.className = 'hero-light-vibration'
+ vibration.setAttribute('aria-hidden', 'true')
+ const shifts = [-.04, .07, -.09, .06, -.07, .04]
+ shifts.forEach((shift, index) => {
+  const band = document.createElement('span')
+  band.dataset.label = light.textContent
+  band.style.clipPath = `inset(${index / shifts.length * 100}% 0 ${(shifts.length - index - 1) / shifts.length * 100}% 0)`
+  band.style.setProperty('--light-shift', `${shift}em`)
+  band.style.animationDelay = `${-index * 22}ms`
+  vibration.append(band)
+ })
+ light.append(vibration)
+ const intro = [...words, ...words]
+ const glitchDuration = 450
+ const minRandomGap = 600
+ const maxRandomGap = 3000 - glitchDuration
+ let visible = false
+ let fontsReady = false
+ let introIndex = 0
+ let timer
+ let lastWord
+ function schedule() {
+  clearTimeout(timer)
+  lastWord?.classList.remove('is-glitching')
+  if (!fontsReady || !visible || !motion.matches || document.hidden) return
+  // The title reveal lasts up to 1550 ms after it enters view.
+  let delay = minRandomGap + Math.random() * (maxRandomGap - minRandomGap)
+  if (introIndex < intro.length) delay = introIndex === 0 ? 1600 : 260
+  timer = setTimeout(() => {
+   if (introIndex < intro.length) {
+    lastWord = intro[introIndex++]
+   } else {
+    const choices = words.filter(word => word !== lastWord)
+    lastWord = choices[Math.floor(Math.random() * choices.length)]
+   }
+   lastWord.classList.add('is-glitching')
+   timer = setTimeout(schedule, glitchDuration)
+  }, delay)
+ }
+ new IntersectionObserver(([entry]) => {
+  visible = entry.isIntersecting
+  schedule()
+ }).observe(title)
+ motion.addEventListener('change', schedule)
+ document.addEventListener('visibilitychange', schedule)
+ document.fonts.ready.then(() => {
+  fontsReady = true
+  schedule()
+ })
+})()

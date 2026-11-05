@@ -13,7 +13,7 @@
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { buildContent, describe, isV2, validateContent } from '../src/data/content.ts'
+import { buildContent, describe, isV2, servicePath, validateContent } from '../src/data/content.ts'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const content = (f) => JSON.parse(readFileSync(join(root, 'content', f), 'utf8'))
@@ -72,7 +72,7 @@ const routes = [
   // descriptions: one helper per route type, shared with the pages (describe, src/data/content.ts)
   { path: '/', title: t(''), desc: describe.home(c), preload: stillPreload(c.heroClips[0]?.poster, '100vw') }, // HeroRotator
   { path: '/work', title: t('Work'), desc: describe.work(c) },
-  { path: '/services', title: t('Services'), desc: describe.services(c) },
+  { path: '/services', title: t('Art & Tech'), desc: describe.services(c) },
   { path: '/about', title: t('About'), desc: describe.about(c) },
   { path: '/contact', title: t('Contact'), desc: describe.contact(c) },
   ...c.works.map((w) => ({
@@ -82,8 +82,8 @@ const routes = [
     image: ogImage(w.media?.still),
     preload: stillPreload(w.media?.still, '100vw'), // WorkDetail hero
   })),
-  ...c.services.map((s) => ({
-    path: `/services/${s.slug}`,
+  ...c.services.filter((s) => servicePath(s).startsWith('/services/')).map((s) => ({
+    path: servicePath(s),
     title: t(`${s.label} · Service`),
     desc: describe.service(s),
     image: ogImage(s.still ?? s.img),

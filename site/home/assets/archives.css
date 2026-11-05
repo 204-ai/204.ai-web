@@ -2,7 +2,23 @@
 .archive-intro h1{font-size:clamp(52px,7vw,112px)}
 .archive-intro>div:first-child>p{font-size:clamp(17px,1.7vw,23px);line-height:1.55;max-width:29ch;margin-top:25px}
 .archive-intro-copy p{color:var(--dim);font-size:15px;line-height:1.8;max-width:48ch;margin-bottom:18px}
-.archive-page .archive-mosaic{aspect-ratio:2/1}
+.archive-intro-copy .archive-permission{margin-bottom:0;font:12px/1.7 var(--mono)}
+.archive-permission a{color:var(--paper);text-decoration:underline;text-underline-offset:3px}
+.archive-alliance{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);align-items:center;gap:clamp(28px,6vw,90px);border-block:1px solid var(--line);padding:clamp(28px,5vw,65px) 0;margin-bottom:38px;scroll-margin-top:calc(var(--chrome-h) + 18px)}
+.alliance-copy .label{margin-bottom:14px}
+.alliance-copy h2{margin-bottom:20px}
+.alliance-copy h3{font:18px/1.5 var(--body);margin:26px 0 10px}
+.alliance-copy p{max-width:51ch;color:var(--dim)}
+.alliance-model svg{display:block;width:100%;max-width:420px;height:auto;margin-inline:auto}
+.alliance-circles{fill:var(--signal);fill-opacity:.08;stroke:var(--signal);stroke-width:1;stroke-opacity:.7}
+.alliance-names{fill:var(--paper);font:24px var(--font-display);text-anchor:middle}
+.alliance-vehicle rect{fill:var(--ink);stroke:var(--signal)}
+.alliance-vehicle text{fill:var(--paper);font:14px var(--body);text-anchor:middle}
+.alliance-roles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:12px 0 0}
+.alliance-roles>div{border-top:1px solid var(--line);padding-top:12px}
+.alliance-roles dt{font:13px/1.5 var(--mono)}
+.alliance-roles dd{margin:6px 0 0;color:var(--dim);font:12px/1.6 var(--body)}
+@media(max-width:680px){.archive-alliance{grid-template-columns:minmax(0,1fr)}}
 .archive-index{display:flex;flex-wrap:wrap;gap:15px 32px;padding:28px 0;font:12px/1.6 var(--mono)}
 .archive-index a{border-bottom:1px solid var(--line);padding-bottom:6px}
 .archive-section{padding:70px 0;border-top:1px solid var(--line);scroll-margin-top:110px}

@@ -1,0 +1,53 @@
+.ink-word { display: inline-block; white-space: nowrap; }
+.ink-word > span { display: inline-block; }
+
+:is([data-ascii-title], .ink-ascii-reveal) {
+  mask-image: linear-gradient(to right, #000 22%, rgb(0 0 0 / var(--ascii-title-edge,.5)));
+}
+
+@supports (mask-composite: intersect) {
+  :is([data-ascii-title], .ink-ascii-reveal) {
+    /* Retain base ink at the edge and let the texture bring back detail in the fade. */
+    mask-image: linear-gradient(to right, #000 22%, rgb(0 0 0 / var(--ascii-title-edge,.5))),
+      linear-gradient(to right, transparent 34%, #000 95%), var(--ascii-title-image, url("ascii/type-grain.svg"));
+    mask-size: 100% 100%, 100% 100%, var(--ascii-title-tile, 72px 36px);
+    mask-position: 0 0, 0 0, 0 0;
+    mask-repeat: no-repeat, no-repeat, repeat;
+    mask-composite: add, intersect, add;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) and (min-width: 701px) {
+  .ink-word > span {
+    animation: heading-ink-in 1150ms cubic-bezier(.2, 0, 0, 1) backwards;
+    animation-delay: var(--ink-delay, 0ms);
+  }
+  .ascii-mask-in-view {
+    animation: heading-ascii-flow 10s linear infinite;
+  }
+  .ink-heading { animation: heading-ink-in 1550ms cubic-bezier(.2, 0, 0, 1); }
+  .ink-heading.ascii-mask-in-view { animation: heading-ink-in 1550ms cubic-bezier(.2, 0, 0, 1), heading-ascii-flow 10s linear infinite; }
+}
+
+@keyframes heading-ascii-flow {
+  to { mask-position: 0 0, 0 0, var(--ascii-title-drift, -72px -36px); }
+}
+
+@keyframes heading-ink-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* A low, wide shadow marks chapter boundaries while leaving control and card borders intact. */
+:is(.featured-panel + .featured-panel, .home-introduction, .trust-wall, .closer,
+    #productions > .story, #productions > .selected, #experiences > .main-experience,
+    #experiences > .dome-chapter,
+    #experiences > .sentient-discover, .services-overview > .service-offerings,
+    .archive-section, .archive-case-chapter, .living-archive-case > .dome-experience,
+    .ciur-case > .ciur-section) {
+  border-top: 0;
+  background-image: radial-gradient(ellipse 72% 100% at 50% 0, #0007 0, #0003 45%, transparent 77%);
+  background-size: 100% clamp(20px, 3vw, 48px);
+  background-position: top center;
+  background-repeat: no-repeat;
+}

@@ -1,0 +1,87 @@
+/* Small gestures for the wordmarks within their grid cells. */
+@media (prefers-reduced-motion: no-preference) {
+  #trusted-by .trust-mark img.is-gesturing {
+    animation: trust-logo-gesture 400ms cubic-bezier(.2,.75,.3,1);
+  }
+
+  #trusted-by [data-partner="Alan Watts Organization"] { --trust-x: 4px; --trust-y: -2px; --trust-turn: -1deg; }
+  #trusted-by [data-partner="KBC"] { --trust-y: -5px; --trust-zoom: 1.035; }
+  #trusted-by [data-partner="ZEB"] { --trust-zoom: 1.055; --trust-turn: -1.5deg; }
+  #trusted-by [data-partner="Standvirtual"] { --trust-x: 5px; --trust-turn: 1deg; }
+  #trusted-by [data-partner="Texas Eclipse"] { --trust-shade: .80; --trust-zoom: 1.025; }
+  #trusted-by [data-partner="Snackshop"] { --trust-x: -3px; --trust-y: -3px; --trust-turn: -2deg; }
+  #trusted-by [data-partner="MOTELX"] { --trust-turn: 4deg; --trust-shade: .91; }
+  #trusted-by [data-partner="NFC"] { --trust-x: 4px; --trust-y: 2px; --trust-shade: .87; }
+  #trusted-by [data-partner="BioXYZ"] { --trust-zoom: 1.06; --trust-y: -2px; }
+  #trusted-by [data-partner="Hulaween"] { --trust-turn: -2.5deg; --trust-y: 2px; --trust-shade: .90; }
+  #trusted-by [data-partner="Viva El Gonzo"] { --trust-turn: 3deg; --trust-y: -3px; --trust-zoom: 1.04; }
+  #trusted-by [data-partner="YARD"] { --trust-x: -4px; --trust-zoom: 1.035; }
+  #trusted-by [data-partner="Screenix"] { --trust-x: 3px; --trust-zoom: 1.035; --trust-shade: .86; }
+  #trusted-by [data-partner="Samsung"] { --trust-zoom: 1.03; --trust-shade: .91; }
+  #trusted-by [data-partner="Lisbon Insiders"] { --trust-y: -3px; --trust-turn: 1.8deg; }
+  #trusted-by [data-partner="Wines From Another World"] { --trust-y: -4px; --trust-turn: -3deg; }
+  #trusted-by [data-partner="Vagabond"] { --trust-x: -4px; --trust-turn: 2.7deg; --trust-y: -2px; }
+  #trusted-by [data-partner="Rare Effect"] { --trust-x: 3px; --trust-y: 2px; --trust-turn: -2deg; --trust-shade: .85; }
+  #trusted-by [data-partner="Portugal Tech Week"] { --trust-y: 3px; --trust-zoom: 1.05; }
+  #trusted-by [data-partner="Studio 54b"] { --trust-turn: 3.5deg; --trust-zoom: 1.04; }
+  #trusted-by [data-partner="Barbara Veiga"] { --trust-x: -3px; --trust-y: -2px; --trust-shade: .90; }
+  #trusted-by [data-partner="Oddsgate"] { --trust-x: 3px; --trust-turn: 1.5deg; --trust-zoom: 1.05; }
+  #trusted-by [data-partner="Synesthesia"] { --trust-y: -4px; --trust-zoom: 1.04; --trust-shade: .83; }
+  #trusted-by [data-partner="Tkeshii"] { --trust-x: -5px; --trust-y: 1px; --trust-turn: -1.8deg; }
+  #trusted-by [data-partner="Quincy Jones"] { --trust-x: 2px; --trust-y: -4px; --trust-turn: -1.2deg; }
+  #trusted-by [data-partner="Obscura"] { --trust-zoom: 1.035; --trust-shade: .81; }
+  #trusted-by [data-partner="Taste Labs"] { --trust-turn: 2deg; --trust-y: 3px; --trust-zoom: 1.025; }
+  #trusted-by [data-partner="Institute for Tomorrow"] { --trust-x: -3px; --trust-y: -4px; --trust-zoom: 1.05; }
+
+  @keyframes trust-logo-gesture {
+    0%, 100% { transform: none; opacity: 1; }
+    18% {
+      transform: translate(var(--trust-x, 0px), var(--trust-y, 0px))
+        rotate(var(--trust-turn, 0deg)) scale(var(--trust-zoom, 1));
+      opacity: var(--trust-shade, 1);
+    }
+    58% {
+      transform: translate(calc(-.28 * var(--trust-x, 0px)), calc(-.28 * var(--trust-y, 0px)))
+        rotate(calc(-.3 * var(--trust-turn, 0deg)));
+    }
+  }
+}
+
+.trust-row {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: clamp(12px, 2vw, 26px);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.trust-row > li { min-width: 0; }
+.trust-row li > :is(a, span) { display: block; }
+.trust-row a:focus-visible { outline-offset: 0; }
+.trust-mark {
+  display: grid;
+  place-items: center;
+  height: clamp(52px, 6vw, 84px);
+  padding-inline: 7%;
+}
+.trust-mark img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: min(100%, var(--mark-width, 124px));
+  max-height: var(--mark-height, 36px);
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
+.trust-row [data-tier='lead'] { --mark-width: 176px; --mark-height: 52px; }
+.trust-row [data-tier='featured'] { --mark-width: 148px; --mark-height: 44px; }
+.trust-row [data-partner='ZEB'] { --mark-height: 42px; }
+.trust-row [data-partner='KBC'] { --mark-height: 58px; }
+.trust-row [data-partner='MOTELX'] { --mark-height: 52px; }
+.trust-row [data-partner='Screenix'] img { filter: none; }
+@media (max-width: 900px) {
+  .trust-row { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  .trust-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
