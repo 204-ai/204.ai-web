@@ -82,6 +82,12 @@
 .site-contact-link{margin-left:18px}.site-menu{display:none}.site-menu>summary{display:flex;align-items:center;min-height:44px;cursor:pointer;list-style:none}.site-menu>summary::-webkit-details-marker{display:none}.site-menu>summary:after{content:' +';margin-left:10px}.site-menu[open]>summary:after{content:' −'}
 .site-menu nav{max-height:calc(100dvh - var(--header-visible-height));overflow-y:auto;overscroll-behavior:contain;position:absolute;top:100%;left:0;right:0;padding:12px var(--side-pad) 24px;background:var(--header-ink);border-bottom:1px solid var(--site-line);display:flex;flex-direction:column}
 .site-menu nav a{padding:15px 0;border-bottom:1px solid var(--site-line);font-size:17px}
+.site-nav-socials{display:flex;align-items:center;gap:4px;flex:none}
+.site-nav-socials a{display:grid;place-items:center;width:26px;height:26px;flex:none}
+.site-nav-socials a:focus-visible{outline-offset:1px}
+.site-nav-socials svg{display:block}
+.site-menu .site-nav-socials{gap:8px;margin-top:10px}
+.site-menu .site-nav-socials a{width:44px;height:44px;padding:0;border:0}
 .site-footer{max-width:var(--shell-max);margin:auto;background:var(--ink);color:var(--paper);border-top:1px solid var(--site-line);padding:60px var(--side-pad) 25px}
 .site-footer-top{display:grid;grid-template-columns:1.4fr .8fr 1fr 1fr;gap:45px}.site-footer-brand img{display:block;width:100px;height:59px;object-fit:contain;margin-bottom:20px}
 .site-footer h2{font:13px/1.4 var(--font-mono);color:var(--dim);margin:0 0 22px;text-transform:none;letter-spacing:0}.site-footer p{margin:0 0 14px;max-width:33ch}.site-footer a,.site-footer p{font:13px/1.9 var(--font-body);color:var(--dim);text-decoration:none}.site-footer a{display:block;margin-bottom:8px}

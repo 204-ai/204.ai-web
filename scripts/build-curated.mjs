@@ -69,7 +69,7 @@ for(const file of files){
    const rel=relative(source,file).replaceAll('\\','/'),route=chapterRoutes[rel]
    if(route!==undefined){
     const navigationRoute=route.startsWith('artworks/')?'services/':route==='archives/'||route.startsWith('work/')?'productions/':route
-    text=text.replace('<!-- site:header -->',siteHeader(base,content.studio.logoUrl,navigationRoute)).replace('<!-- site:footer -->',siteFooter(base,content.studio))
+    text=text.replace('<!-- site:header -->',siteHeader(base,content.studio,navigationRoute)).replace('<!-- site:footer -->',siteFooter(base,content.studio))
     if(route==='')text=text.replace('<!-- site:mission -->',escape(content.studio.copy.home.who))
     text=text.replace(/<!-- site:services:(content|interactive) -->/g,(_,pillar)=>{
      const title=pillar==='content'?'Production services':'Experience services'
@@ -85,7 +85,7 @@ for(const file of files){
     })
    }
    if(rel==='sentient-studio/index.html'){
-    text=text.replace(/<header[\s\S]*?<\/header>/,siteHeader(base,content.studio.logoUrl,'experiences/')).replace(/<footer>[\s\S]*?<\/footer>/,siteFooter(base,content.studio))
+    text=text.replace(/<header[\s\S]*?<\/header>/,siteHeader(base,content.studio,'experiences/')).replace(/<footer>[\s\S]*?<\/footer>/,siteFooter(base,content.studio))
     text=text.replace('</head>',`<link rel="stylesheet" href="${urls.get(join(source,'home/assets/site-shell.css'))}"></head>`)
    }
    if(route!==undefined||rel==='sentient-studio/index.html'){
