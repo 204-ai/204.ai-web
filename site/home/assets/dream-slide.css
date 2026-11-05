@@ -38,7 +38,6 @@
   color:var(--film-ink);
 }
 .dream-partner .text-link {margin:0}
-.dream-overview[data-ascii] {--ascii-opacity:.08}
 .dream-overview .dream-meta {
   padding:clamp(14px,2vw,26px);
   background:#201d19;

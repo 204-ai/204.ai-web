@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <defs>
+    <pattern id="characters" width="72" height="44" patternUnits="userSpaceOnUse">
+      <g fill="#e2d0ad" font-family="monospace" font-size="9">
+        <text x="0" y="9">.:+o=@#:.+o=</text>
+        <text x="1" y="20">+#o:.=+@o:.#</text>
+        <text x="0" y="31">@=.:#o+:.=o+</text>
+        <text x="2" y="42">o+#@:=o+.:#=</text>
+      </g>
+    </pattern>
+    <mask id="light-dot">
+      <path fill="white" d="M0 0h256v256H0z"/>
+      <circle cx="128" cy="68" r="14" fill="black"/>
+    </mask>
+  </defs>
+  <circle cx="128" cy="128" r="120" fill="url(#characters)" opacity=".26"/>
+  <path d="M128 8a120 120 0 0 1 0 240 60 60 0 0 0 0-120 60 60 0 0 1 0-120z" fill="url(#characters)" mask="url(#light-dot)"/>
+  <circle cx="128" cy="188" r="14" fill="url(#characters)"/>
+</svg>
