@@ -15,13 +15,13 @@ const fixture = (): RawContent => ({
   ],
   services: {
     content: [svc('branded', 'Branded Campaigns'), svc('artistic', 'Animation & Film')],
-    interactive: [svc('mirror', 'Magic Mirror'), svc('booth', 'Magic Photo Booth'), svc('visuals', 'Live Visuals')],
+    interactive: [svc('mirror', 'Magic Mirror'), svc('booth', 'Magic Booth'), svc('visuals', 'Live Visuals')],
   },
   people: [{ name: 'Cecilia Hübinette', role: 'Art Director' }],
   studio: {
     schema: 2, name: '204', suffix: 'NO-CONTENT', tag: 'Studio', logoUrl: '/media/logo.webp',
     contact: { email: 'hello@204.ai', studio: 'RnA Studio', instagram: '@x', instagramUrl: 'https://instagram.com/x', linkedin: 'x', linkedinUrl: 'https://linkedin.com/x' },
-    heroClips: [{ work: 'motel-x', clip: '/media/mx.mp4', poster: '/media/mx.webp', title: 'Motel X — Vinte Anos', kind: 'Magic Photo Booth' }],
+    heroClips: [{ work: 'motel-x', clip: '/media/mx.mp4', poster: '/media/mx.webp', title: 'Motel X — Vinte Anos', kind: 'Magic Booth' }],
     featured: [{ work: 'ciurlionis', title: 'Čiurlionis\nTrail of Angels', label: 'Animation\n& Film', poster: '/media/feat.webp' }, { work: 'motel-x' }],
     allWork: { title: 'Other\nProjects', label: 'Selected\nwork', client: 'Various', year: '2024–26', poster: '/media/all.webp', clip: '/media/all.mp4' },
     process: [{ n: '01', label: 'Discover', body: 'Goals' }],
@@ -43,12 +43,12 @@ describe('buildContent (I.content, C19, C20)', () => {
     expect(c.works.map((w) => [w.id, w.code, w.slug])).toEqual([
       ['w01', 'NC·003', 'motel-x'], ['w02', 'NC·002', 'delulu'], ['w03', 'NC·001', 'ciurlionis'],
     ])
-    expect(c.works.map((w) => w.format)).toEqual(['Magic Photo Booth', 'Magic Photo Booth', 'Animation'])
+    expect(c.works.map((w) => w.format)).toEqual(['Magic Booth', 'Magic Booth', 'Animation'])
   })
   it('numbers services per pillar in JSON order and derives related work from practices', () => {
     expect(c.services.map((s) => `${s.pillar}:${s.n}:${s.slug}`)).toEqual([
       'content:01:branded-campaigns', 'content:02:animation-film',
-      'interactive:01:magic-mirror', 'interactive:02:magic-photo-booth', 'interactive:03:live-visuals',
+      'interactive:01:magic-mirror', 'interactive:02:magic-booth', 'interactive:03:live-visuals',
     ])
     const related = (id: string) => c.services.find((s) => s.id === id)!.works.map((w) => w.slug)
     expect(related('booth')).toEqual(['motel-x', 'delulu'])

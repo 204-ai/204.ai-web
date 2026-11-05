@@ -16,6 +16,9 @@
   margin-bottom: clamp(18px, 2.6vw, 34px);
 }
 .featured-panel-head h3 { font-size: clamp(42px, 7.6vw, 116px); line-height: .94; }
+.featured-panel-head h3 a { display: inline-block; max-width: 100%; }
+.featured-panel-head h3 [data-ascii-title] { display: inline-block; }
+.featured-panel-head h3 a:hover, .featured-panel-head h3 a:focus-visible { color: var(--signal); }
 .featured-panel-copy p { color: var(--dim); font-size: 13px; }
 .featured-panel-copy .text-link { margin-top: 5px; }
 

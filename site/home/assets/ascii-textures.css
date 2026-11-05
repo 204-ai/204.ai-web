@@ -4,16 +4,15 @@
   --ascii-opacity: .22;
   --ascii-offset: -12px, 4px;
   --ascii-tempo: 18s;
-  --ascii-ease: ease-in-out;
 }
 
-[data-ascii="film"] { --ascii-image: url("ascii/film.svg"); --ascii-offset: -20px, -8px; --ascii-tempo: 12s; --ascii-ease: steps(16); }
-:is([data-ascii="space"], [data-ascii-motion="space"]) { --ascii-image: url("ascii/space.svg"); --ascii-offset: -10px, 9px; --ascii-tempo: 20s; --ascii-ease: ease-in-out; }
+[data-ascii="film"] { --ascii-image: url("ascii/film.svg"); --ascii-offset: -20px, -8px; --ascii-tempo: 12s; }
+:is([data-ascii="space"], [data-ascii-motion="space"]) { --ascii-image: url("ascii/space.svg"); --ascii-offset: -10px, 9px; --ascii-tempo: 20s; }
 [data-ascii="signal"] { --ascii-image: url("ascii/signal.svg"); --ascii-offset: -32px, 0px; --ascii-tempo: 9s; }
 [data-ascii="archive"] { --ascii-image: url("ascii/archive.svg"); --ascii-offset: -5px, -4px; --ascii-tempo: 25s; --ascii-opacity: .17; }
 [data-ascii="studio"] { --ascii-image: url("ascii/studio.svg"); --ascii-offset: -10px, -7px; --ascii-opacity: .24; }
 [data-ascii="mirror"] { --ascii-image: url("ascii/mirror.svg"); --ascii-offset: -9px, 0px; --ascii-tempo: 16s; }
-[data-ascii="animation"] { --ascii-image: url("ascii/animation.svg"); --ascii-offset: -15px, -3px; --ascii-tempo: 10s; --ascii-ease: steps(12); }
+[data-ascii="animation"] { --ascii-image: url("ascii/animation.svg"); --ascii-offset: -15px, -3px; --ascii-tempo: 10s; }
 [data-ascii="portrait"] { --ascii-image: url("ascii/portrait.svg"); --ascii-offset: -5px, -12px; --ascii-tempo: 16s; }
 [data-ascii="storm"] { --ascii-image: url("ascii/storm.svg"); --ascii-offset: -10px, -8px; --ascii-tempo: 18s; }
 
@@ -33,18 +32,16 @@
 [data-ascii-motion="film"] {
   --ascii-offset: -28px, -10px;
   --ascii-tempo: 12s;
-  --ascii-ease: steps(18);
   --ascii-title-image: url("ascii/film-type.svg");
-  --ascii-title-tile: clamp(115px,13vw,168px) clamp(57.5px,6.5vw,84px);
+  --ascii-title-tile: 84px 42px;
+  --ascii-title-drift: -84px -42px;
 }
 [data-ascii-motion="film"] [data-ascii-title] {display:inline-block}
 .hero-secondary {display:block;font-size:.88em}
 .hero-secondary [data-ascii-title] {display:inline-block;--ascii-title-edge:.68}
 .hero-cyberspace {
-  --ascii-title-tile: .95em .475em;
-  --ascii-offset: -.95em, 0px;
-  --ascii-tempo: 3.4s;
-  --ascii-ease: steps(14);
+  --ascii-title-tile: .64em .32em;
+  --ascii-title-drift: -.64em -.32em;
 }
 [data-ascii-title] {
   width: fit-content;

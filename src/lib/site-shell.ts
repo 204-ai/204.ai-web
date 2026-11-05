@@ -16,7 +16,7 @@ const SECTION_LINKS = {
   ],
   experiences: [
     ['experiences/#magic-mirror', 'Magic Mirror'],
-    ['experiences/#magic-photo-booth', 'Magic Photo Booth'],
+    ['experiences/#magic-booth', 'Magic Booth'],
     ['sentient-studio/', 'Sentient Studio'],
     ['experiences/#dome-and-360', 'Dome & 360°'],
   ],
@@ -30,10 +30,17 @@ const SECTION_LINKS = {
 export function siteHeader(base: string, logo: string, path = '') {
   const root = path.replace(/^\//, '').split('/')[0]
   const section = root === 'sentient-studio' ? 'experiences' : root === 'technology' ? 'services' : root
-  const links = SITE_NAV.map(link => `<a href="${base}${link.path}"${section === link.path.slice(0, -1) ? ' aria-current="page"' : ''}>${escape(link.label)}</a>`).join('')
   const children = Object.hasOwn(SECTION_LINKS, section) ? SECTION_LINKS[section as keyof typeof SECTION_LINKS] : undefined
-  const subnav = children ? `<nav class="site-subnav" aria-label="In this section"><div>${children.map(([href, label]) => `<a href="${base}${href}">${escape(label)}</a>`).join('')}</div></nav>` : ''
-  return `<header class="site-header"><div class="site-header-inner"><a class="site-brand" href="${base}" aria-label="204 home"><img src="${escape(logo)}" width="320" height="189" alt="204 No Content"></a><nav class="site-desktop-nav" aria-label="Main">${links}<a class="site-contact-link" href="${base}contact/">Let’s talk ↗</a></nav><details class="site-menu"><summary>Menu</summary><nav aria-label="Main menu">${links}<a href="${base}contact/">Let’s talk ↗</a></nav></details></div>${subnav}</header>`
+  const sublinks = children?.map(([href, label]) => `<a href="${base}${href}">${escape(label)}</a>`).join('')
+  const primaryLink = (link: typeof SITE_NAV[number]) =>
+    `<a href="${base}${link.path}"${section === link.path.slice(0, -1) ? ' aria-current="page"' : ''}>${escape(link.label)}</a>`
+  const desktopLinks = SITE_NAV.map(link => {
+    const anchor = primaryLink(link)
+    if (!sublinks || section !== link.path.slice(0, -1)) return anchor
+    return `<div class="site-nav-section">${anchor}<div class="site-subnav" role="group" aria-label="In this section">${sublinks}</div></div>`
+  }).join('')
+  const mobileSubnav = sublinks ? `<nav class="site-subnav site-subnav-mobile" aria-label="In this section">${sublinks}</nav>` : ''
+  return `<header class="site-header"><div class="site-header-inner"><a class="site-brand" href="${base}" aria-label="204 home"><img src="${escape(logo)}" width="320" height="189" alt="204 No Content"></a><nav class="site-desktop-nav" aria-label="Main">${desktopLinks}<a class="site-contact-link" href="${base}contact/">Let’s talk ↗</a></nav><details class="site-menu"><summary>Menu</summary><nav aria-label="Main menu">${SITE_NAV.map(primaryLink).join('')}<a href="${base}contact/">Let’s talk ↗</a></nav></details></div>${mobileSubnav}</header>`
 }
 
 interface FooterContent {

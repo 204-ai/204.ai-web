@@ -25,7 +25,7 @@ for(const page of ['productions','experiences','services']){
  if((html.match(/<h1[ >]/g)||[]).length!==1)errors.push(`Expected one page heading: ${page}`)
 }
 const services=readFileSync(join(dist,'services/index.html'),'utf8')
-if(!home.includes('id="featured-technology-title">Art &amp; Tech.'))errors.push('Missing Art & Tech homepage panel')
+if(!/<h3 id="featured-technology-title">[^]*?Art &amp; Tech\.[^]*?<\/h3>/.test(home))errors.push('Missing Art & Tech homepage panel')
 for(const id of ['studio-artworks','technology','services','content-services','interactive-services']){
  if(!services.includes(`id="${id}"`))errors.push(`Missing Art & Tech section ${id}`)
 }
@@ -34,7 +34,7 @@ if(services.includes('prompin-walkthrough'))errors.push('Prompin walkthrough is 
 for(const id of ['production-showreel','magic-mirror','dome-player','featured-screen'])if(home.includes(`id="${id}"`))errors.push(`Homepage still contains full chapter ${id}`)
 const productions=readFileSync(join(dist,'productions/index.html'),'utf8'),experiences=readFileSync(join(dist,'experiences/index.html'),'utf8')
 for(const id of ['production-showreel','alan-watts','working-title','dimination','dunbrae-making-of'])if(!productions.includes(`id="${id}"`))errors.push(`Missing production content ${id}`)
-for(const id of ['magic-mirror','magic-photo-booth','immersive-dome','texas-eclipse-reel'])if(!experiences.includes(`id="${id}"`))errors.push(`Missing experience content ${id}`)
+for(const id of ['magic-mirror','magic-booth','immersive-dome','texas-eclipse-reel'])if(!experiences.includes(`id="${id}"`))errors.push(`Missing experience content ${id}`)
 if(!productions.includes('September 2026'))errors.push('Missing September reel')
 if(!productions.includes('1 of 4: A family of Dimi'))errors.push('Family carousel must start first')
 const alanWatts=readFileSync(join(dist,'work/alan-watts/index.html'),'utf8')

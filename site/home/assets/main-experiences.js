@@ -178,11 +178,13 @@
   stopPrint()
   photo.src=next.src
   photo.alt=portrait.alt
-  printStage.classList.toggle('is-portrait',portrait!==originalPrint)
+  photo.width=next.naturalWidth
+  photo.height=next.naturalHeight
+  printStage.style.setProperty('--print-photo-ratio',next.naturalWidth/next.naturalHeight)
   if(!desktopMotion.matches)return
   const timing={duration:1200,easing:'steps(32, end)'}
   photo.animate([{clipPath:'inset(0 0 100% 0)'},{clipPath:'inset(0)'}],timing)
-  printHead.style.setProperty('--print-travel',printStage.querySelector('.booth-print-surface').offsetHeight+'px')
+  printHead.style.setProperty('--print-travel',photo.offsetHeight+'px')
   printHead.animate([{transform:'translateY(0)',opacity:1},{transform:'translateY(var(--print-travel, 0px))',opacity:1}],timing)
  }
 

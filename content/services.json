@@ -208,9 +208,9 @@
     },
     {
       "id": "booth",
-      "label": "Magic Photo Booth",
-      "title": "Magic\nPhoto Booth",
-      "slug": "magic-photo-booth",
+      "label": "Magic Booth",
+      "title": "Magic\nBooth",
+      "slug": "magic-booth",
       "desc": "Pose for a branded portrait\nto print or share",
       "img": "/media/svc-booth-3dd88a.webp",
       "lead": "Instant branded portraits, directed by our visual system — print or digital, no app needed.",
@@ -237,7 +237,8 @@
         "/media/sd-booth-1-278aa2.mp4"
       ],
       "aliases": [
-        "ai-photo-booth"
+        "ai-photo-booth",
+        "magic-photo-booth"
       ]
     },
     {

@@ -10,7 +10,8 @@
     /* Retain base ink at the edge and let the texture bring back detail in the fade. */
     mask-image: linear-gradient(to right, #000 22%, rgb(0 0 0 / var(--ascii-title-edge,.5))),
       linear-gradient(to right, transparent 34%, #000 95%), var(--ascii-title-image, url("ascii/type-grain.svg"));
-    mask-size: 100% 100%, 100% 100%, var(--ascii-title-tile, 108px 54px);
+    mask-size: 100% 100%, 100% 100%, var(--ascii-title-tile, 72px 36px);
+    mask-position: 0 0, 0 0, 0 0;
     mask-repeat: no-repeat, no-repeat, repeat;
     mask-composite: add, intersect, add;
   }
@@ -21,7 +22,15 @@
     animation: heading-ink-in 1150ms cubic-bezier(.2, 0, 0, 1) backwards;
     animation-delay: var(--ink-delay, 0ms);
   }
+  .ascii-mask-in-view {
+    animation: heading-ascii-flow 10s linear infinite;
+  }
   .ink-heading { animation: heading-ink-in 1550ms cubic-bezier(.2, 0, 0, 1); }
+  .ink-heading.ascii-mask-in-view { animation: heading-ink-in 1550ms cubic-bezier(.2, 0, 0, 1), heading-ascii-flow 10s linear infinite; }
+}
+
+@keyframes heading-ascii-flow {
+  to { mask-position: 0 0, 0 0, var(--ascii-title-drift, -72px -36px); }
 }
 
 @keyframes heading-ink-in {

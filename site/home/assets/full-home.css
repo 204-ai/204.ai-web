@@ -54,35 +54,46 @@
 .full-hero-title .hero-secondary { font-size: .65em; }
 
 .hero-material { position: relative; display: inline-block; }
+.hero-light-vibration { display: none; }
 @media (min-width: 701px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  .hero-material > span { transition: opacity 160ms ease-out; }
+  .hero-material > span:first-child { transition: opacity 110ms ease-out; }
   .hero-material::after {
     content: '';
     position: absolute;
     inset: 0;
     pointer-events: none;
     opacity: 0;
-    transition: opacity 160ms ease-out;
+    transition: opacity 110ms ease-out;
   }
-  .hero-material:hover > span { opacity: 0; }
-  .hero-material:hover::after { opacity: 1; }
-  .hero-material[data-material="pixels"]:hover::after {
+  .hero-material:is(:hover, .is-glitching) > span:first-child { opacity: 0; }
+  .hero-material:is(:hover, .is-glitching)::after { opacity: 1; }
+  .hero-material[data-material="pixels"]::after {
     background: url("ascii/hero-pixels.svg") center / 100% 80% no-repeat;
   }
-  .hero-material:is([data-material="code"], [data-material="light"])::after {
+  .hero-material[data-material="code"]::after {
     content: attr(data-material);
     color: transparent;
     -webkit-text-stroke: .018em var(--paper);
     background-clip: text;
-  }
-  .hero-material[data-material="code"]:hover::after {
     background-image: url("ascii/hero-code.svg");
     background-size: 2.7em 1.1em;
     background-position: center;
   }
-  .hero-material[data-material="light"]:hover::after {
-    background-image: url("ascii/hero-light.svg");
-    background-size: 2.8em 1.2em;
-    background-position: center;
+  .hero-light-vibration {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
   }
+  .hero-material:is(:hover, .is-glitching) > .hero-light-vibration { display: block; }
+  .hero-light-vibration > span {
+    position: absolute;
+    inset: 0;
+    animation: hero-light-vibrate 280ms ease-in-out infinite;
+  }
+  .hero-light-vibration > span::before { content: attr(data-label); }
+}
+@keyframes hero-light-vibrate {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(var(--light-shift)); }
+  70% { transform: translateX(calc(-.7 * var(--light-shift))); }
 }

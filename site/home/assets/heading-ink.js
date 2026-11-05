@@ -4,6 +4,11 @@
   const catalog = document.querySelector('#root')
   const headings = 'main h1, main h2:not(.label), main h3[data-ascii-title], main .featured-panel-head h3, main .section-head h3, main .story-copy h3, main .experience-title h3, main .dome-heading h3, main .sentient-discover h3'
   const seen = new WeakSet()
+  const maskObserver = new IntersectionObserver(entries => {
+    for (const {target, isIntersecting} of entries) {
+      target.classList.toggle('ascii-mask-in-view', isIntersecting)
+    }
+  })
 
   function inkLetters(heading) {
     const walker = document.createTreeWalker(heading, NodeFilter.SHOW_TEXT)
@@ -24,9 +29,6 @@
     }
 
     const interval = 400 / Math.max(1, letterCount - 1)
-    if (!heading.matches('[data-ascii-title]') && !heading.querySelector('[data-ascii-title]')) {
-      heading.classList.add('ink-ascii-reveal')
-    }
     if (!heading.hasAttribute('aria-label')) heading.setAttribute('aria-label', heading.innerText.trim().replace(/\s+/g, ' '))
     let index = 0
     for (const node of nodes) {
@@ -67,9 +69,14 @@
       if (seen.has(heading)) continue
       seen.add(heading)
       observer.observe(heading)
+      if (!heading.matches('[data-ascii-title]') && !heading.querySelector('[data-ascii-title]') && heading.textContent.trim()) {
+        heading.classList.add('ink-ascii-reveal')
+        maskObserver.observe(heading)
+      }
     }
   }
 
+  document.querySelectorAll('[data-ascii-title]').forEach(title => maskObserver.observe(title))
   watchHeadings()
   if (catalog) new MutationObserver(watchHeadings).observe(catalog, {childList:true, subtree:true})
 })()

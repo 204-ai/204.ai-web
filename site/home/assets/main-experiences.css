@@ -21,6 +21,7 @@
 .experience-doors .experience-painting{object-position:center 39%}
 .experience-doors a:is(:hover,:focus-visible) img{opacity:.85}
 .main-experience{scroll-margin-top:25px;margin-bottom:100px;border-top:1px solid var(--line);padding-top:55px}
+#magic-photo-booth{position:absolute;inset:0 auto auto 0;scroll-margin-top:inherit}
 .experience-title{display:grid;grid-template-columns:1.2fr 1fr;gap:60px;align-items:end;margin-bottom:32px}
 .experience-title h3{font-size:clamp(40px,4.8vw,72px);margin-top:14px}.experience-title p{font-size:14px;color:var(--dim);max-width:48ch}.experience-title .text-link{margin-top:15px}
 .experience-player{aspect-ratio:16/9}.experience-player>img{object-fit:contain}
@@ -360,28 +361,33 @@
  .booth-lever-art {width:72px}
 }
 .booth-result {position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
-.booth-print::before {
- content:'';
- position:absolute;
- width:68%;
- aspect-ratio:1.25;
- border-radius:2px;
- background:#344759;
- transform:translate(6%,2%) rotate(8deg);
+.booth-print {
+ container-type:inline-size;
+ --print-photo-ratio:calc(455 / 360);
+ --print-border:clamp(4px,.55vw,8px);
 }
 .booth-print-paper {
  position:relative;
- width:70%;
- border:clamp(4px,.7vw,10px) solid #e8e6df;
- border-bottom-width:clamp(11px,1.7vw,23px);
+ width:min(70%,calc(52cqw * var(--print-photo-ratio) + 2 * var(--print-border)));
+}
+.booth-print-paper::before {
+ content:'';
+ position:absolute;
+ inset:0;
+ z-index:-1;
  border-radius:2px;
- box-shadow:0 9px 28px #0009;
- transform:rotate(-7deg);
+ background:#344759;
+ transform:translate(6%,2%) rotate(8deg);
 }
 .booth-print-surface {
  position:relative;
  overflow:hidden;
  background:#eeede7;
+ border:var(--print-border) solid #e8e6df;
+ border-bottom-width:clamp(8px,1.15vw,16px);
+ border-radius:2px;
+ box-shadow:0 9px 28px #0009;
+ transform:rotate(-7deg);
 }
 .booth-print-surface img {display:block;width:100%;height:auto}
 .booth-print-head {
@@ -466,9 +472,6 @@
 @media (max-width:660px) {
  .booth-align {width:86px;margin-inline:auto}
 }
-.booth-print-surface {aspect-ratio:455/360}
-.booth-print-surface img {height:100%;object-fit:cover}
-.booth-print.is-portrait .booth-print-surface img {object-fit:contain}
 @media (max-width:700px), (prefers-reduced-motion:reduce) {
  .booth-wheel-strip,.booth-align-pad.is-aligning .booth-align-target {transition:none;animation:none}
 }
