@@ -144,6 +144,9 @@ body:has(.site-header){background:var(--ink)}
  transform:translateX(-50%);
 }
 .site-nav-section .site-subnav a {min-height:18px}
+@media (min-width:701px) and (max-width:1000px) {
+ .site-desktop-nav > .site-nav-section:nth-child(-n+2) .site-subnav {left:0;transform:none}
+}
 .site-subnav.site-subnav-mobile {display:none}
 .site-subnav a {
  display:grid;
