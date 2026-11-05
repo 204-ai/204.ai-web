@@ -29,11 +29,15 @@
   pointer-events: none;
 }
 
+[data-ascii="yin-yang"] {
+  overflow-x: clip;
+}
+
 [data-ascii="yin-yang"]::before {
-  --yin-yang-size: clamp(88px, 9.5vw, 140px);
-  inset: -15px 25% auto auto;
-  width: var(--yin-yang-size);
-  height: var(--yin-yang-size);
+  inset: -15px 0 auto auto;
+  width: 50%;
+  height: auto;
+  aspect-ratio: 1;
   background: url("ascii/yin-yang.svg") center / contain no-repeat;
   mask-image: none;
   opacity: .3;
@@ -59,13 +63,13 @@
 }
 
 @media (max-width: 680px) {
-  [data-ascii]::before {
+  [data-ascii]:not([data-ascii="yin-yang"])::before {
     width: min(100%, 440px);
     height: min(100%, 200px);
     opacity: calc(var(--ascii-opacity) * .7);
   }
   [data-ascii="yin-yang"]::before {
-    inset: 0 0 auto auto;
+    top: 0;
     opacity: .16;
   }
 }
