@@ -11,19 +11,23 @@
   display:grid;
   grid-template-columns:minmax(0,1fr) var(--dream-side);
   align-items:end;
-  gap:12px var(--dream-gap);
-  margin-bottom:clamp(24px,3vw,42px);
+  gap:18px var(--dream-gap);
+  margin-bottom:clamp(20px,2.5vw,34px);
+}
+.dream-partner {
+  display:grid;
+  justify-items:start;
+  gap:8px;
 }
 .dream-partner-logo {
   display:block;
-  width:clamp(144px,17vw,232px);
+  width:clamp(125px,12vw,185px);
   max-width:100%;
   height:auto;
-  margin-bottom:clamp(14px,1.6vw,22px);
 }
 .dream-masthead #awatts-title {
   margin:0;
-  font:clamp(37px,6.1vw,92px)/1 var(--display);
+  font:clamp(34px,4.6vw,68px)/1 var(--display);
   color:var(--film-ink);
   text-transform:uppercase;
 }
@@ -33,7 +37,7 @@
   font:clamp(13px,1.15vw,16px)/1.55 var(--body);
   color:var(--film-ink);
 }
-.dream-masthead > .text-link {justify-self:start;margin:0}
+.dream-partner .text-link {margin:0}
 .dream-overview[data-ascii] {--ascii-opacity:.08}
 .dream-overview .dream-meta {
   padding:clamp(14px,2vw,26px);
@@ -43,7 +47,8 @@
 .dream-overview .dream-meta>p:not(.dream-sub) {font-size:12px}
 @media (max-width:620px) {
   .dream-masthead {grid-template-columns:1fr}
-  .dream-masthead #awatts-title {font-size:clamp(35px,9.7vw,60px)}
+  .dream-masthead #awatts-title {font-size:clamp(32px,8vw,48px)}
+  .dream-partner {display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px}
 }
 .dream-slide .dream-player{aspect-ratio:16/9;border-radius:0;background:transparent}
 .dream-slide .dream-player>img{object-fit:contain}
