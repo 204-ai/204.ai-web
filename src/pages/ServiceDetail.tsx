@@ -2,7 +2,6 @@ import { Link, useParams } from 'react-router-dom'
 import { ServiceReel } from '../components/service/ServiceReel'
 import { Pill } from '../components/ui/Pill'
 import { Rich } from '../components/ui/Rich'
-import { SecLab } from '../components/ui/SecLab'
 import { describe, type Service } from '../data/content'
 import { CONTENT } from '../data/studio'
 import { useHead } from '../hooks/useHead'
@@ -28,19 +27,11 @@ function ServicePage({ service: s, index: i }: { service: Service; index: number
 
   return (
     <div className="v2">
+      <nav className={`site-section-links ${styles.breadcrumb}`} aria-label="Service context"><Link to="/services">← Services</Link><a href={`${import.meta.env.BASE_URL}${s.pillar === 'content' ? 'productions/' : 'experiences/'}`}>{s.pillar === 'content' ? 'Productions' : 'Experiences'} ↗</a></nav>
+      <div className="site-page-heading"><h1><Rich text={s.title} /></h1><p>{s.lead}</p></div>
       <section className={styles.detail}>
         <div className={styles.left}>
-          <Link className={styles.back} to="/services">
-            ← services
-          </Link>
-          <SecLab className={styles.lab}>
-            / {s.pillar === 'content' ? 'content creation' : 'interactive installations'}
-          </SecLab>
-          <h1 className={styles.title}>
-            <Rich text={s.title} />
-          </h1>
           <ServiceReel reels={s.reels ?? []} poster={s.still ?? s.img} />
-          <p className={styles.lead}>{s.lead}</p>
           <Pill to="/contact" onClick={() => trackCta('bring_to_event', { service: s.label })}>
             → {s.cta}
           </Pill>
@@ -51,7 +42,6 @@ function ServicePage({ service: s, index: i }: { service: Service; index: number
           <div className={styles.modes}>
             {s.modes.map((m) => (
               <div key={m.n} className={styles.mrow}>
-                <div className={styles.n}>{m.n}</div>
                 <div>
                   <h3 className={styles.t}>{m.label}</h3>
                   <div className={styles.d}>{m.body}</div>
@@ -62,15 +52,15 @@ function ServicePage({ service: s, index: i }: { service: Service; index: number
 
           <h2 className={styles.sectionTitle}>What's included</h2>
           <p className={styles.incl}>{s.included}</p>
+          {s.id === 'archival' && <a className={styles.wrow} href={`${import.meta.env.BASE_URL}archives/`}><span className={styles.ttl}>Explore archival intelligence</span><span className={styles.ar} aria-hidden="true">↗</span></a>}
 
           {/* derived from works[].practices (SPEC C19); a service without work hides the block (V26) */}
           {s.works.length > 0 && (
             <>
               <h2 className={styles.sectionTitle}>Selected work</h2>
               <div className={styles.works}>
-                {s.works.map((w) => (
+                {s.works.slice(0, 6).map((w) => (
                   <Link key={w.slug} to={`/work/${w.slug}`} className={styles.wrow}>
-                    <span className={styles.code}>{w.code}</span>
                     <span className={styles.ttl}>{w.title}</span>
                     <span className={styles.ar} aria-hidden="true">
                       →
@@ -78,6 +68,7 @@ function ServicePage({ service: s, index: i }: { service: Service; index: number
                   </Link>
                 ))}
               </div>
+              {s.works.length > 6 && <details className={styles.moreWorks}><summary>More projects</summary>{s.works.slice(6).map(w => <Link key={w.slug} to={`/work/${w.slug}`} className={styles.wrow}><span className={styles.ttl}>{w.title}</span><span className={styles.ar} aria-hidden="true">↗</span></Link>)}</details>}
             </>
           )}
         </div>

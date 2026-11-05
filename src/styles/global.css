@@ -9,6 +9,7 @@
   --ink-70: #3a3a3a;
   --ink-50: #9d9d9d;
   --ink-30: #c6c6c6;
+  --dim: var(--ink-30);
   --ink-10: #e6e6e6;
   --signal: #5aa6ff;
   --signal-dim: rgba(90, 166, 255, 0.16);

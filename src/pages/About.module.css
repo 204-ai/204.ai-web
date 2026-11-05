@@ -2,7 +2,7 @@
 .colophon {
   display: grid;
   grid-template-columns: 1fr 1px 1fr;
-  padding: calc(140 * var(--px)) 0 calc(120 * var(--px));
+  padding: 64px 0 calc(120 * var(--px));
   background: var(--ink);
 }
 
@@ -251,7 +251,7 @@
   .colophon {
     grid-template-columns: 1fr;
     gap: 80px;
-    padding: 120px 0 90px;
+    padding: 64px 0 90px;
   }
 
   .left {
@@ -284,3 +284,5 @@
     display: none;
   }
 }
+
+@media (max-width: 700px) { .colophon { padding-top: 40px; } }

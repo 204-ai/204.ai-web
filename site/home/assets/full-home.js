@@ -4,7 +4,6 @@
  const stage=document.querySelector('.full-hero-stage'),poster=document.querySelector('#home-hero-poster'),video=document.querySelector('#home-hero-video')
  const small=matchMedia('(max-width:900px)'),reduced=matchMedia('(prefers-reduced-motion:reduce)')
  let index=0,timer=0,visible=stage.getBoundingClientRect().bottom>0,fallback=false,userPaused=false,userRequested=false
- const toggle=document.querySelector('#home-hero-toggle')
  function stopTimer(){clearTimeout(timer);timer=0}
  function canAnimate(){return !fallback&&(userRequested||(!small.matches&&!reduced.matches&&!navigator.connection?.saveData))}
  function schedule(){
@@ -34,17 +33,10 @@
   if(video.paused){userPaused=false;userRequested=true;fallback=false;playback()}
   else{userPaused=true;video.pause();stopTimer()}
  }
- function syncToggle(){
-  toggle.textContent=video.paused?'▶':'Ⅱ'
-  toggle.setAttribute('aria-label',`${video.paused?'Play':'Pause'} hero film`)
- }
- toggle.addEventListener('click',toggleFilm)
  stage.addEventListener('click',event=>{
   if(event.target.closest('a,button,input,select,textarea'))return
   toggleFilm()
  })
- for(const event of ['play','pause','ended'])video.addEventListener(event,syncToggle)
- syncToggle()
  document.addEventListener('keydown',event=>{
   if(!visible||event.defaultPrevented||event.repeat||event.altKey||event.ctrlKey||event.metaKey||event.shiftKey)return
   if(event.key!=='ArrowLeft'&&event.key!=='ArrowRight')return

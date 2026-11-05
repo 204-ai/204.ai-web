@@ -13,8 +13,10 @@
   color: var(--paper);
   border: 1px solid var(--paper);
   border-radius: 999px;
-  line-height: 1;
-  white-space: nowrap;
+  max-width: 100%;
+  line-height: 1.4;
+  white-space: normal;
+  text-align: center;
   cursor: pointer;
   transition: background 0.25s, color 0.25s, letter-spacing 0.25s;
 }

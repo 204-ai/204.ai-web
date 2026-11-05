@@ -39,6 +39,11 @@
         "type": 301
       },
       {
+        "regex": "^/technology/?$",
+        "destination": "/services",
+        "type": 301
+      },
+      {
         "regex": "^/work/bioxyz-coin-launch/?$",
         "destination": "/work/bioxyz",
         "type": 301
