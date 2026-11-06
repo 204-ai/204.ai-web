@@ -75,6 +75,12 @@ sound carry no audio track.
 | `archive-article.mp4` | Desktop `screenshots/Interactive Lab Newsletter.mov`, 0–24 s (w29) | 27 |
 | `dunbrae-peel.mp4` | no master found; range-converted (full → limited) from the previous web file | 22 |
 
+The six home hero loops, `hero-preview-1…6.mp4`, were re-encoded from
+`media-src/cinematic/` (feat-alanwatts, feat-motelx, hero-standv, reel-delulu,
+feat-ciurlionis, sd-vfx-2) at CRF 24 (approved 2026-11-06, the hero fills the
+window), 720 px high, with a keyframe at most every 5 s (`-g 150`: autoplay
+loops are not seeked) and the master's AAC copied for the sound toggle.
+
 `sentient-studio/presentation/media/fluxrt.mp4` is unchanged. Its master is
 `references/204ai/installations/mirror/fluxrt-FluxRT-2026-10-27-12-11-44.mp4`,
 frames 1082–1201, 1860–1980, 2160–2280, 6240–6360 and 7381–7470 on a 30 fps
