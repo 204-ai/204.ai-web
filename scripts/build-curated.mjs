@@ -5,6 +5,7 @@ import { readFileSync, writeFileSync, readdirSync, mkdirSync, copyFileSync, stat
 import { dirname, extname, join, relative, resolve, posix } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { siteHeader, siteFooter } from '../src/lib/site-shell.ts'
+import { GA_ID } from '../src/lib/analytics.ts'
 import { buildContent, servicePath } from '../src/data/content.ts'
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..'),source=join(root,'site'),dist=join(root,'dist')
 const base=process.env.VITE_BASE||'/',siteUrl=(process.env.SITE_URL||'https://studio204-web.web.app').replace(/\/$/,'')
@@ -53,6 +54,14 @@ const headingInkJs=urls.get(join(source,'home/assets/heading-ink.js'))
 const headerScroll=urls.get(join(source,'home/assets/site-header-scroll.js'))
 const headingEffects=`<link rel="stylesheet" href="${headingInkCss}"><script defer src="${headingInkJs}"></script>`
 const siteEffects=headingEffects+`<script defer src="${headerScroll}"></script>`
+// Standalone pages use the tag's automatic page_view. React tracks its routes separately.
+const chapterAnalytics = `<script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { window.dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', '${GA_ID}');
+</script>`
 for(const file of walk(dist).filter(f=>f.endsWith('.html'))){
  let html=readFileSync(file,'utf8');if(html.includes('http-equiv="refresh"'))continue
  const effects=html.includes('id="root"')?headingEffects:''
@@ -89,7 +98,7 @@ for(const file of files){
     text=text.replace('</head>',`<link rel="stylesheet" href="${urls.get(join(source,'home/assets/site-shell.css'))}"></head>`)
    }
    if(route!==undefined||rel==='sentient-studio/index.html'){
-    text=text.replace('</head>',siteEffects+'</head>')
+    text=text.replace('</head>',siteEffects+chapterAnalytics+'</head>')
     const title=text.match(/<title>([\s\S]*?)<\/title>/)[1],desc=text.match(/<meta name="description" content="([^"]*)"/)[1]
     const canonical=siteUrl+'/'+(route??'sentient-studio/')
     const image=siteUrl+'/media/204white-p-800.jpg'
