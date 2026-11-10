@@ -17,13 +17,6 @@
   },
   "heroClips": [
     {
-      "work": "alan-watts",
-      "clip": "/media/feat-alanwatts-b75ac0.mp4",
-      "poster": "/media/feat-alanwatts-c79fdb.webp",
-      "kind": "Archival Restoration",
-      "place": "Alan Watts Organization"
-    },
-    {
       "work": "motel-x",
       "clip": "/media/feat-motelx-48007f.mp4",
       "poster": "/media/feat-motelx-0955fe.webp",
@@ -40,21 +33,6 @@
       "place": "Lisbon"
     },
     {
-      "work": "delulu",
-      "clip": "/media/reel-delulu-0eb7f9.mp4",
-      "poster": "/media/w-delulu-1bed9d.webp",
-      "title": "Delulu — Sofie Heyman",
-      "kind": "Artist Collaboration",
-      "place": "Lisbon"
-    },
-    {
-      "work": "m-k-ciurlionis-trail-of-angels",
-      "clip": "/media/feat-ciurlionis-5a3485.mp4",
-      "poster": "/media/ciur-10-142998.webp",
-      "kind": "Animation & Film",
-      "place": "RnA Studio, Lisbon"
-    },
-    {
       "work": "yard-episode",
       "clip": "/media/sd-vfx-2-dc367a.mp4",
       "poster": "/media/yrd-02-a97af2.webp",
@@ -68,7 +46,6 @@
       "title": "M. K. Čiurlionis\nTrail of Angels",
       "label": "Animation\n& Film",
       "poster": "/media/ciur-10-142998.webp",
-      "clip": "/media/feat-ciurlionis-5a3485.mp4",
       "focus": "50% 30%"
     },
     {
@@ -83,7 +60,6 @@
       "title": "Alan\nWatts",
       "label": "Archival\nRestoration",
       "poster": "/media/feat-alanwatts-c79fdb.webp",
-      "clip": "/media/feat-alanwatts-b75ac0.mp4",
       "focus": "50% 30%"
     }
   ],
