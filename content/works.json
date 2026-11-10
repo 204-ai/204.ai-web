@@ -287,9 +287,6 @@
     "note": "Archival restoration",
     "media": {
       "still": "/media/feat-alanwatts-c79fdb.webp",
-      "video": {
-        "mp4": "/media/feat-alanwatts-b75ac0.mp4"
-      },
       "focus": "50% 30%"
     },
     "products": "Archival restoration · AI video",
@@ -471,8 +468,7 @@
       "/media/zeb-10-5cbcf8.webp",
       "/media/zeb-11-933ab1.webp",
       "/media/zeb-12-8e3c5b.webp",
-      "/media/zeb-13-fa70e4.webp",
-      "/media/zeb-14-2cb325.webp"
+      "/media/zeb-13-fa70e4.webp"
     ],
     "collab": {
       "label": "Partnered with",
@@ -649,7 +645,6 @@
       "/media/rare-02-325852.webp",
       "/media/rare-03-a4d204.webp",
       "/media/rare-04-dbee95.webp",
-      "/media/rare-05-26cae6.webp",
       "/media/rare-06-e04372.webp"
     ],
     "logo": "/media/logo-rareeffect-9afc9d.webp"

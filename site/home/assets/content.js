@@ -21,7 +21,7 @@ const pieces={
       ['assets/confucius-still-4.webp','Two men speak at the riverbank'],
     ],
   },
-  maybe:{title:'The Great Maybe',poster:'assets/maybe.jpg',duration:99,waveform:'assets/maybe-wave.webp',frames:frameList('maybe','jpg'),status:'2026 · 1:39 · Animated short',credit:'Jas Black, 204 production, AWO words',description:"The story of the farmer, animated over Alan Watts' recorded voice. Another way into the archive, with a character and visual language of its own.",youtubeId:'BFemz-ur0_0',youtube:'https://www.youtube.com/watch?v=BFemz-ur0_0'}
+  maybe:{title:'The Great Maybe',poster:'assets/maybe.webp',duration:99,waveform:'assets/maybe-wave.webp',frames:frameList('maybe','jpg'),status:'2026 · 1:39 · Animated short',credit:'Jas Black, 204 production, AWO words',description:"The story of the farmer, animated over Alan Watts' recorded voice. Another way into the archive, with a character and visual language of its own.",youtubeId:'BFemz-ur0_0',youtube:'https://www.youtube.com/watch?v=BFemz-ur0_0'}
 }
 const $ = selector => document.querySelector(selector)
 const screen = $('#featured-screen')

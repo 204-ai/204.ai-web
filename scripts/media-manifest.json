@@ -652,16 +652,6 @@
     "eeg-04-542161-p-800.webp": 52832
    }
   },
-  "media-src/cinematic/feat-alanwatts.mp4": {
-   "sha1": "428d3bf163eb1e6cfa48ef5a7de5cf05bd5a50aa",
-   "role": "hero",
-   "path": "/media/feat-alanwatts-b75ac0.mp4",
-   "w": 1280,
-   "h": 720,
-   "files": {
-    "feat-alanwatts-b75ac0.mp4": 3366512
-   }
-  },
   "media-src/cinematic/feat-alanwatts.png": {
    "sha1": "afdf8fd7b97a3d2758dc5b17a285af8ed8711bbe",
    "role": "still",
@@ -675,16 +665,6 @@
     "feat-alanwatts-c79fdb-p-500.webp": 25452,
     "feat-alanwatts-c79fdb-p-320.webp": 11838,
     "feat-alanwatts-c79fdb-p-160.webp": 4254
-   }
-  },
-  "media-src/cinematic/feat-ciurlionis.mp4": {
-   "sha1": "3490cf528d16b3d2c26cda421af2082420aae474",
-   "role": "hero",
-   "path": "/media/feat-ciurlionis-5a3485.mp4",
-   "w": 1280,
-   "h": 720,
-   "files": {
-    "feat-ciurlionis-5a3485.mp4": 2229890
    }
   },
   "media-src/cinematic/feat-ciurlionis.png": {
@@ -2096,17 +2076,6 @@
     "rare-04-dbee95-p-800.webp": 30530
    }
   },
-  "media-src/cinematic/rare-05.jpg": {
-   "sha1": "161ac0b62989bb45f863a63464145c3efa2349a5",
-   "role": "gallery",
-   "path": "/media/rare-05-26cae6.webp",
-   "w": 1600,
-   "h": 1067,
-   "files": {
-    "rare-05-26cae6.webp": 92610,
-    "rare-05-26cae6-p-800.webp": 38308
-   }
-  },
   "media-src/cinematic/rare-06.jpg": {
    "sha1": "103b8335b176711ed5842096e6671daef3afb1ff",
    "role": "gallery",
@@ -2116,16 +2085,6 @@
    "files": {
     "rare-06-e04372.webp": 32162,
     "rare-06-e04372-p-800.webp": 15390
-   }
-  },
-  "media-src/cinematic/reel-delulu.mp4": {
-   "sha1": "95bc81da256cbbd5300120f585b222ce45c70347",
-   "role": "hero",
-   "path": "/media/reel-delulu-0eb7f9.mp4",
-   "w": 1280,
-   "h": 720,
-   "files": {
-    "reel-delulu-0eb7f9.mp4": 3716513
    }
   },
   "media-src/cinematic/rem-1.png": {
@@ -4647,17 +4606,6 @@
    "files": {
     "zeb-13-fa70e4.webp": 56000,
     "zeb-13-fa70e4-p-800.webp": 23332
-   }
-  },
-  "media-src/cinematic/zeb-14.jpg": {
-   "sha1": "3dc2caeeaa80b0fdb5537cdfa1bb6d8abf40aa8a",
-   "role": "gallery",
-   "path": "/media/zeb-14-2cb325.webp",
-   "w": 1195,
-   "h": 1600,
-   "files": {
-    "zeb-14-2cb325.webp": 86444,
-    "zeb-14-2cb325-p-800.webp": 32782
    }
   },
   "media-src/cinematic/zeb-thumb2.jpg": {
